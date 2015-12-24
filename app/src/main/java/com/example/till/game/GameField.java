@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+
 /**
  * Created by till on 23.12.15.
  */
@@ -21,7 +23,7 @@ public class GameField implements Runnable {
     public GameField(MySurfaceView mySurfaceView, int updatesPerSecond) {
         this.surfaceView = mySurfaceView;
         this.updatesPerSecond = updatesPerSecond;
-        triangle = new Triangle(new MyVector(0, 0), new MyVector(200, 200).scale(1.0/updatesPerSecond), 0, 0);
+        triangle = new Triangle(new ArrayRealVector(new double[]{0, 0}), new ArrayRealVector(new double[]{200, 200}).mapMultiply(1.0/updatesPerSecond), 0, 0);
         cycleLength = 1000000000/updatesPerSecond;
     }
 

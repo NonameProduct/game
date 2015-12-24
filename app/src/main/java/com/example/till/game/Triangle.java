@@ -7,21 +7,24 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.util.Log;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+
 /**
  * Created by till on 23.12.15.
  */
 public class Triangle implements Dockable {
-    MyVector positionInParent;
-    MyVector movement;
+    RealVector positionInParent;
+    RealVector movement;
     double rotation;
     double rotationSpeed;
 
 
-    private MyVector a = new MyVector(-0.5, Math.sqrt(3.0 / 16.0));
-    private MyVector b = new MyVector(0.5, Math.sqrt(3.0 / 16.0));
-    private MyVector c = new MyVector(0, -Math.sqrt(3.0 / 16.0));
+    private RealVector a = new ArrayRealVector(new double[]{-0.5, Math.sqrt(3.0 / 16.0)});
+    private RealVector b = new ArrayRealVector(new double[]{0.5, Math.sqrt(3.0 / 16.0)});
+    private RealVector c = new ArrayRealVector(new double[]{0, -Math.sqrt(3.0 / 16.0)});
 
-    public Triangle(MyVector positionInParent, MyVector movement, double rotation, double rotationSpeed) {
+    public Triangle(RealVector positionInParent, RealVector movement, double rotation, double rotationSpeed) {
         this.positionInParent = positionInParent;
         this.movement = movement;
         this.rotation = rotation;
@@ -43,9 +46,9 @@ public class Triangle implements Dockable {
         paint.setColor(android.graphics.Color.RED);
         paint.setAntiAlias(true);
 
-        Point pointA = new Point((int) a.getX(), (int) a.getY());
-        Point pointB = new Point((int) b.getX(), (int) b.getY());
-        Point pointC = new Point((int) c.getX(), (int) c.getY());
+        Point pointA = new Point((int) a.getEntry(0), (int) a.getEntry(1));
+        Point pointB = new Point((int) b.getEntry(0), (int) b.getEntry(1));
+        Point pointC = new Point((int) c.getEntry(0), (int) c.getEntry(1));
 
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
@@ -59,19 +62,19 @@ public class Triangle implements Dockable {
         return canvas;
     }
 
-    private MyVector calculatePoint(MyVector vector) {
-        vector = vector.scale(100);
+    private RealVector calculatePoint(RealVector vector) {
+        vector = vector.mapMultiply(100);
         vector = vector.add(positionInParent);
         return vector;
     }
 
     @Override
-    public MyVector getPositionInParent() {
+    public RealVector getPositionInParent() {
         return positionInParent;
     }
 
     @Override
-    public MyVector getMovement() {
+    public RealVector getMovement() {
         return movement;
     }
 
