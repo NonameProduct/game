@@ -3,6 +3,7 @@ package com.example.till.game;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Debug;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -18,6 +19,7 @@ public class GameField implements Runnable {
     private int updatesPerSecond;
     private final String logTag = "game_log";
     private long cycleLength;
+    private Canvas canvas;
 
 
     public GameField(MySurfaceView mySurfaceView, int updatesPerSecond) {
@@ -25,6 +27,8 @@ public class GameField implements Runnable {
         this.updatesPerSecond = updatesPerSecond;
         triangle = new Triangle(new ArrayRealVector(new double[]{0, 0}), new ArrayRealVector(new double[]{200, 200}).mapMultiply(1.0/updatesPerSecond), 0, 0);
         cycleLength = 1000000000/updatesPerSecond;
+        canvas = surfaceView.getHolder().lockCanvas();
+        surfaceView.getHolder().unlockCanvasAndPost(canvas);
     }
 
     public Canvas drawMe(Canvas canvas) {
@@ -33,6 +37,7 @@ public class GameField implements Runnable {
 
     @Override
     public void run() {
+        Debug.startMethodTracing("mytrace");
         long time;
         long remainder;
         for (int i = 0; i < 5*updatesPerSecond; i++) {
@@ -50,6 +55,7 @@ public class GameField implements Runnable {
                 e.printStackTrace();
             }
         }
+        Debug.stopMethodTracing();
     }
 
     private void updateState() {
@@ -57,6 +63,8 @@ public class GameField implements Runnable {
     }
 
     private void updateDisplay() {
+
+
         SurfaceHolder sh = surfaceView.getHolder();
         Canvas canvas = sh.lockCanvas();
         Paint paint = new Paint();
@@ -66,7 +74,6 @@ public class GameField implements Runnable {
         canvas = this.drawMe(canvas);
 
         sh.unlockCanvasAndPost(canvas);
-
     }
 
     public int getUpdatesPerSecond() {

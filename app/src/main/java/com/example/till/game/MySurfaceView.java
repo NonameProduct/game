@@ -18,16 +18,19 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     public MySurfaceView(Context context) {
         super(context);
         getHolder().addCallback(this);
+        setWillNotDraw(false);
     }
 
     public MySurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getHolder().addCallback(this);
+        setWillNotDraw(false);
     }
 
     public MySurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         getHolder().addCallback(this);
+        setWillNotDraw(false);
     }
 
 
@@ -48,4 +51,5 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder) {
 
     }
+
 }
