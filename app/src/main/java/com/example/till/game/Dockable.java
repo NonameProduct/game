@@ -8,7 +8,7 @@ import org.apache.commons.math3.linear.RealVector;
  * Created by till on 23.12.15.
  */
 public interface Dockable {
-    public Canvas drawMe(Canvas canvas);
+    public Canvas draw(Canvas canvas);
 
     public RealVector getPositionInParent();
 

@@ -1,7 +1,6 @@
 package com.example.till.game;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -19,26 +18,30 @@ public class Triangle implements Dockable {
     double rotation;
     double rotationSpeed;
 
+    private RealVector positionInParentA;
+    private RealVector positionInParentB;
+    private RealVector positionInParentC;
 
-    private RealVector a = new ArrayRealVector(new double[]{-0.5, Math.sqrt(3.0 / 16.0)});
-    private RealVector b = new ArrayRealVector(new double[]{0.5, Math.sqrt(3.0 / 16.0)});
-    private RealVector c = new ArrayRealVector(new double[]{0, -Math.sqrt(3.0 / 16.0)});
+    private RealVector cornerRelativeToCenterA = new ArrayRealVector(new double[]{-0.5, Math.sqrt(3.0 / 16.0)});
+    private RealVector cornerRelativeToCenterB = new ArrayRealVector(new double[]{0.5, Math.sqrt(3.0 / 16.0)});
+    private RealVector cornerRelativeToCenterC = new ArrayRealVector(new double[]{0, -Math.sqrt(3.0 / 16.0)});
 
-    public Triangle(RealVector positionInParent, RealVector movement, double rotation, double rotationSpeed) {
-        this.positionInParent = positionInParent;
-        this.movement = movement;
+    public Triangle(double[] positionInParent, double[] movement, double rotation, double rotationSpeed) {
+        if(positionInParent.length != 2 || movement.length != 2) {
+            throw new IllegalArgumentException();
+        }
+        this.positionInParent = new ArrayRealVector(positionInParent);
+        this.movement = new ArrayRealVector(movement);
         this.rotation = rotation;
         this.rotationSpeed = rotationSpeed;
 
         Log.i("game_log", "sqrt(3/16): " + Math.sqrt(3 / 16));
-        a = calculatePoint(a);
-        b = calculatePoint(b);
-        c = calculatePoint(c);
+        update();
     }
 
 
     @Override
-    public Canvas drawMe(Canvas canvas) {
+    public Canvas draw(Canvas canvas) {
 
 
         Paint paint = new Paint();
@@ -46,26 +49,29 @@ public class Triangle implements Dockable {
         paint.setColor(android.graphics.Color.RED);
         paint.setAntiAlias(true);
 
-        Point pointA = new Point((int) a.getEntry(0), (int) a.getEntry(1));
-        Point pointB = new Point((int) b.getEntry(0), (int) b.getEntry(1));
-        Point pointC = new Point((int) c.getEntry(0), (int) c.getEntry(1));
-
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(pointA.x, pointA.y);
-        path.lineTo(pointB.x, pointB.y);
-        path.lineTo(pointC.x, pointC.y);
-        path.lineTo(pointA.x, pointA.y);
+        path.moveTo((float)positionInParentA.getEntry(0), (float)positionInParentA.getEntry(1));
+        path.lineTo((float)positionInParentB.getEntry(0), (float)positionInParentB.getEntry(1));
+        path.lineTo((float)positionInParentC.getEntry(0), (float)positionInParentC.getEntry(1));
+        path.lineTo((float)positionInParentA.getEntry(0), (float)positionInParentA.getEntry(1));
         path.close();
 
         canvas.drawPath(path, paint);
         return canvas;
     }
 
-    private RealVector calculatePoint(RealVector vector) {
+    private RealVector calculatePositionOfCorner(RealVector vector) {
         vector = vector.mapMultiply(100);
         vector = vector.add(positionInParent);
         return vector;
+    }
+
+    public void handleActionDown(int eventX, int eventY) {
+        RealVector eventCoordinates = new ArrayRealVector(new double[]{eventX, eventY});
+        RealVector movementDirection = eventCoordinates.add(positionInParent.mapMultiply(-1));
+        RealVector movementScaled = movementDirection.mapMultiply(1.0/100.0);
+        movement = movementScaled;
     }
 
     @Override
@@ -89,9 +95,9 @@ public class Triangle implements Dockable {
     }
 
     public void update() {
-        a = a.add(movement);
-        b = b.add(movement);
-        c = c.add(movement);
-        Log.i("game_log", "a = " + a + ", movement: " + movement);
+        positionInParent = positionInParent.add(movement);
+        positionInParentA = calculatePositionOfCorner(cornerRelativeToCenterA);
+        positionInParentB = calculatePositionOfCorner(cornerRelativeToCenterB);
+        positionInParentC = calculatePositionOfCorner(cornerRelativeToCenterC);
     }
 }
