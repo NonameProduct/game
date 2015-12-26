@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -24,7 +25,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
     public MainGamePanel(Context context) {
         super(context);
         getHolder().addCallback(this);
-        triangle = new Triangle(new double[]{100, 100}, new double[]{0, 0}, 0, 0);
+        triangle = new Triangle(new double[]{400, 400}, new double[]{0, 0}, 0, Math.PI/thread.MAX_FPS);
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
     }
@@ -70,7 +71,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
         return true;
     }
 
-    protected void onDraw(Canvas canvas) {
+    protected void render(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
         triangle.draw(canvas);
     }

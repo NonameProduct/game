@@ -3,10 +3,11 @@ package com.example.till.game;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
 import android.util.Log;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 /**
@@ -15,24 +16,25 @@ import org.apache.commons.math3.linear.RealVector;
 public class Triangle implements Dockable {
     RealVector positionInParent;
     RealVector movement;
-    double rotation;
+    double currentRotation;
     double rotationSpeed;
+    private RealMatrix rotationMatrix;
 
     private RealVector positionInParentA;
     private RealVector positionInParentB;
     private RealVector positionInParentC;
 
-    private RealVector cornerRelativeToCenterA = new ArrayRealVector(new double[]{-0.5, Math.sqrt(3.0 / 16.0)});
-    private RealVector cornerRelativeToCenterB = new ArrayRealVector(new double[]{0.5, Math.sqrt(3.0 / 16.0)});
-    private RealVector cornerRelativeToCenterC = new ArrayRealVector(new double[]{0, -Math.sqrt(3.0 / 16.0)});
+    private RealVector cornerRelativeToCenterA = new ArrayRealVector(new double[]{-0.5, 2.0/3.0*Math.sqrt(3.0 / 16.0)});
+    private RealVector cornerRelativeToCenterB = new ArrayRealVector(new double[]{0.5, 2.0/3.0*Math.sqrt(3.0 / 16.0)});
+    private RealVector cornerRelativeToCenterC = new ArrayRealVector(new double[]{0, -4.0/3.0*Math.sqrt(3.0 / 16.0)});
 
-    public Triangle(double[] positionInParent, double[] movement, double rotation, double rotationSpeed) {
+    public Triangle(double[] positionInParent, double[] movement, double currentRotation, double rotationSpeed) {
         if(positionInParent.length != 2 || movement.length != 2) {
             throw new IllegalArgumentException();
         }
         this.positionInParent = new ArrayRealVector(positionInParent);
         this.movement = new ArrayRealVector(movement);
-        this.rotation = rotation;
+        this.currentRotation = currentRotation;
         this.rotationSpeed = rotationSpeed;
 
         Log.i("game_log", "sqrt(3/16): " + Math.sqrt(3 / 16));
@@ -62,9 +64,12 @@ public class Triangle implements Dockable {
     }
 
     private RealVector calculatePositionOfCorner(RealVector vector) {
-        vector = vector.mapMultiply(100);
-        vector = vector.add(positionInParent);
-        return vector;
+        RealVector vectorScaled = vector.mapMultiply(200);
+        RealMatrix rotationMatrix = new Array2DRowRealMatrix(new double[][]{{Math.cos(currentRotation), Math.sin(currentRotation)},
+                {-Math.sin(currentRotation), Math.cos(currentRotation)}});
+        RealVector vectorRotated = rotationMatrix.preMultiply(vectorScaled);
+        RealVector vectorShifted = vectorRotated.add(positionInParent);
+        return vectorShifted;
     }
 
     public void handleActionDown(int eventX, int eventY) {
@@ -84,9 +89,13 @@ public class Triangle implements Dockable {
         return movement;
     }
 
+    private void setMovement(RealVector movement) {
+        this.movement = movement;
+    }
+
     @Override
-    public double getRotation() {
-        return rotation;
+    public double getCurrentRotation() {
+        return currentRotation;
     }
 
     @Override
@@ -95,6 +104,7 @@ public class Triangle implements Dockable {
     }
 
     public void update() {
+        currentRotation += rotationSpeed;
         positionInParent = positionInParent.add(movement);
         positionInParentA = calculatePositionOfCorner(cornerRelativeToCenterA);
         positionInParentB = calculatePositionOfCorner(cornerRelativeToCenterB);

@@ -14,7 +14,7 @@ public interface Dockable {
 
     public RealVector getMovement();
 
-    public double getRotation();
+    public double getCurrentRotation();
 
     public double getRotationSpeed();
 
