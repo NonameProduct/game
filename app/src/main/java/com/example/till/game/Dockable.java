@@ -1,6 +1,7 @@
 package com.example.till.game;
 
 import android.graphics.Canvas;
+import android.view.MotionEvent;
 
 import org.apache.commons.math3.linear.RealVector;
 
@@ -19,4 +20,12 @@ public interface Dockable {
     public double getRotationSpeed();
 
     public void update();
+
+    public Dockable focus();
+
+    public void unfocus();
+
+    public boolean isFocused();
+
+    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY);
 }
