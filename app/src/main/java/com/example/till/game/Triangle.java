@@ -156,13 +156,24 @@ public class Triangle implements Dockable {
         if (!isFocused()) {
             throw new IllegalStateException("Triangle.onFling() should only be called if the respective triangle currantly isFocused()");
         }
-        ArrayRealVector startPoint = new ArrayRealVector(new double[]{event1.getX(), event1.getY()});
-        double distanceEventToTriangleCenter = startPoint.add(positionInParent.mapMultiply(-1)).getNorm();
-        double distanceAToTriangleCenter = positionInParentA.add(positionInParent.mapMultiply(-1)).getNorm();
-        if (distanceEventToTriangleCenter < distanceAToTriangleCenter) {
+
+        RealVector startPoint = new ArrayRealVector(new double[]{event1.getX(), event1.getY()});
+        RealVector startPointInTriangleCoordinates = transformToTriangleCoordinates(startPoint);
+        RealVector endPoint = new ArrayRealVector(new double[]{event2.getX(), event2.getY()});
+        RealVector endPointInTriangleCoordinates = transformToTriangleCoordinates(endPoint);
+
+        if (startPointInTriangleCoordinates.getNorm() < cornerRelativeToCenterA.getNorm()*200) {
             setMovement(new ArrayRealVector(new double[]{velocityX/(10.0*MainThread.MAX_FPS), velocityY/(30.0*MainThread.MAX_FPS)}));
-        }else if (distanceEventToTriangleCenter<distanceAToTriangleCenter*3) {
-            rotationSpeed += 2*Math.PI/(MainThread.MAX_FPS*4);
+        }else if (startPointInTriangleCoordinates.getNorm()<cornerRelativeToCenterA.getNorm()*3*200) {
+            double determinantOfDirectionMatrix = startPointInTriangleCoordinates.getEntry(0) * endPointInTriangleCoordinates.getEntry(1)
+                    - startPointInTriangleCoordinates.getEntry(1) * endPointInTriangleCoordinates.getEntry(0);
+            int signOfDeterminant;
+            if (determinantOfDirectionMatrix > 0) {
+                signOfDeterminant = 1;
+            } else {
+                signOfDeterminant = -1;
+            }
+            rotationSpeed += signOfDeterminant * 2 * Math.PI / (MainThread.MAX_FPS * 4);
         }
         return false;
     }
