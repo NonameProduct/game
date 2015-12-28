@@ -46,7 +46,7 @@ public class MainThread extends Thread {
 
         while (running) {
             canvas = null;
-            try{
+            try {
                 synchronized (surfaceHolder) {
                     beginTime = System.currentTimeMillis();
                     canvas = this.surfaceHolder.lockCanvas();
@@ -62,7 +62,7 @@ public class MainThread extends Thread {
                             + timeForUpdate + "; Time For Render: " + timeForRender + "; Sleep time: " + sleepTime);
 
                     if (sleepTime > 0) {
-                        try{
+                        try {
                             Thread.sleep(sleepTime);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -79,15 +79,16 @@ public class MainThread extends Thread {
                     if (framesSkipped > 0) {
                         Log.d(TAG, "Frames skipped: " + framesSkipped);
                     }
-                    if(sleepTime > 0){
-                        try{
+                    if (sleepTime > 0) {
+                        try {
                             Thread.sleep(sleepTime);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
-                        } ;
+                        }
+                        ;
                     }
                 }
-            }finally {
+            } finally {
                 if (canvas != null) {
                     surfaceHolder.unlockCanvasAndPost(canvas);
                 }

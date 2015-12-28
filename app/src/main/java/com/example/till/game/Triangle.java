@@ -17,9 +17,9 @@ import org.apache.commons.math3.linear.RealVector;
  */
 public class Triangle implements Dockable {
     private static final String TAG = Triangle.class.getSimpleName();
-    RealVector movement;
-    double currentRotation;
-    double rotationSpeed;
+    private RealVector movement;
+    private double currentRotation;
+    private double rotationSpeed;
     private RealMatrix rotationMatrix;
     private boolean isFocused;
     int currentColor;
@@ -27,17 +27,29 @@ public class Triangle implements Dockable {
 
     private RealVector positionOfLastTouch;
 
+    public RealVector getPositionInParentA() {
+        return positionInParentA;
+    }
+
+    public RealVector getPositionInParentB() {
+        return positionInParentB;
+    }
+
+    public RealVector getPositionInParentC() {
+        return positionInParentC;
+    }
+
     private RealVector positionInParentA;
     private RealVector positionInParentB;
     private RealVector positionInParentC;
     RealVector positionInParent;
 
-    private RealVector cornerRelativeToCenterA = new ArrayRealVector(new double[]{-0.5, 2.0/3.0*Math.sqrt(3.0 / 16.0)});
-    private RealVector cornerRelativeToCenterB = new ArrayRealVector(new double[]{0.5, 2.0/3.0*Math.sqrt(3.0 / 16.0)});
-    private RealVector cornerRelativeToCenterC = new ArrayRealVector(new double[]{0, -4.0/3.0*Math.sqrt(3.0 / 16.0)});
+    private RealVector cornerRelativeToCenterA = new ArrayRealVector(new double[]{-0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)});
+    private RealVector cornerRelativeToCenterB = new ArrayRealVector(new double[]{0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)});
+    private RealVector cornerRelativeToCenterC = new ArrayRealVector(new double[]{0, -4.0 / 3.0 * Math.sqrt(3.0 / 16.0)});
 
     public Triangle(double[] positionInParent, double[] movement, double currentRotation, double rotationSpeed, GameField gameField) {
-        if(positionInParent.length != 2 || movement.length != 2) {
+        if (positionInParent.length != 2 || movement.length != 2) {
             throw new IllegalArgumentException();
         }
         this.positionInParent = new ArrayRealVector(positionInParent);
@@ -64,8 +76,8 @@ public class Triangle implements Dockable {
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
         path.moveTo((float) positionInParentA.getEntry(0), (float) positionInParentA.getEntry(1));
-        path.lineTo((float)positionInParentB.getEntry(0), (float)positionInParentB.getEntry(1));
-        path.lineTo((float)positionInParentC.getEntry(0), (float)positionInParentC.getEntry(1));
+        path.lineTo((float) positionInParentB.getEntry(0), (float) positionInParentB.getEntry(1));
+        path.lineTo((float) positionInParentC.getEntry(0), (float) positionInParentC.getEntry(1));
         path.lineTo((float) positionInParentA.getEntry(0), (float) positionInParentA.getEntry(1));
         path.close();
 
@@ -110,7 +122,7 @@ public class Triangle implements Dockable {
         return movement;
     }
 
-    private void setMovement(RealVector movement) {
+    public void setMovement(RealVector movement) {
         this.movement = movement;
     }
 
@@ -162,9 +174,9 @@ public class Triangle implements Dockable {
         RealVector endPoint = new ArrayRealVector(new double[]{event2.getX(), event2.getY()});
         RealVector endPointInTriangleCoordinates = transformToTriangleCoordinates(endPoint);
 
-        if (startPointInTriangleCoordinates.getNorm() < cornerRelativeToCenterA.getNorm()*200) {
-            setMovement(new ArrayRealVector(new double[]{velocityX/(10.0*MainThread.MAX_FPS), velocityY/(30.0*MainThread.MAX_FPS)}));
-        }else if (startPointInTriangleCoordinates.getNorm()<cornerRelativeToCenterA.getNorm()*3*200) {
+        if (startPointInTriangleCoordinates.getNorm() < cornerRelativeToCenterA.getNorm() * 200) {
+            setMovement(new ArrayRealVector(new double[]{velocityX / (10.0 * MainThread.MAX_FPS), velocityY / (30.0 * MainThread.MAX_FPS)}));
+        } else if (startPointInTriangleCoordinates.getNorm() < cornerRelativeToCenterA.getNorm() * 3 * 200) {
             double determinantOfDirectionMatrix = startPointInTriangleCoordinates.getEntry(0) * endPointInTriangleCoordinates.getEntry(1)
                     - startPointInTriangleCoordinates.getEntry(1) * endPointInTriangleCoordinates.getEntry(0);
             int signOfDeterminant;
@@ -193,6 +205,10 @@ public class Triangle implements Dockable {
         return (baseCoordinates.getEntry(0) > 0 && baseCoordinates.getEntry(1) > 0 && baseCoordinates.getEntry(0) + baseCoordinates.getEntry(1) <= 1);
     }
 
+    public boolean isInside(RealVector vector) {
+        return isInside(vector.getEntry(0), vector.getEntry(1));
+    }
+
     private RealVector transformToTriangleCoordinates(RealVector coordinates) {
         RealVector translated = coordinates.add(positionInParent.mapMultiply(-1));
         RealMatrix rotationMatrix = new Array2DRowRealMatrix(new double[][]{{Math.cos(currentRotation), -Math.sin(currentRotation)},
@@ -200,4 +216,9 @@ public class Triangle implements Dockable {
         RealVector rotated = rotationMatrix.preMultiply(translated);
         return rotated;
     }
+
+    public void setRotationSpeed(double rotationSpeed) {
+        this.rotationSpeed = rotationSpeed;
+    }
+
 }
