@@ -71,7 +71,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
         gameField.update();
     }
 
-    public Thread getMainThread() {
+    public MainThread getMainThread() {
         return thread;
     }
 
