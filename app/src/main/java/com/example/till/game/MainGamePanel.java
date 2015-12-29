@@ -19,14 +19,14 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
     private static final String TAG = MainGamePanel.class.getSimpleName();
 
     private MainThread thread;
-    private GameField gameField;
     private GestureDetectorCompat gestureDetector;
+    private GameFieldPainter gameFieldPainter;
 
     public MainGamePanel(Context context) {
         super(context);
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
-        gameField = new GameField();
+        gameFieldPainter = new GameFieldPainter();
         gestureDetector = new GestureDetectorCompat(context, new LocalGestureListener());
         setFocusable(true);
     }
@@ -64,11 +64,11 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     protected void render(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
-        gameField.render(canvas);
+        gameFieldPainter.drawGameField(canvas);
     }
 
     public void update() {
-        gameField.update();
+        GameField.getInstance().update();
     }
 
     public MainThread getMainThread() {
@@ -101,7 +101,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
             Log.d(TAG, "Fling");
-            gameField.onFling(event1, event2, velocityX, velocityY);
+            GameField.getInstance().onFling(event1, event2, velocityX, velocityY);
             return false;
         }
 
@@ -129,7 +129,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
                 ((Activity) getContext()).finish();
                 return true;
             } else {
-                return gameField.onSingleTapConfirmed(event);
+                return GameField.getInstance().onSingleTapConfirmed(event);
             }
         }
 

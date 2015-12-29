@@ -6,57 +6,60 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.Log;
 import android.view.MotionEvent;
-
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
+import static com.example.till.game.VectorCalculations2D.*;
 
 /**
  * Created by till on 23.12.15.
  */
 public class Triangle implements Dockable {
     private static final String TAG = Triangle.class.getSimpleName();
-    private RealVector movement;
+    private double[] movement;
     private double currentRotation;
     private double rotationSpeed;
-    private RealMatrix rotationMatrix;
+    private double[] rotationMatrix;
     private boolean isFocused;
-    int currentColor;
-    private GameField gameField;
 
-    private RealVector positionOfLastTouch;
+    public int getCurrentColor() {
+        return currentColor;
+    }
 
-    public RealVector getPositionInParentA() {
+    private int currentColor;
+
+    public double[] getPositionOfLastTouch() {
+        return positionOfLastTouch;
+    }
+
+    private double[] positionOfLastTouch;
+
+    public double[] getPositionInParentA() {
         return positionInParentA;
     }
 
-    public RealVector getPositionInParentB() {
+    public double[] getPositionInParentB() {
         return positionInParentB;
     }
 
-    public RealVector getPositionInParentC() {
+    public double[] getPositionInParentC() {
         return positionInParentC;
     }
 
-    private RealVector positionInParentA;
-    private RealVector positionInParentB;
-    private RealVector positionInParentC;
-    RealVector positionInParent;
+    private double[] positionInParentA;
+    private double[] positionInParentB;
+    private double[] positionInParentC;
+    double[] positionInParent;
 
-    private RealVector cornerRelativeToCenterA = new ArrayRealVector(new double[]{-0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)});
-    private RealVector cornerRelativeToCenterB = new ArrayRealVector(new double[]{0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)});
-    private RealVector cornerRelativeToCenterC = new ArrayRealVector(new double[]{0, -4.0 / 3.0 * Math.sqrt(3.0 / 16.0)});
+    private double[] cornerRelativeToCenterA = {-0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
+    private double[] cornerRelativeToCenterB = {0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
+    private double[] cornerRelativeToCenterC = {0, -4.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
 
-    public Triangle(double[] positionInParent, double[] movement, double currentRotation, double rotationSpeed, GameField gameField) {
+    public Triangle(double[] positionInParent, double[] movement, double currentRotation, double rotationSpeed) {
         if (positionInParent.length != 2 || movement.length != 2) {
             throw new IllegalArgumentException();
         }
-        this.positionInParent = new ArrayRealVector(positionInParent);
-        this.movement = new ArrayRealVector(movement);
+        this.positionInParent = positionInParent;
+        this.movement = movement;
         this.currentRotation = currentRotation;
         this.rotationSpeed = rotationSpeed;
-        this.gameField = gameField;
         currentColor = Color.RED;
 
         Log.i("game_log", "sqrt(3/16): " + Math.sqrt(3 / 16));
@@ -64,38 +67,12 @@ public class Triangle implements Dockable {
     }
 
 
-    @Override
-    public Canvas draw(Canvas canvas) {
-
-
-        Paint paint = new Paint();
-        paint.setStrokeWidth(4);
-        paint.setColor(currentColor);
-        paint.setAntiAlias(true);
-
-        Path path = new Path();
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo((float) positionInParentA.getEntry(0), (float) positionInParentA.getEntry(1));
-        path.lineTo((float) positionInParentB.getEntry(0), (float) positionInParentB.getEntry(1));
-        path.lineTo((float) positionInParentC.getEntry(0), (float) positionInParentC.getEntry(1));
-        path.lineTo((float) positionInParentA.getEntry(0), (float) positionInParentA.getEntry(1));
-        path.close();
-
-        canvas.drawPath(path, paint);
-
-        if (positionOfLastTouch != null) {
-            paint.setColor(Color.WHITE);
-            canvas.drawCircle((int) positionOfLastTouch.getEntry(0), (int) positionOfLastTouch.getEntry(1), 10, paint);
-        }
-        return canvas;
-    }
-
-    private RealVector calculatePositionOfCorner(RealVector vector) {
-        RealVector vectorScaled = vector.mapMultiply(200);
-        RealMatrix rotationMatrix = new Array2DRowRealMatrix(new double[][]{{Math.cos(currentRotation), Math.sin(currentRotation)},
-                {-Math.sin(currentRotation), Math.cos(currentRotation)}});
-        RealVector vectorRotated = rotationMatrix.preMultiply(vectorScaled);
-        RealVector vectorShifted = vectorRotated.add(positionInParent);
+    private double[] calculatePositionOfCorner(double[] vector) {
+        double[] vectorScaled = scale(vector, 200);
+        double[] rotationMatrix = {Math.cos(currentRotation), -Math.sin(currentRotation),
+                Math.sin(currentRotation), Math.cos(currentRotation)};
+        double[] vectorRotated = multiplyMatrixVector(rotationMatrix, vectorScaled);
+        double[] vectorShifted = add(vectorRotated, positionInParent);
         return vectorShifted;
     }
 
@@ -105,24 +82,20 @@ public class Triangle implements Dockable {
         } else {
             unfocus();
         }
-        positionOfLastTouch = new ArrayRealVector(new double[]{event.getX(), event.getY()});
-//        RealVector eventCoordinates = new ArrayRealVector(new double[]{event.getX(), event.getY()});
-//        RealVector movementDirection = eventCoordinates.add(positionInParent.mapMultiply(-1));
-//        RealVector movementScaled = movementDirection.mapMultiply(1.0 / 100.0);
-//        movement = movementScaled;
+        positionOfLastTouch = new double[]{event.getX(), event.getY()};
     }
 
     @Override
-    public RealVector getPositionInParent() {
+    public double[] getPositionInParent() {
         return positionInParent;
     }
 
     @Override
-    public RealVector getMovement() {
+    public double[] getMovement() {
         return movement;
     }
 
-    public void setMovement(RealVector movement) {
+    public void setMovement(double[] movement) {
         this.movement = movement;
     }
 
@@ -138,7 +111,7 @@ public class Triangle implements Dockable {
 
     public void update() {
         currentRotation += rotationSpeed;
-        positionInParent = positionInParent.add(movement);
+        positionInParent = add(positionInParent, movement);
         positionInParentA = calculatePositionOfCorner(cornerRelativeToCenterA);
         positionInParentB = calculatePositionOfCorner(cornerRelativeToCenterB);
         positionInParentC = calculatePositionOfCorner(cornerRelativeToCenterC);
@@ -148,13 +121,13 @@ public class Triangle implements Dockable {
     public Dockable focus() {
         isFocused = true;
         currentColor = Color.GREEN;
-        gameField.setCurrentlyFocusedDockable(this);
+        GameField.getInstance().setCurrentlyFocusedDockable(this);
         return this;
     }
 
     public void unfocus() {
         isFocused = false;
-        gameField.setCurrentlyFocusedDockable(null);
+        GameField.getInstance().setCurrentlyFocusedDockable(null);
         currentColor = Color.RED;
     }
 
@@ -169,16 +142,16 @@ public class Triangle implements Dockable {
             throw new IllegalStateException("Triangle.onFling() should only be called if the respective triangle currantly isFocused()");
         }
 
-        RealVector startPoint = new ArrayRealVector(new double[]{event1.getX(), event1.getY()});
-        RealVector startPointInTriangleCoordinates = transformToTriangleCoordinates(startPoint);
-        RealVector endPoint = new ArrayRealVector(new double[]{event2.getX(), event2.getY()});
-        RealVector endPointInTriangleCoordinates = transformToTriangleCoordinates(endPoint);
+        double[] startPoint = {event1.getX(), event1.getY()};
+        double[] startPointInTriangleCoordinates = transformToTriangleCoordinates(startPoint);
+        double[] endPoint = {event2.getX(), event2.getY()};
+        double[] endPointInTriangleCoordinates = transformToTriangleCoordinates(endPoint);
 
-        if (startPointInTriangleCoordinates.getNorm() < cornerRelativeToCenterA.getNorm() * 200) {
-            setMovement(new ArrayRealVector(new double[]{velocityX / (10.0 * MainThread.MAX_FPS), velocityY / (30.0 * MainThread.MAX_FPS)}));
-        } else if (startPointInTriangleCoordinates.getNorm() < cornerRelativeToCenterA.getNorm() * 3 * 200) {
-            double determinantOfDirectionMatrix = startPointInTriangleCoordinates.getEntry(0) * endPointInTriangleCoordinates.getEntry(1)
-                    - startPointInTriangleCoordinates.getEntry(1) * endPointInTriangleCoordinates.getEntry(0);
+        if (normL2(startPointInTriangleCoordinates) < normL2(cornerRelativeToCenterA) * 200) {
+            setMovement(new double[]{velocityX / (10.0 * MainThread.MAX_FPS), velocityY / (30.0 * MainThread.MAX_FPS)});
+        } else if (normL2(startPointInTriangleCoordinates) < normL2(cornerRelativeToCenterA) * 3 * 200) {
+            double determinantOfDirectionMatrix = startPointInTriangleCoordinates[0] * endPointInTriangleCoordinates[1]
+                    - startPointInTriangleCoordinates[1] * endPointInTriangleCoordinates[0];
             int signOfDeterminant;
             if (determinantOfDirectionMatrix > 0) {
                 signOfDeterminant = 1;
@@ -191,29 +164,29 @@ public class Triangle implements Dockable {
     }
 
     public boolean isInside(double x, double y) {
-        RealVector vector = new ArrayRealVector(new double[]{x, y}).add(positionInParentA.mapMultiply(-1));
-        RealVector axis1 = positionInParentB.add(positionInParentA.mapMultiply(-1));
-        RealVector axis2 = positionInParentC.add(positionInParentA.mapMultiply(-1));
-        double a = axis1.getEntry(0);
-        double b = axis1.getEntry(1);
-        double c = axis2.getEntry(0);
-        double d = axis2.getEntry(1);
-        RealMatrix invertedBaseMatrix = new Array2DRowRealMatrix(new double[][]{{d, -b}, {-c, a}}).scalarMultiply(1 / (a * d - b * c));
-        RealVector baseCoordinates = invertedBaseMatrix.preMultiply(vector);
-        Log.d(TAG, "Base coordinates: x=" + baseCoordinates.getEntry(0) + ",y=" + baseCoordinates.getEntry(1));
+        double[] vector = substract(new double[]{x, y}, positionInParentA);
+        double[] axis1 = substract(positionInParentB, positionInParentA);
+        double[] axis2 = substract(positionInParentC, positionInParentA);
+        double a = axis1[0];
+        double b = axis2[0];
+        double c = axis1[1];
+        double d = axis2[1];
+        double[] invertedBaseMatrix = invert(new double[]{a, b, c, d});
+        double[] baseCoordinates = multiplyMatrixVector(invertedBaseMatrix, vector);
+        Log.d(TAG, "Base coordinates: x=" + baseCoordinates[0] + ",y=" + baseCoordinates[1]);
 
-        return (baseCoordinates.getEntry(0) > 0 && baseCoordinates.getEntry(1) > 0 && baseCoordinates.getEntry(0) + baseCoordinates.getEntry(1) <= 1);
+        return (baseCoordinates[0] > 0 && baseCoordinates[1] > 0 && baseCoordinates[0] + baseCoordinates[1] <= 1);
     }
 
-    public boolean isInside(RealVector vector) {
-        return isInside(vector.getEntry(0), vector.getEntry(1));
+    public boolean isInside(double[] vector) {
+        return isInside(vector[0], vector[1]);
     }
 
-    private RealVector transformToTriangleCoordinates(RealVector coordinates) {
-        RealVector translated = coordinates.add(positionInParent.mapMultiply(-1));
-        RealMatrix rotationMatrix = new Array2DRowRealMatrix(new double[][]{{Math.cos(currentRotation), -Math.sin(currentRotation)},
-                {Math.sin(currentRotation), Math.cos(currentRotation)}});
-        RealVector rotated = rotationMatrix.preMultiply(translated);
+    private double[] transformToTriangleCoordinates(double[] coordinates) {
+        double[] translated = substract(coordinates, positionInParent);
+        double[] rotationMatrix = {Math.cos(currentRotation), -Math.sin(currentRotation),
+                Math.sin(currentRotation), Math.cos(currentRotation)};
+        double[] rotated = multiplyMatrixVector(rotationMatrix, translated);
         return rotated;
     }
 

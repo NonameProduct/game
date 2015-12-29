@@ -3,17 +3,15 @@ package com.example.till.game;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
-import org.apache.commons.math3.linear.RealVector;
 
 /**
  * Created by till on 23.12.15.
  */
 public interface Dockable {
-    public Canvas draw(Canvas canvas);
 
-    public RealVector getPositionInParent();
+    public double[] getPositionInParent();
 
-    public RealVector getMovement();
+    public double[] getMovement();
 
     public double getCurrentRotation();
 

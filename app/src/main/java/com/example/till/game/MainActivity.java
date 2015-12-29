@@ -44,5 +44,11 @@ public class MainActivity extends Activity {
         super.onStop();
     }
 
+    @Override
+    protected void onPause() {
+        mainGamePanel.getMainThread().setRunning(false);
+        super.onPause();
+    }
+
 
 }
