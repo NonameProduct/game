@@ -6,6 +6,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.Log;
 import android.view.MotionEvent;
+
+import java.util.Arrays;
+
 import static com.example.till.game.VectorCalculations2D.*;
 
 /**
@@ -14,45 +17,20 @@ import static com.example.till.game.VectorCalculations2D.*;
 public class Triangle implements Dockable {
 
     private static final String TAG = Triangle.class.getSimpleName();
+    double[] positionInParent;
     private double[] movement;
     private double currentRotation;
     private double rotationSpeed;
     private double[] rotationMatrix;
     private boolean isFocused;
-
-    public int getCurrentColor() {
-        return currentColor;
-    }
-
     private int currentColor;
-
-    public double[] getPositionOfLastTouch() {
-        return positionOfLastTouch;
-    }
-
     private double[] positionOfLastTouch;
-
-    public double[] getPositionInParentA() {
-        return positionInParentA;
-    }
-
-    public double[] getPositionInParentB() {
-        return positionInParentB;
-    }
-
-    public double[] getPositionInParentC() {
-        return positionInParentC;
-    }
-
     private double[] positionInParentA;
     private double[] positionInParentB;
     private double[] positionInParentC;
-    double[] positionInParent;
-
     private double[] cornerRelativeToCenterA = {-0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
     private double[] cornerRelativeToCenterB = {0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
     private double[] cornerRelativeToCenterC = {0, -4.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
-
     public Triangle(double[] positionInParent, double[] movement, double currentRotation, double rotationSpeed) {
         if (positionInParent.length != 2 || movement.length != 2) {
             throw new IllegalArgumentException();
@@ -67,6 +45,25 @@ public class Triangle implements Dockable {
         update();
     }
 
+    public int getCurrentColor() {
+        return currentColor;
+    }
+
+    public double[] getPositionOfLastTouch() {
+        return positionOfLastTouch;
+    }
+
+    public double[] getPositionInParentA() {
+        return positionInParentA;
+    }
+
+    public double[] getPositionInParentB() {
+        return positionInParentB;
+    }
+
+    public double[] getPositionInParentC() {
+        return positionInParentC;
+    }
 
     private double[] calculatePositionOfCorner(double[] vector) {
         double[] vectorScaled = scale(vector, 200);
@@ -108,6 +105,10 @@ public class Triangle implements Dockable {
     @Override
     public double getRotationSpeed() {
         return rotationSpeed;
+    }
+
+    public void setRotationSpeed(double rotationSpeed) {
+        this.rotationSpeed = rotationSpeed;
     }
 
     public void update() {
@@ -191,8 +192,50 @@ public class Triangle implements Dockable {
         return rotated;
     }
 
-    public void setRotationSpeed(double rotationSpeed) {
-        this.rotationSpeed = rotationSpeed;
+    public boolean equals(Triangle triangle) {
+        if (!Arrays.equals(positionInParent, triangle.positionInParent)) {
+            return false;
+        }
+        if (!Arrays.equals(movement, triangle.movement)) {
+            return false;
+        }
+        if (currentRotation != triangle.currentRotation) {
+            return false;
+        }
+        if (rotationSpeed != triangle.rotationSpeed) {
+            return false;
+        }
+        if (!Arrays.equals(rotationMatrix, triangle.rotationMatrix)) {
+            return false;
+        }
+        if (isFocused != triangle.isFocused) {
+            return false;
+        }
+        if (currentColor != triangle.currentColor) {
+            return false;
+        }
+        if (!Arrays.equals(positionOfLastTouch, triangle.positionOfLastTouch)) {
+            return false;
+        }
+        if (!Arrays.equals(positionInParentA, triangle.positionInParentA)) {
+            return false;
+        }
+        if (!Arrays.equals(positionInParentB, triangle.positionInParentB)) {
+            return false;
+        }
+        if (!Arrays.equals(positionInParentC, triangle.positionInParentC)) {
+            return false;
+        }
+        if (!Arrays.equals(cornerRelativeToCenterA, triangle.cornerRelativeToCenterA)) {
+            return false;
+        }
+        if (!Arrays.equals(cornerRelativeToCenterB, triangle.cornerRelativeToCenterB)) {
+            return false;
+        }
+        if (!Arrays.equals(cornerRelativeToCenterC, triangle.cornerRelativeToCenterC)) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -1,6 +1,5 @@
 package com.example.till.game;
 
-import android.graphics.Canvas;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -38,37 +37,22 @@ public class GameField extends GestureDetector.SimpleOnGestureListener {
         content = new ArrayList<Dockable>();
         content.add(new Triangle(new double[]{400, 1200}, new double[]{0, 0}, 0, 0));
         content.add(new Triangle(new double[]{400, 1200}, new double[]{0, 0}, Math.PI, 0));
-        Log.d(TAG, getContentAsJson());
-        Gson gson = new Gson();
-        String s = gson.toJson(content);
-
-        Type type = new TypeToken<List<Triangle>>(){}.getType();
-        List<Dockable> l = gson.fromJson(s, type);
-        Log.d(TAG, s);
     }
 
     public static GameField getInstance() {
         return uniqueGameField;
     }
 
-    public String getContentAsJson() {
+    public String getGameFieldDataContainerAsJson() {
         Gson gson = new Gson();
-        List<String> strings = new ArrayList<String>();
-        for (Dockable d : content) {
-            strings.add(gson.toJson(d));
-        }
-        return gson.toJson(strings);
+        GameFieldDataContainer gameFieldDataContainer = new GameFieldDataContainer(content);
+        return gson.toJson(gameFieldDataContainer);
     }
 
-    public void loadContentFromJson(String jsonStringList) {
+    public void loadGameFieldCataContainerFromJson(String jsonGameFieldDataContainer) {
         Gson gson = new Gson();
-        Type type = new TypeToken<List<String>>(){}.getType();
-        List<String> stringsList = gson.fromJson(jsonStringList, type);
-        List<Dockable> result = new ArrayList<Dockable>();
-        for (String s : stringsList) {
-            result.add(gson.fromJson(s, Triangle.class));
-        }
-        content = result;
+        GameFieldDataContainer gameFieldDataContainer = gson.fromJson(jsonGameFieldDataContainer, GameFieldDataContainer.class);
+        content = gameFieldDataContainer.getContent();
     }
 
     @Override
