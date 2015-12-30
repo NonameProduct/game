@@ -12,6 +12,7 @@ import static com.example.till.game.VectorCalculations2D.*;
  * Created by till on 23.12.15.
  */
 public class Triangle implements Dockable {
+
     private static final String TAG = Triangle.class.getSimpleName();
     private double[] movement;
     private double currentRotation;

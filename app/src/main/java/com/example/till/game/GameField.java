@@ -35,15 +35,16 @@ public class GameField extends GestureDetector.SimpleOnGestureListener {
     private GestureDetectorCompat gestureDetector;
 
     private GameField() {
-//        content = new ArrayList<Dockable>();
-//        Gson gson = new Gson();
-//        content.add(new Triangle(new double[]{400, 1200}, new double[]{0, 0}, 0, 0));
-//        content.add(new Triangle(new double[]{400, 300}, new double[]{0, 0}, 0, 0));
-//        content.add(new Triangle(new double[]{1000, 1200}, new double[]{0, 0}, 0, 0));
-//        content.add(new Triangle(new double[]{1000, 300}, new double[]{0, 0}, 0, 0));
-//        Log.d(TAG, getContentAsJson());
-//        Log.d(TAG, "bla");
-        loadContentFromJson(GameFieldConfigurations.fourTriangles);
+        content = new ArrayList<Dockable>();
+        content.add(new Triangle(new double[]{400, 1200}, new double[]{0, 0}, 0, 0));
+        content.add(new Triangle(new double[]{400, 1200}, new double[]{0, 0}, Math.PI, 0));
+        Log.d(TAG, getContentAsJson());
+        Gson gson = new Gson();
+        String s = gson.toJson(content);
+
+        Type type = new TypeToken<List<Triangle>>(){}.getType();
+        List<Dockable> l = gson.fromJson(s, type);
+        Log.d(TAG, s);
     }
 
     public static GameField getInstance() {
