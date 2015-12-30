@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 /**
  * Created by till on 29.12.15.
  */
-public class VectorCalculations2DTest extends TestCase {
+public class VectorCalculations2DTest extends GameTestCase {
     public void testMatrixMultiplicationAndInversion() {
         double[] matrix1 = {2.3, 4.5, 6.534, 21.54};
         double[] inverse = VectorCalculations2D.invert(matrix1);
@@ -45,7 +45,7 @@ public class VectorCalculations2DTest extends TestCase {
     public void testNorm() {
         double[] v = {3, 4};
         double norm = VectorCalculations2D.normL2(v);
-        assertEquals(5, norm);
+        assertEquals(5.0, norm);
 
     }
 
