@@ -13,10 +13,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by till on 26.12.15.
  */
-public class GameField extends GestureDetector.SimpleOnGestureListener {
+public class GameField{
     private static GameField uniqueGameField = new GameField();
     private final String TAG = GameField.class.getSimpleName();
 
@@ -35,8 +36,8 @@ public class GameField extends GestureDetector.SimpleOnGestureListener {
 
     private GameField() {
         content = new ArrayList<Dockable>();
-        content.add(new Triangle(new double[]{400, 400}, new double[]{0, 0}, 0, 0));
-        content.add(new Triangle(new double[]{400, 1200}, new double[]{0, 0}, Math.PI, 0));
+        content.add(new Triangle(new double[]{2, 2}, new double[]{0, 0}, 0, 0));
+        content.add(new Triangle(new double[]{2, 6}, new double[]{0, 0}, Math.PI, 0));
     }
 
     public static GameField getInstance() {
@@ -55,34 +56,18 @@ public class GameField extends GestureDetector.SimpleOnGestureListener {
         content = gameFieldDataContainer.getContent();
     }
 
-    @Override
-    public boolean onDown(MotionEvent event) {
-        return true;
-    }
 
-    //todo: implement handling of action events. Maybe extension of SimpleOnGestureListener is not necessary for that?
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent event) {
-        Log.d(TAG, "Action: " + event.getAction());
+    public boolean handleTap(double x, double y) {
         if (currentlyFocusedDockable != null) {
             currentlyFocusedDockable.unfocus();
         }
         for (Dockable dockable : content) {
-            if (dockable.isInside(event.getX(), event.getY())) {
+            if (dockable.isInside(x, y)) {
                 dockable.focus();
                 return false;
             }
         }
         return false;
-    }
-
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-        if (currentlyFocusedDockable != null) {
-            return currentlyFocusedDockable.onFling(event1, event2, velocityX, velocityY);
-        } else {
-            return false;
-        }
     }
 
 
@@ -112,9 +97,11 @@ public class GameField extends GestureDetector.SimpleOnGestureListener {
         }
     }
 
-
-    class JsonTestClass {
-        public int x = 1;
-        public boolean b = true;
+    public boolean handleFling(double event1x, double event1y, double event2x, double event2y, float velocityX, float velocityY) {
+        if (currentlyFocusedDockable != null) {
+            return currentlyFocusedDockable.handleFling(event1x, event1y, event2x, event2y, velocityX, velocityY);
+        } else {
+            return false;
+        }
     }
 }

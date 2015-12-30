@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.v4.view.GestureDetectorCompat;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -20,13 +19,13 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     private MainThread thread;
     private GestureDetectorCompat gestureDetector;
-    private GameFieldPainter gameFieldPainter;
+    private UserInterface userInterface;
 
     public MainGamePanel(Context context) {
         super(context);
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
-        gameFieldPainter = new GameFieldPainter();
+        userInterface = new UserInterface();
         gestureDetector = new GestureDetectorCompat(context, new LocalGestureListener());
         setFocusable(true);
     }
@@ -64,7 +63,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     protected void render(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
-        gameFieldPainter.drawGameField(canvas);
+        userInterface.drawGameField(canvas);
     }
 
     public void update() {
@@ -82,60 +81,53 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         @Override
         public boolean onDoubleTap(MotionEvent event) {
-            Log.d(TAG, "DoubleTap");
             return true;
         }
 
         @Override
         public boolean onDoubleTapEvent(MotionEvent event) {
-            Log.d(TAG, "DoubleTapEvent");
             return true;
         }
 
         @Override
         public boolean onDown(MotionEvent event) {
-            Log.d(TAG, "Down");
             return true;
         }
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-            Log.d(TAG, "Fling");
-            GameField.getInstance().onFling(event1, event2, velocityX, velocityY);
+            userInterface.onFling(event1, event2, velocityX, velocityY);
             return false;
         }
 
         @Override
         public void onLongPress(MotionEvent event) {
-            Log.d(TAG, "Long press");
+
         }
 
         @Override
         public boolean onScroll(MotionEvent event1, MotionEvent event2, float distanceX, float distanceY) {
-            Log.d(TAG, "DoubleTapEvent");
             return true;
         }
 
         @Override
         public void onShowPress(MotionEvent event) {
-            Log.d(TAG, "Show press");
+
         }
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent event) {
-            Log.d(TAG, "SingleTapConfirmed");
             if (event.getY() > getHeight() - 50) {
                 thread.setRunning(false);
                 ((Activity) getContext()).finish();
                 return true;
             } else {
-                return GameField.getInstance().onSingleTapConfirmed(event);
+                return userInterface.onSingleTapConfirmed(event);
             }
         }
 
         @Override
         public boolean onSingleTapUp(MotionEvent event) {
-            Log.d(TAG, "SingleTapUp");
             return true;
         }
     }

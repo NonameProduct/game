@@ -66,10 +66,9 @@ public class Triangle implements Dockable {
     }
 
     private double[] calculatePositionOfCorner(double[] vector) {
-        double[] vectorScaled = scale(vector, 200);
         double[] rotationMatrix = {Math.cos(currentRotation), -Math.sin(currentRotation),
                 Math.sin(currentRotation), Math.cos(currentRotation)};
-        double[] vectorRotated = multiplyMatrixVector(rotationMatrix, vectorScaled);
+        double[] vectorRotated = multiplyMatrixVector(rotationMatrix, vector);
         double[] vectorShifted = add(vectorRotated, positionInParent);
         return vectorShifted;
     }
@@ -147,20 +146,21 @@ public class Triangle implements Dockable {
         return isFocused;
     }
 
+
     @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+    public boolean handleFling(double event1x, double event1y, double event2x, double event2y, float velocityX, float velocityY) {
         if (!isFocused()) {
             throw new IllegalStateException("Triangle.onFling() should only be called if the respective triangle currantly isFocused()");
         }
 
-        double[] startPoint = {event1.getX(), event1.getY()};
+        double[] startPoint = {event1x, event1y};
         double[] startPointInTriangleCoordinates = transformToTriangleCoordinates(startPoint);
-        double[] endPoint = {event2.getX(), event2.getY()};
+        double[] endPoint = {event2x, event2y};
         double[] endPointInTriangleCoordinates = transformToTriangleCoordinates(endPoint);
 
-        if (normL2(startPointInTriangleCoordinates) < normL2(cornerRelativeToCenterA) * 200) {
+        if (normL2(startPointInTriangleCoordinates) < normL2(cornerRelativeToCenterA)) {
             setMovement(new double[]{velocityX / (10.0 * MainThread.MAX_FPS), velocityY / (30.0 * MainThread.MAX_FPS)});
-        } else if (normL2(startPointInTriangleCoordinates) < normL2(cornerRelativeToCenterA) * 3 * 200) {
+        } else if (normL2(startPointInTriangleCoordinates) < normL2(cornerRelativeToCenterA) * 3) {
             double determinantOfDirectionMatrix = startPointInTriangleCoordinates[0] * endPointInTriangleCoordinates[1]
                     - startPointInTriangleCoordinates[1] * endPointInTriangleCoordinates[0];
             int signOfDeterminant;

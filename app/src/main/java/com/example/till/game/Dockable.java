@@ -27,7 +27,7 @@ public interface Dockable {
 
     public boolean isFocused();
 
-    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY);
+    public boolean handleFling(double event1x, double event1y, double event2x, double event2y, float velocityX, float velocityY);
 
     public boolean isInside(double x, double y);
 

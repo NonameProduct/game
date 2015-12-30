@@ -27,7 +27,6 @@ public class MainActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mainGamePanel = new MainGamePanel(this);
         setContentView(mainGamePanel);
-        Log.d(TAG, "View added");
     }
 
 
