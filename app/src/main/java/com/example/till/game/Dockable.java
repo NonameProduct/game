@@ -19,6 +19,8 @@ public interface Dockable {
 
     public void update();
 
+    void rollbackUpdate();
+
     public Dockable focus();
 
     public void unfocus();

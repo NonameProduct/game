@@ -120,6 +120,15 @@ public class Triangle implements Dockable {
     }
 
     @Override
+    public void rollbackUpdate() {
+        currentRotation -= rotationSpeed;
+        positionInParent = substract(positionInParent, movement);
+        positionInParentA = calculatePositionOfCorner(cornerRelativeToCenterA);
+        positionInParentB = calculatePositionOfCorner(cornerRelativeToCenterB);
+        positionInParentC = calculatePositionOfCorner(cornerRelativeToCenterC);
+    }
+
+    @Override
     public Dockable focus() {
         isFocused = true;
         currentColor = Color.GREEN;
@@ -166,18 +175,16 @@ public class Triangle implements Dockable {
     }
 
     public boolean isInside(double x, double y) {
-        double[] vector = substract(new double[]{x, y}, positionInParentA);
-        double[] axis1 = substract(positionInParentB, positionInParentA);
-        double[] axis2 = substract(positionInParentC, positionInParentA);
-        double a = axis1[0];
-        double b = axis2[0];
-        double c = axis1[1];
-        double d = axis2[1];
-        double[] invertedBaseMatrix = invert(new double[]{a, b, c, d});
-        double[] baseCoordinates = multiplyMatrixVector(invertedBaseMatrix, vector);
-        Log.d(TAG, "Base coordinates: x=" + baseCoordinates[0] + ",y=" + baseCoordinates[1]);
-
-        return (baseCoordinates[0] > 0 && baseCoordinates[1] > 0 && baseCoordinates[0] + baseCoordinates[1] <= 1);
+        double[] vectorA = substract(new double[]{x, y}, positionInParentA);
+        double[] ab = substract(positionInParentB, positionInParentA);
+        double[] vectorB = substract(new double[]{x, y}, positionInParentB);
+        double[] bc = substract(positionInParentC, positionInParentB);
+        double[] vectorC = substract(new double[]{x, y}, positionInParentC);
+        double[] ca = substract(positionInParentA, positionInParentC);
+        double determinante1 = VectorCalculations2D.determinante(vectorA, ab);
+        double determinante2 = VectorCalculations2D.determinante(vectorB, bc);
+        double determinante3 = VectorCalculations2D.determinante(vectorC, ca);
+        return determinante1>=0 && determinante2 >= 0 && determinante3 >= 0;
     }
 
     public boolean isInside(double[] vector) {
@@ -190,6 +197,24 @@ public class Triangle implements Dockable {
                 Math.sin(currentRotation), Math.cos(currentRotation)};
         double[] rotated = multiplyMatrixVector(rotationMatrix, translated);
         return rotated;
+    }
+
+    public boolean trianglesCollide(Triangle triangle) {
+//        double[][] vertices1 = new double[][]{positionInParentA, positionInParentB, positionInParentC};
+//        double[][] vertices2 = new double[][]{triangle.getPositionInParentA(), triangle.getPositionInParentB(), triangle.getPositionInParentC()};
+        double[][] vertices = new double[][] {positionInParentA, positionInParentB, positionInParentC,
+                triangle.getPositionInParentA(), triangle.getPositionInParentB(), triangle.getPositionInParentC()};
+        for (int i = 0; i < 6; i++) {
+            double[] pivotVertex1 = VectorCalculations2D.substract(vertices[(i/3)*3 + 0], vertices[( 1 - i / 3 ) * 3 + i % 3]);
+            double[] pivotVertex2 = VectorCalculations2D.substract(vertices[(i/3)*3 + 1], vertices[( 1 - i / 3 ) * 3 + i%3]);
+            double[] pivotVertex3 = VectorCalculations2D.substract(vertices[(i/3)*3 + 2], vertices[( 1 - i / 3 ) * 3 + i%3]);
+            double[] comparisonEdge = VectorCalculations2D.substract(vertices[( 1 - i / 3 ) * 3 + (i+1)%3], vertices[( 1 - i / 3 ) * 3 + i%3]);
+            if (determinante(pivotVertex1, comparisonEdge) < 0 && determinante(pivotVertex2, comparisonEdge) < 0 && determinante(pivotVertex3, comparisonEdge) < 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public boolean equals(Triangle triangle) {

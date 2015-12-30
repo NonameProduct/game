@@ -35,7 +35,7 @@ public class GameField extends GestureDetector.SimpleOnGestureListener {
 
     private GameField() {
         content = new ArrayList<Dockable>();
-        content.add(new Triangle(new double[]{400, 1200}, new double[]{0, 0}, 0, 0));
+        content.add(new Triangle(new double[]{400, 400}, new double[]{0, 0}, 0, 0));
         content.add(new Triangle(new double[]{400, 1200}, new double[]{0, 0}, Math.PI, 0));
     }
 
@@ -98,13 +98,14 @@ public class GameField extends GestureDetector.SimpleOnGestureListener {
             for (int j = i + 1; j < content.size(); j++) {
                 Triangle triangle1 = (Triangle) content.get(i);
                 Triangle triangle2 = (Triangle) content.get(j);
-                if (triangle2.isInside(triangle1.getPositionInParentA()) || triangle2.isInside(triangle1.getPositionInParentB()) || triangle2.isInside(triangle1.getPositionInParentC()) ||
-                        triangle1.isInside(triangle2.getPositionInParentA()) || triangle1.isInside(triangle2.getPositionInParentB()) || triangle1.isInside(triangle2.getPositionInParentC())) {
+                if (triangle1.trianglesCollide(triangle2)) {
                     Log.i(TAG, "Collision detected.");
-                    triangle1.setRotationSpeed(0);
-                    triangle1.setMovement(new double[]{0.0, 0.0});
-                    triangle2.setRotationSpeed(0);
-                    triangle2.setMovement(new double[]{0.0, 0.0});
+                    triangle1.rollbackUpdate();
+                    triangle2.rollbackUpdate();
+                    triangle1.setRotationSpeed(-triangle1.getRotationSpeed());
+                    triangle1.setMovement(VectorCalculations2D.scale(triangle1.getMovement(), -1));
+                    triangle2.setRotationSpeed(-triangle2.getRotationSpeed());
+                    triangle2.setMovement(VectorCalculations2D.scale(triangle2.getMovement(), -1));
 
                 }
             }

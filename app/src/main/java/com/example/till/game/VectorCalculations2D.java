@@ -69,6 +69,10 @@ public class VectorCalculations2D {
         return determinante(matrix[0], matrix[1], matrix[2], matrix[3]);
     }
 
+    public static double determinante(double[] vector1, double[] vector2) {
+        return determinante(vector1[0], vector2[0], vector1[1], vector2[1]);
+    }
+
     public static double determinante(double x11, double x12, double x21, double x22) {
         return x11*x22-x12*x21;
     }
