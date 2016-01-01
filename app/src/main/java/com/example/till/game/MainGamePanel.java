@@ -19,6 +19,11 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     private MainThread thread;
     private GestureDetectorCompat gestureDetector;
+
+    public UserInterface getUserInterface() {
+        return userInterface;
+    }
+
     private UserInterface userInterface;
 
     public MainGamePanel(Context context) {

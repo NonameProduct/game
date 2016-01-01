@@ -113,6 +113,13 @@ public class VectorCalculations2D {
         return add(multiplyMatrixVector(rotation, vector), translation);
     }
 
+    public static double[] transformLinear(double[] translation, double[] rotation, double[] vector) {
+        checkDimensionsVector(translation);
+        checkDimensionsMatrix(rotation);
+        checkDimensionsVector(vector);
+        return transformLinear(makeLinearTransformation(translation, rotation), vector);
+    }
+
     public static double[] makeLinearTransformation(double[] translation, double[] rotation) {
         checkDimensionsVector(translation);
         checkDimensionsMatrix(rotation);

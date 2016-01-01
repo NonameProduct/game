@@ -33,13 +33,19 @@ public class GameField implements Drawable{
         this.currentlyFocusedDockable = currentlyFocusedDockable;
     }
 
+    public Dockable getCurrentlyFocusedDockable() {
+        return currentlyFocusedDockable;
+    }
+
     private Dockable currentlyFocusedDockable = null;
     private GestureDetectorCompat gestureDetector;
 
     private GameField() {
         content = new ArrayList<Dockable>();
-        content.add(new Triangle(new double[]{2, 2}, new double[]{0, 0}, 0, 0));
-        content.add(new Triangle(new double[]{2, 6}, new double[]{0, 0}, Math.PI, 0));
+//        content.add(new Triangle(new double[]{2, 2}, new double[]{0, 0}, 0, 0));
+//        content.add(new Triangle(new double[]{2, 6}, new double[]{0, 0}, Math.PI, 0));
+        Triangle t = new Triangle(new double[]{1, 2}, new double[]{0, 0}, Math.PI, 0);
+        content.add(t);
         drawer = new GameFieldDrawer();
     }
 

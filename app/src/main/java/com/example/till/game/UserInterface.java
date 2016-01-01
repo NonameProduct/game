@@ -16,6 +16,14 @@ import java.util.List;
  */
 public class UserInterface extends GestureDetector.SimpleOnGestureListener {
 
+    public double getZoomFactor() {
+        return zoomFactor;
+    }
+
+    public double[] getTranslation() {
+        return translation;
+    }
+
     private double zoomFactor = 200;
     private double[] translation = {0, 0};
 

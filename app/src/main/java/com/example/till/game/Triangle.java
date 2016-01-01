@@ -280,6 +280,13 @@ public class Triangle implements Dockable, Drawable{
             double[] A = transformLinear(transformationFromTriangle, cornerRelativeToCenterA);
             double[] B = transformLinear(transformationFromTriangle, cornerRelativeToCenterB);
             double[] C = transformLinear(transformationFromTriangle, cornerRelativeToCenterC);
+            double[] center = transformLinear(positionInParent, rotationMatrix, new double[]{0, 0});
+            double[] insideNearA = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterA, 0.99));
+            double[] outsideNearA = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterA, 1.01));
+            double[] insideNearB = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterB, 0.99));
+            double[] outsideNearB = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterB, 1.01));
+            double[] insideNearC = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterC, 0.99));
+            double[] outsideNearC = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterC, 1.01));
             Path path = new Path();
             path.setFillType(Path.FillType.EVEN_ODD);
             path.moveTo((float) A[0], (float) (A[1]));
@@ -293,5 +300,6 @@ public class Triangle implements Dockable, Drawable{
             return canvas;
         }
     }
+
 
 }
