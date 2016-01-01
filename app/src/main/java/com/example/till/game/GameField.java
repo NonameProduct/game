@@ -28,8 +28,8 @@ public class GameField implements Drawable{
 
     private GameField() {
         content = new ArrayList<Dockable>();
-        content.add(new Triangle(new double[]{2, 2}, new double[]{0, 0}, 0, 0));
-        content.add(new Triangle(new double[]{2, 6}, new double[]{0, 0}, Math.PI, 0));
+        content.add(new Triangle(new double[]{1, 1}, new double[]{0, 0}, Math.PI, 0));
+        content.add(new Triangle(new double[]{4, 7}, new double[]{0, 0}, 0, 0));
         drawer = new GameFieldDrawer();
     }
 
@@ -90,14 +90,8 @@ public class GameField implements Drawable{
                 Dockable dockable1 = content.get(i);
                 Dockable dockable2 = content.get(j);
                 if (dockable1.dockablesCollide(identityTransformation, identityTransformation, dockable2)) {
+                    dockable1.handleCollision(identityTransformation, identityTransformation, dockable2);
                     Log.i(TAG, "Collision detected.");
-                    dockable1.rollbackUpdate();
-                    dockable2.rollbackUpdate();
-                    dockable1.setRotationSpeed(-dockable1.getRotationSpeed());
-                    dockable1.setMovement(VectorCalculations2D.scale(dockable1.getMovement(), -1));
-                    dockable2.setRotationSpeed(-dockable2.getRotationSpeed());
-                    dockable2.setMovement(VectorCalculations2D.scale(dockable2.getMovement(), -1));
-
                 }
             }
         }

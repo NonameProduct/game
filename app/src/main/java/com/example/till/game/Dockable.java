@@ -13,7 +13,7 @@ public interface Dockable extends Drawable {
 
     public double[] getMovement();
 
-    public double getCurrentRotation();
+    public double getRotation();
 
     public double getRotationSpeed();
 
@@ -34,6 +34,8 @@ public interface Dockable extends Drawable {
     public void handleTap(MotionEvent event);
 
     public boolean dockablesCollide(double[] transformationThis, double[] transformationDockable, Dockable dockable);
+
+    public void handleCollision(double[] transformationThis, double[] transformationDockable, Dockable dockable);
 
     void setRotationSpeed(double v);
 

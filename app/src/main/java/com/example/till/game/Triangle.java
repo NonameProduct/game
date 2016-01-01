@@ -16,34 +16,41 @@ import static com.example.till.game.VectorCalculations2D.*;
 public class Triangle implements Dockable, Drawable{
 
     private static final String TAG = Triangle.class.getSimpleName();
-    double[] translation;
+
+    public void setTranslation(double[] translation) {
+        this.translation = translation;
+    }
+
+    private double[] translation;
     private double[] movement;
-    private double currentRotation;
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
+        rotationMatrix = calculateRotationMatrix(rotation);
+    }
+
+    private double rotation;
     private double rotationSpeed;
     private double[] rotationMatrix;
     private boolean isFocused;
-    private int currentColor;
     private double[] positionOfLastTouch;
     public static final double[] A = {-0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
     public static final double[] B = {0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
     public static final double[] C = {0, -4.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
     private TriangleDrawer drawer;
+    private int nNeighbors = 0;
     public Triangle(double[] positionInParent, double[] movement, double currentRotation, double rotationSpeed) {
         if (positionInParent.length != 2 || movement.length != 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("PositionInParent and Movement must have dimension 2. PositionInParent had dimension " + positionInParent.length + ", movement had dimension " + movement.length + ".");
         }
         this.translation = positionInParent;
         this.movement = movement;
-        this.currentRotation = currentRotation;
+        setRotation(currentRotation);
         this.rotationSpeed = rotationSpeed;
-        currentColor = Color.RED;
         drawer = new TriangleDrawer();
         update();
     }
 
-    public int getCurrentColor() {
-        return currentColor;
-    }
 
     public double[] getPositionOfLastTouch() {
         return positionOfLastTouch;
@@ -86,8 +93,8 @@ public class Triangle implements Dockable, Drawable{
     }
 
     @Override
-    public double getCurrentRotation() {
-        return currentRotation;
+    public double getRotation() {
+        return rotation;
     }
 
     @Override
@@ -102,24 +109,19 @@ public class Triangle implements Dockable, Drawable{
 
     @Override
     public void update() {
-        currentRotation += rotationSpeed;
-        rotationMatrix = new double[]{Math.cos(currentRotation), -Math.sin(currentRotation),
-                Math.sin(currentRotation), Math.cos(currentRotation)};
+        setRotation(rotation + rotationSpeed);
         translation = add(translation, movement);
     }
 
     @Override
     public void rollbackUpdate() {
-        currentRotation -= rotationSpeed;
-        rotationMatrix = new double[]{Math.cos(currentRotation), -Math.sin(currentRotation),
-                Math.sin(currentRotation), Math.cos(currentRotation)};
+        setRotation(rotation - rotationSpeed);
         translation = substract(translation, movement);
     }
 
     @Override
     public Dockable focus() {
         isFocused = true;
-        currentColor = Color.GREEN;
         GameField.getInstance().setCurrentlyFocusedDockable(this);
         return this;
     }
@@ -128,7 +130,6 @@ public class Triangle implements Dockable, Drawable{
     public void unfocus() {
         isFocused = false;
         GameField.getInstance().setCurrentlyFocusedDockable(null);
-        currentColor = Color.RED;
     }
 
     @Override
@@ -197,26 +198,84 @@ public class Triangle implements Dockable, Drawable{
     }
 
     @Override
-    public boolean dockablesCollide(double[] transformationThis, double[] transformationTriangle, Dockable dockable) {
-        if (dockable.getClass().getSimpleName().equals(this.getClass().getSimpleName())) {
-            Triangle triangle = (Triangle) dockable;
-            transformationThis = concatenateLinearTransformation(transformationThis, makeLinearTransformation(translation, rotationMatrix));
-            transformationTriangle = concatenateLinearTransformation(transformationTriangle, makeLinearTransformation(triangle.translation, triangle.rotationMatrix));
-            double[] transformationTriangleToThis = concatenateLinearTransformation(invertLinearTransformation(transformationThis), transformationTriangle);
-            double[][] vertices = new double[][]{A, B, C,
-                    transformLinear(transformationTriangleToThis, A), transformLinear(transformationTriangleToThis, B), transformLinear(transformationTriangleToThis, C)};
-            for (int i = 0; i < 6; i++) {
-                double[] pivotVertex1 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 0], vertices[(1 - i / 3) * 3 + i % 3]);
-                double[] pivotVertex2 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 1], vertices[(1 - i / 3) * 3 + i % 3]);
-                double[] pivotVertex3 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 2], vertices[(1 - i / 3) * 3 + i % 3]);
-                double[] comparisonEdge = VectorCalculations2D.substract(vertices[(1 - i / 3) * 3 + (i + 1) % 3], vertices[(1 - i / 3) * 3 + i % 3]);
-                if (determinante(pivotVertex1, comparisonEdge) < 0 && determinante(pivotVertex2, comparisonEdge) < 0 && determinante(pivotVertex3, comparisonEdge) < 0) {
-                    return false;
-                }
-            }
-            return true;
+    public boolean dockablesCollide(double[] transformationThis, double[] transformationDockable, Dockable dockable) {
+        if (dockable.getClass().getSimpleName().equals(Triangle.class.getSimpleName())) {
+            return trianglesCollide(transformationThis, transformationDockable, (Triangle) dockable);
+        } else if (dockable.getClass().getSimpleName().equals(CompoundIsland.class.getSimpleName())) {
+            return dockable.dockablesCollide(transformationDockable, transformationThis, this);
         } else {
-            throw new IllegalArgumentException("Collision with non-triangle objects not yet implemented.");
+            throw new IllegalArgumentException("For input dockable collisions are not yet implemented.");
+        }
+    }
+
+    private boolean trianglesCollide(double[] transformationThis, double[] transformationTriangle, Triangle triangle) {
+        transformationThis = concatenateLinearTransformation(transformationThis, translation, rotationMatrix);
+        transformationTriangle = concatenateLinearTransformation(transformationTriangle, triangle.translation, triangle.rotationMatrix);
+        double[] transformationTriangleToThis = concatenateLinearTransformation(invertLinearTransformation(transformationThis), transformationTriangle);
+        double[][] vertices = new double[][]{A, B, C,
+                transformLinear(transformationTriangleToThis, A), transformLinear(transformationTriangleToThis, B), transformLinear(transformationTriangleToThis, C)};
+        for (int i = 0; i < 6; i++) {
+            double[] pivotVertex1 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 0], vertices[(1 - i / 3) * 3 + i % 3]);
+            double[] pivotVertex2 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 1], vertices[(1 - i / 3) * 3 + i % 3]);
+            double[] pivotVertex3 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 2], vertices[(1 - i / 3) * 3 + i % 3]);
+            double[] comparisonEdge = VectorCalculations2D.substract(vertices[(1 - i / 3) * 3 + (i + 1) % 3], vertices[(1 - i / 3) * 3 + i % 3]);
+            if (determinante(pivotVertex1, comparisonEdge) < 0 && determinante(pivotVertex2, comparisonEdge) < 0 && determinante(pivotVertex3, comparisonEdge) < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void handleCollision(double[] transformationThis, double[] transformationDockable, Dockable dockable) {
+        if (dockable.getClass().getSimpleName().equals(Triangle.class.getSimpleName())) {
+            handleCollision(transformationThis, transformationDockable, (Triangle) dockable);
+        } else if (dockable.getClass().getSimpleName().equals(CompoundIsland.class)) {
+            handleCollision(transformationThis, transformationDockable, (CompoundIsland) dockable);
+        }
+    }
+
+    private void handleCollision(double[] transformationThis, double[] transformationTriangle, Triangle triangle) {
+        double[] vectorBetweenCenters = substract(transformLinear(transformationThis, translation), transformLinear(transformationTriangle, triangle.getTranslation()));
+        if (normL2(vectorBetweenCenters)<=CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING){
+            new CompoundIsland(this, triangle);
+        }
+        else{
+            repell(triangle);
+        }
+    }
+
+    private void repell(Triangle triangle) {
+        rollbackUpdate();
+        triangle.rollbackUpdate();
+        setRotationSpeed(-getRotationSpeed());
+        setMovement(VectorCalculations2D.scale(movement, -1));
+        triangle.setRotationSpeed(-triangle.getRotationSpeed());
+        triangle.setMovement(VectorCalculations2D.scale(triangle.getMovement(), -1));
+    }
+
+    private void handleCollision(double[] transformationThis, double[] transformationCompoundIsland, CompoundIsland compoundIsland) {
+        rollbackUpdate();
+        compoundIsland.rollbackUpdate();
+        setRotationSpeed(-getRotationSpeed());
+        setMovement(VectorCalculations2D.scale(movement, -1));
+        compoundIsland.setRotationSpeed(-compoundIsland.getRotationSpeed());
+        compoundIsland.setMovement(VectorCalculations2D.scale(compoundIsland.getMovement(), -1));
+    }
+
+    public void addNeighbor() {
+        if (nNeighbors < 3) {
+            nNeighbors++;
+        } else {
+            throw new RuntimeException("A triangle must not have more than 3 neighbors.");
+        }
+    }
+
+    public void removeNeighbor() {
+        if (nNeighbors > 0) {
+            nNeighbors--;
+        } else {
+            throw new RuntimeException("A triangle must not have less than 0 neighbors.");
         }
     }
 
@@ -227,7 +286,7 @@ public class Triangle implements Dockable, Drawable{
         if (!Arrays.equals(movement, triangle.movement)) {
             return false;
         }
-        if (currentRotation != triangle.currentRotation) {
+        if (rotation != triangle.rotation) {
             return false;
         }
         if (rotationSpeed != triangle.rotationSpeed) {
@@ -237,9 +296,6 @@ public class Triangle implements Dockable, Drawable{
             return false;
         }
         if (isFocused != triangle.isFocused) {
-            return false;
-        }
-        if (currentColor != triangle.currentColor) {
             return false;
         }
         if (!Arrays.equals(positionOfLastTouch, triangle.positionOfLastTouch)) {
@@ -254,7 +310,15 @@ public class Triangle implements Dockable, Drawable{
             double[] transformationFromTriangle = concatenateLinearTransformation(transformationToUserInterface, makeLinearTransformation(translation, rotationMatrix));
             Paint paint = new Paint();
             paint.setStrokeWidth(4);
-            paint.setColor(currentColor);
+            int color = 0;
+            if (nNeighbors > 0) {
+                color = Color.BLUE;
+            }else if (isFocused) {
+                color = Color.GREEN;
+            } else {
+                color = Color.RED;
+            }
+            paint.setColor(color);
             paint.setAntiAlias(true);
             double[] A = transformLinear(transformationFromTriangle, Triangle.A);
             double[] B = transformLinear(transformationFromTriangle, Triangle.B);

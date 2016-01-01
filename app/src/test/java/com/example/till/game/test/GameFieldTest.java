@@ -3,6 +3,7 @@ package com.example.till.game.test;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.MotionEvent;
 
+import com.example.till.game.CompoundIsland;
 import com.example.till.game.Dockable;
 import com.example.till.game.GameField;
 import com.example.till.game.Triangle;
@@ -12,9 +13,13 @@ import junit.framework.TestCase;
 import org.junit.Before;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import static com.example.till.game.VectorCalculations2D.*;
 
+import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -197,6 +202,115 @@ public class GameFieldTest extends GameTestCase {
 
     private void tapInsideTriangle() {
         gameField.handleTap(1.0, 2.0);
+    }
+
+    public void testMergeTrianglesOnCollision() {
+//        given
+        gameFieldContainsTwoCollidingTrianglesCloseEnough();
+
+//        when
+        handleCollisionsIsCalled();
+
+//        then
+        aCompoundIslandIsCreated();
+//        when
+        Triangle t = anAdditionalCollidingTriangleCloseEnoughOccurs();
+        handleCollisionsIsCalled();
+
+//        then
+        itGetsAddedToTheCompoundIsland(t);
+
+    }
+
+    private void itGetsAddedToTheCompoundIsland(Triangle t) {
+        assertEquals(1, gameField.getContent().size());
+        List<Dockable> content = gameField.getContent();
+        CompoundIsland island = (CompoundIsland) content.get(0);
+        List<Triangle> contentIsland = island.getContent();
+        assertTrue(island.contains(t));
+        assertTrue(normL2(substract(contentIsland.get(0).getTranslation(), t.getTranslation())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING
+                ||normL2(substract(contentIsland.get(1).getTranslation(), t.getTranslation())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING);
+        assertTrue(normL2(substract(contentIsland.get(0).getTranslation(), t.getTranslation())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4
+                ||normL2(substract(contentIsland.get(1).getTranslation(), t.getTranslation())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4);
+    }
+
+    private Triangle anAdditionalCollidingTriangleCloseEnoughOccurs() {
+        Triangle t = new Triangle(new double[]{4-0.5*0.9, 7-Triangle.A[1]}, new double[]{0, 0}, Math.PI, 0);
+        gameField.getContent().add(t);
+
+        double[] identity = {0, 0, 1, 0, 0, 1};
+        assertTrue(t.dockablesCollide(identity, identity, gameField.getContent().get(0)));
+        return t;
+    }
+
+    private void aCompoundIslandIsCreated() {
+        assertEquals(1, gameField.getContent().size());
+        assertTrue(CompoundIsland.class.getSimpleName().equals(gameField.getContent().get(0).getClass().getSimpleName()));
+        List<Triangle> content = ((CompoundIsland) gameField.getContent().get(0)).getContent();
+        assertTrue(normL2(substract(content.get(0).getTranslation(), content.get(1).getTranslation()))<= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING);
+        assertTrue(normL2(substract(content.get(0).getTranslation(), content.get(1).getTranslation()))>= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4);
+    }
+
+    private void handleCollisionsIsCalled() {
+        Method method = null;
+        try {
+            method = gameField.getClass().getDeclaredMethod("handleCollisions");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        method.setAccessible(true);
+        try {
+            method.invoke(gameField);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void gameFieldContainsTwoCollidingTrianglesCloseEnough() {
+        Triangle t1 = new Triangle(new double[]{4, 7}, new double[]{0, 0}, 0, 0);
+        Triangle t2 = new Triangle(new double[]{4, 7+2*Triangle.A[1]*0.9}, new double[]{0, 0}, Math.PI, 0);
+        List<Dockable> content = new ArrayList<>();
+        content.add(t1);
+        content.add(t2);
+
+        double[] identity = {0, 0, 1, 0, 0, 1};
+        assertTrue(t1.dockablesCollide(identity, identity, t2));
+        setContentInGameField(content);
+
+    }
+
+    public void testRepellTrianglesOnCollision() {
+//        given
+        gameFieldContainsTwoCollidingTrianglesNotCloseEnough();
+
+//        when
+        handleCollisionsIsCalled();
+
+//        then
+        theTrianglesRepell();
+
+    }
+
+    private void theTrianglesRepell() {
+        List<Dockable> content = gameField.getContent();
+        assertEquals(2, content.size());
+        assertTrue(content.get(0).getClass().getSimpleName().equals(Triangle.class.getSimpleName()));
+        assertTrue(content.get(1).getClass().getSimpleName().equals(Triangle.class.getSimpleName()));
+    }
+
+    private void gameFieldContainsTwoCollidingTrianglesNotCloseEnough() {
+        Triangle t1 = new Triangle(new double[]{5, 2}, new double[]{0, 0}, 0, 0);
+        Triangle t2 = new Triangle(new double[]{5+0.75*0.9, 2-(Triangle.A[1] - Triangle.C[1])/2.0}, new double[]{0, 0}, 0, 0);
+        List<Dockable> content = new ArrayList<>();
+        content.add(t1);
+        content.add(t2);
+        setContentInGameField(content);
+
+        double[] identity = {0, 0, 1, 0, 0, 1};
+        assertTrue(t1.dockablesCollide(identity, identity, t2));
+
     }
 
 }

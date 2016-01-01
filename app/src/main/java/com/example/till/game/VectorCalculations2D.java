@@ -129,10 +129,17 @@ public class VectorCalculations2D {
     public static double[] concatenateLinearTransformation(double[] transformation1, double[] transformation2) {
         checkDimensionsTransformation(transformation1);
         checkDimensionsTransformation(transformation2);
-        double[] t1 = Arrays.copyOfRange(transformation1, 0, 2);
-        double[] r1 = Arrays.copyOfRange(transformation1, 2, 6);
         double[] t2 = Arrays.copyOfRange(transformation2, 0, 2);
         double[] r2 = Arrays.copyOfRange(transformation2, 2, 6);
+        return concatenateLinearTransformation(transformation1, t2, r2);
+    }
+
+    public static double[] concatenateLinearTransformation(double[] transformation, double[] t2, double[] r2) {
+        checkDimensionsTransformation(transformation);
+        checkDimensionsVector(t2);
+        checkDimensionsMatrix(r2);
+        double[] t1 = Arrays.copyOfRange(transformation, 0, 2);
+        double[] r1 = Arrays.copyOfRange(transformation, 2, 6);
         double[] t = add(multiplyMatrixVector(r1, t2), t1);
         double[] r = multiplyMatrixMatrix(r1, r2);
         return makeLinearTransformation(t, r);
@@ -170,5 +177,9 @@ public class VectorCalculations2D {
         rotation = invert(rotation);
         translation = scale(multiplyMatrixVector(rotation, translation), -1);
         return new double[]{translation[0], translation[1], rotation[0], rotation[1], rotation[2], rotation[3]};
+    }
+
+    public static double[] calculateRotationMatrix(double angle) {
+        return  new double[]{Math.cos(angle), -Math.sin(angle),Math.sin(angle), Math.cos(angle)};
     }
 }
