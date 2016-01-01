@@ -87,16 +87,16 @@ public class GameField implements Drawable{
         double[] identityTransformation = new double[]{0, 0, 1, 0, 0, 1};
         for (int i = 0; i < content.size(); i++) {
             for (int j = i + 1; j < content.size(); j++) {
-                Triangle triangle1 = (Triangle) content.get(i);
-                Triangle triangle2 = (Triangle) content.get(j);
-                if (triangle1.trianglesCollide(identityTransformation, identityTransformation, triangle2)) {
+                Dockable dockable1 = content.get(i);
+                Dockable dockable2 = content.get(j);
+                if (dockable1.dockablesCollide(identityTransformation, identityTransformation, dockable2)) {
                     Log.i(TAG, "Collision detected.");
-                    triangle1.rollbackUpdate();
-                    triangle2.rollbackUpdate();
-                    triangle1.setRotationSpeed(-triangle1.getRotationSpeed());
-                    triangle1.setMovement(VectorCalculations2D.scale(triangle1.getMovement(), -1));
-                    triangle2.setRotationSpeed(-triangle2.getRotationSpeed());
-                    triangle2.setMovement(VectorCalculations2D.scale(triangle2.getMovement(), -1));
+                    dockable1.rollbackUpdate();
+                    dockable2.rollbackUpdate();
+                    dockable1.setRotationSpeed(-dockable1.getRotationSpeed());
+                    dockable1.setMovement(VectorCalculations2D.scale(dockable1.getMovement(), -1));
+                    dockable2.setRotationSpeed(-dockable2.getRotationSpeed());
+                    dockable2.setMovement(VectorCalculations2D.scale(dockable2.getMovement(), -1));
 
                 }
             }

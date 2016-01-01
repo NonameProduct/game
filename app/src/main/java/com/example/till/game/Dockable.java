@@ -32,4 +32,10 @@ public interface Dockable extends Drawable {
     public boolean isInside(double x, double y);
 
     public void handleTap(MotionEvent event);
+
+    public boolean dockablesCollide(double[] transformationThis, double[] transformationDockable, Dockable dockable);
+
+    void setRotationSpeed(double v);
+
+    void setMovement(double[] scale);
 }

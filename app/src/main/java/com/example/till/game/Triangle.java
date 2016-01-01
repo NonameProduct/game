@@ -55,6 +55,7 @@ public class Triangle implements Dockable, Drawable{
         return vectorShifted;
     }
 
+    @Override
     public void handleTap(MotionEvent event) {
         if (isInside(event.getX(), event.getY())) {
             focus();
@@ -79,6 +80,7 @@ public class Triangle implements Dockable, Drawable{
         return movement;
     }
 
+    @Override
     public void setMovement(double[] movement) {
         this.movement = movement;
     }
@@ -93,10 +95,12 @@ public class Triangle implements Dockable, Drawable{
         return rotationSpeed;
     }
 
+    @Override
     public void setRotationSpeed(double rotationSpeed) {
         this.rotationSpeed = rotationSpeed;
     }
 
+    @Override
     public void update() {
         currentRotation += rotationSpeed;
         rotationMatrix = new double[]{Math.cos(currentRotation), -Math.sin(currentRotation),
@@ -120,6 +124,7 @@ public class Triangle implements Dockable, Drawable{
         return this;
     }
 
+    @Override
     public void unfocus() {
         isFocused = false;
         GameField.getInstance().setCurrentlyFocusedDockable(null);
@@ -165,6 +170,7 @@ public class Triangle implements Dockable, Drawable{
      * @param y
      * @return
      */
+    @Override
     public boolean isInside(double x, double y) {
         double[] triangleCoordinates = transformLinear(invertLinearTransformation(translation, rotationMatrix), new double[]{x, y});
         double newX = triangleCoordinates[0];
@@ -187,27 +193,31 @@ public class Triangle implements Dockable, Drawable{
 
     private double[] transformToTriangleCoordinates(double[] coordinates) {
         double[] translated = substract(coordinates, translation);
-        double[] rotated = multiplyMatrixVector(rotationMatrix, translated);
-        return rotated;
+        return multiplyMatrixVector(rotationMatrix, translated);
     }
 
-    public boolean trianglesCollide(double[] transformationThis, double[] transformationTriangle, Triangle triangle) {
-        transformationThis = concatenateLinearTransformation(transformationThis, makeLinearTransformation(translation, rotationMatrix));
-        transformationTriangle = concatenateLinearTransformation(transformationTriangle, makeLinearTransformation(triangle.translation, triangle.rotationMatrix));
-        double[] transformationTriangleToThis = concatenateLinearTransformation(invertLinearTransformation(transformationThis), transformationTriangle);
-        double[][] vertices = new double[][]{A, B, C,
-                transformLinear(transformationTriangleToThis, A), transformLinear(transformationTriangleToThis, B), transformLinear(transformationTriangleToThis, C)};
-        for (int i = 0; i < 6; i++) {
-            double[] pivotVertex1 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 0], vertices[(1 - i / 3) * 3 + i % 3]);
-            double[] pivotVertex2 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 1], vertices[(1 - i / 3) * 3 + i % 3]);
-            double[] pivotVertex3 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 2], vertices[(1 - i / 3) * 3 + i % 3]);
-            double[] comparisonEdge = VectorCalculations2D.substract(vertices[(1 - i / 3) * 3 + (i + 1) % 3], vertices[(1 - i / 3) * 3 + i % 3]);
-            if (determinante(pivotVertex1, comparisonEdge) < 0 && determinante(pivotVertex2, comparisonEdge) < 0 && determinante(pivotVertex3, comparisonEdge) < 0) {
-                return false;
+    @Override
+    public boolean dockablesCollide(double[] transformationThis, double[] transformationTriangle, Dockable dockable) {
+        if (dockable.getClass().getSimpleName().equals(this.getClass().getSimpleName())) {
+            Triangle triangle = (Triangle) dockable;
+            transformationThis = concatenateLinearTransformation(transformationThis, makeLinearTransformation(translation, rotationMatrix));
+            transformationTriangle = concatenateLinearTransformation(transformationTriangle, makeLinearTransformation(triangle.translation, triangle.rotationMatrix));
+            double[] transformationTriangleToThis = concatenateLinearTransformation(invertLinearTransformation(transformationThis), transformationTriangle);
+            double[][] vertices = new double[][]{A, B, C,
+                    transformLinear(transformationTriangleToThis, A), transformLinear(transformationTriangleToThis, B), transformLinear(transformationTriangleToThis, C)};
+            for (int i = 0; i < 6; i++) {
+                double[] pivotVertex1 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 0], vertices[(1 - i / 3) * 3 + i % 3]);
+                double[] pivotVertex2 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 1], vertices[(1 - i / 3) * 3 + i % 3]);
+                double[] pivotVertex3 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 2], vertices[(1 - i / 3) * 3 + i % 3]);
+                double[] comparisonEdge = VectorCalculations2D.substract(vertices[(1 - i / 3) * 3 + (i + 1) % 3], vertices[(1 - i / 3) * 3 + i % 3]);
+                if (determinante(pivotVertex1, comparisonEdge) < 0 && determinante(pivotVertex2, comparisonEdge) < 0 && determinante(pivotVertex3, comparisonEdge) < 0) {
+                    return false;
+                }
             }
+            return true;
+        } else {
+            throw new IllegalArgumentException("Collision with non-triangle objects not yet implemented.");
         }
-
-        return true;
     }
 
     public boolean equals(Triangle triangle) {
@@ -235,15 +245,6 @@ public class Triangle implements Dockable, Drawable{
         if (!Arrays.equals(positionOfLastTouch, triangle.positionOfLastTouch)) {
             return false;
         }
-        if (!Arrays.equals(A, triangle.A)) {
-            return false;
-        }
-        if (!Arrays.equals(B, triangle.B)) {
-            return false;
-        }
-        if (!Arrays.equals(C, triangle.C)) {
-            return false;
-        }
         return true;
     }
 
@@ -255,16 +256,16 @@ public class Triangle implements Dockable, Drawable{
             paint.setStrokeWidth(4);
             paint.setColor(currentColor);
             paint.setAntiAlias(true);
-            double[] A = transformLinear(transformationFromTriangle, Triangle.this.A);
-            double[] B = transformLinear(transformationFromTriangle, Triangle.this.B);
-            double[] C = transformLinear(transformationFromTriangle, Triangle.this.C);
+            double[] A = transformLinear(transformationFromTriangle, Triangle.A);
+            double[] B = transformLinear(transformationFromTriangle, Triangle.B);
+            double[] C = transformLinear(transformationFromTriangle, Triangle.C);
             double[] center = transformLinear(translation, rotationMatrix, new double[]{0, 0});
-            double[] insideNearA = transformLinear(translation, rotationMatrix, scale(Triangle.this.A, 0.99));
-            double[] outsideNearA = transformLinear(translation, rotationMatrix, scale(Triangle.this.A, 1.01));
-            double[] insideNearB = transformLinear(translation, rotationMatrix, scale(Triangle.this.B, 0.99));
-            double[] outsideNearB = transformLinear(translation, rotationMatrix, scale(Triangle.this.B, 1.01));
-            double[] insideNearC = transformLinear(translation, rotationMatrix, scale(Triangle.this.C, 0.99));
-            double[] outsideNearC = transformLinear(translation, rotationMatrix, scale(Triangle.this.C, 1.01));
+            double[] insideNearA = transformLinear(translation, rotationMatrix, scale(Triangle.A, 0.99));
+            double[] outsideNearA = transformLinear(translation, rotationMatrix, scale(Triangle.A, 1.01));
+            double[] insideNearB = transformLinear(translation, rotationMatrix, scale(Triangle.B, 0.99));
+            double[] outsideNearB = transformLinear(translation, rotationMatrix, scale(Triangle.B, 1.01));
+            double[] insideNearC = transformLinear(translation, rotationMatrix, scale(Triangle.C, 0.99));
+            double[] outsideNearC = transformLinear(translation, rotationMatrix, scale(Triangle.C, 1.01));
             Path path = new Path();
             path.setFillType(Path.FillType.EVEN_ODD);
             path.moveTo((float) A[0], (float) (A[1]));

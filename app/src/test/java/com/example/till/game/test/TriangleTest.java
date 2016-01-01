@@ -44,11 +44,11 @@ public class TriangleTest extends GameTestCase {
         Triangle tPiercing = new Triangle(new double[]{74.58640225219403/200.0, -73.259914341275/200.0}, new double[]{0, 0}, 2.670353755551327, 0);
         Triangle somewhereElse = new Triangle(new double[]{0, 300/200.0}, new double[]{0, 0}, 0, 0);
         double[] identityTransformation = makeLinearTransformation(new double[]{0, 0}, new double[]{1, 0, 0, 1});
-        assertTrue(t.trianglesCollide(identityTransformation, identityTransformation, t180DegreesRotated));
-        assertTrue(t180DegreesRotated.trianglesCollide(identityTransformation, identityTransformation, t));
-        assertTrue(t.trianglesCollide(identityTransformation, identityTransformation, tPiercing));
-        assertTrue(tPiercing.trianglesCollide(identityTransformation, identityTransformation, t));
-        assertFalse(t.trianglesCollide(identityTransformation, identityTransformation, somewhereElse));
-        assertFalse(somewhereElse.trianglesCollide(identityTransformation, identityTransformation, t));
+        assertTrue(t.dockablesCollide(identityTransformation, identityTransformation, t180DegreesRotated));
+        assertTrue(t180DegreesRotated.dockablesCollide(identityTransformation, identityTransformation, t));
+        assertTrue(t.dockablesCollide(identityTransformation, identityTransformation, tPiercing));
+        assertTrue(tPiercing.dockablesCollide(identityTransformation, identityTransformation, t));
+        assertFalse(t.dockablesCollide(identityTransformation, identityTransformation, somewhereElse));
+        assertFalse(somewhereElse.dockablesCollide(identityTransformation, identityTransformation, t));
     }
 }

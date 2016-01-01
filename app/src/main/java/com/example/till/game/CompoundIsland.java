@@ -10,6 +10,7 @@ import org.jgrapht.graph.SimpleGraph;
 public class CompoundIsland implements Dockable {
     private SimpleGraph<Triangle, Double> g;
 
+
     @Override
     public double[] getTranslation() {
         return new double[0];
@@ -67,6 +68,21 @@ public class CompoundIsland implements Dockable {
 
     @Override
     public void handleTap(MotionEvent event) {
+
+    }
+
+    @Override
+    public boolean dockablesCollide(double[] transformationThis, double[] transformationDockable, Dockable dockable) {
+        return false;
+    }
+
+    @Override
+    public void setRotationSpeed(double v) {
+
+    }
+
+    @Override
+    public void setMovement(double[] scale) {
 
     }
 
