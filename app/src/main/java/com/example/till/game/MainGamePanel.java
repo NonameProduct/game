@@ -10,6 +10,9 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import static com.example.till.game.VectorCalculations2D.makeLinearTransformation;
+import static com.example.till.game.VectorCalculations2D.scale;
+
 /**
  * Created by till on 20.12.15.
  */
@@ -20,17 +23,13 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
     private MainThread thread;
     private GestureDetectorCompat gestureDetector;
 
-    public UserInterface getUserInterface() {
-        return userInterface;
-    }
-
-    private UserInterface userInterface;
+    private double zoomFactor = 200;
+    private double[] translation = {0, 0};
 
     public MainGamePanel(Context context) {
         super(context);
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
-        userInterface = new UserInterface();
         gestureDetector = new GestureDetectorCompat(context, new LocalGestureListener());
         setFocusable(true);
     }
@@ -68,7 +67,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     protected void render(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
-        userInterface.drawGameField(canvas);
+        GameField.getInstance().getDrawer().draw(makeLinearTransformation(translation, scale(new double[]{1, 0, 0, 1}, zoomFactor)), canvas);
     }
 
     public void update() {
@@ -101,8 +100,8 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-            userInterface.onFling(event1, event2, velocityX, velocityY);
-            return false;
+            return GameField.getInstance().handleFling(transformX(event1.getX()), transformY(event1.getY()), transformX(event2.getX()), transformY(event2.getY()),
+                    (float) (velocityX/zoomFactor), (float) (velocityY/zoomFactor));
         }
 
         @Override
@@ -127,7 +126,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
                 ((Activity) getContext()).finish();
                 return true;
             } else {
-                return userInterface.onSingleTapConfirmed(event);
+                return GameField.getInstance().handleTap(transformX(event.getX()), transformY(event.getY()));
             }
         }
 
@@ -136,5 +135,15 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
             return true;
         }
     }
+
+
+    private double transformX(double d) {
+        return (d-translation[0])/zoomFactor;
+    }
+
+    private double transformY(double d) {
+        return (d - translation[1]) / zoomFactor;
+    }
+
 
 }

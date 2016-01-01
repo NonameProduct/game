@@ -22,35 +22,31 @@ public class GameField implements Drawable{
     private static GameField uniqueGameField = new GameField();
     private final String TAG = GameField.class.getSimpleName();
     private GameFieldDrawer drawer;
+    private List<Dockable> content;
+    private Dockable currentlyFocusedDockable = null;
+    private GestureDetectorCompat gestureDetector;
+
+    private GameField() {
+        content = new ArrayList<Dockable>();
+        content.add(new Triangle(new double[]{2, 2}, new double[]{0, 0}, 0, 0));
+        content.add(new Triangle(new double[]{2, 6}, new double[]{0, 0}, Math.PI, 0));
+        drawer = new GameFieldDrawer();
+    }
+
+    public static GameField getInstance() {
+        return uniqueGameField;
+    }
 
     public List<Dockable> getContent() {
         return content;
-    }
-
-    private List<Dockable> content;
-
-    public void setCurrentlyFocusedDockable(Dockable currentlyFocusedDockable) {
-        this.currentlyFocusedDockable = currentlyFocusedDockable;
     }
 
     public Dockable getCurrentlyFocusedDockable() {
         return currentlyFocusedDockable;
     }
 
-    private Dockable currentlyFocusedDockable = null;
-    private GestureDetectorCompat gestureDetector;
-
-    private GameField() {
-        content = new ArrayList<Dockable>();
-//        content.add(new Triangle(new double[]{2, 2}, new double[]{0, 0}, 0, 0));
-//        content.add(new Triangle(new double[]{2, 6}, new double[]{0, 0}, Math.PI, 0));
-        Triangle t = new Triangle(new double[]{1, 2}, new double[]{0, 0}, Math.PI, 0);
-        content.add(t);
-        drawer = new GameFieldDrawer();
-    }
-
-    public static GameField getInstance() {
-        return uniqueGameField;
+    public void setCurrentlyFocusedDockable(Dockable currentlyFocusedDockable) {
+        this.currentlyFocusedDockable = currentlyFocusedDockable;
     }
 
     public String getGameFieldDataContainerAsJson() {
