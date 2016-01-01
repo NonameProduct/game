@@ -53,7 +53,6 @@ public class VectorCalculations2DTest extends GameTestCase {
         for (int i = 0; i < d.length; i++) {
             d[i] = Math.round(10000000000l*d[i])/10000000000l;
         }
-
     }
 
 

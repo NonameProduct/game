@@ -11,7 +11,7 @@ public class CompoundIsland implements Dockable {
     private SimpleGraph<Triangle, Double> g;
 
     @Override
-    public double[] getPositionInParent() {
+    public double[] getTranslation() {
         return new double[0];
     }
 

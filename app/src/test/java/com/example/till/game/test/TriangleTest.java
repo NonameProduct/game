@@ -4,6 +4,7 @@ import com.example.till.game.Triangle;
 
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
+import static com.example.till.game.VectorCalculations2D.*;
 
 /**
  * Created by till on 30.12.15.
@@ -42,12 +43,12 @@ public class TriangleTest extends GameTestCase {
         Triangle t180DegreesRotated = new Triangle(new double[]{0, 0}, new double[]{0, 0}, Math.PI, 0);
         Triangle tPiercing = new Triangle(new double[]{74.58640225219403/200.0, -73.259914341275/200.0}, new double[]{0, 0}, 2.670353755551327, 0);
         Triangle somewhereElse = new Triangle(new double[]{0, 300/200.0}, new double[]{0, 0}, 0, 0);
-
-        assertTrue(t.trianglesCollide(t180DegreesRotated));
-        assertTrue(t180DegreesRotated.trianglesCollide(t));
-        assertTrue(t.trianglesCollide(tPiercing));
-        assertTrue(tPiercing.trianglesCollide(t));
-        assertFalse(t.trianglesCollide(somewhereElse));
-        assertFalse(somewhereElse.trianglesCollide(t));
+        double[] identityTransformation = makeLinearTransformation(new double[]{0, 0}, new double[]{1, 0, 0, 1});
+        assertTrue(t.trianglesCollide(identityTransformation, identityTransformation, t180DegreesRotated));
+        assertTrue(t180DegreesRotated.trianglesCollide(identityTransformation, identityTransformation, t));
+        assertTrue(t.trianglesCollide(identityTransformation, identityTransformation, tPiercing));
+        assertTrue(tPiercing.trianglesCollide(identityTransformation, identityTransformation, t));
+        assertFalse(t.trianglesCollide(identityTransformation, identityTransformation, somewhereElse));
+        assertFalse(somewhereElse.trianglesCollide(identityTransformation, identityTransformation, t));
     }
 }

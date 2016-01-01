@@ -88,11 +88,12 @@ public class GameField implements Drawable{
     }
 
     private void handleCollisions() {
+        double[] identityTransformation = new double[]{0, 0, 1, 0, 0, 1};
         for (int i = 0; i < content.size(); i++) {
             for (int j = i + 1; j < content.size(); j++) {
                 Triangle triangle1 = (Triangle) content.get(i);
                 Triangle triangle2 = (Triangle) content.get(j);
-                if (triangle1.trianglesCollide(triangle2)) {
+                if (triangle1.trianglesCollide(identityTransformation, identityTransformation, triangle2)) {
                     Log.i(TAG, "Collision detected.");
                     triangle1.rollbackUpdate();
                     triangle2.rollbackUpdate();

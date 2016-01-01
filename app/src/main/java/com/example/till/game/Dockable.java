@@ -9,7 +9,7 @@ import android.view.MotionEvent;
  */
 public interface Dockable extends Drawable {
 
-    public double[] getPositionInParent();
+    public double[] getTranslation();
 
     public double[] getMovement();
 

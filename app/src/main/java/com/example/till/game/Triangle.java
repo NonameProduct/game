@@ -4,10 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.Log;
 import android.view.MotionEvent;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import static com.example.till.game.VectorCalculations2D.*;
@@ -18,7 +16,7 @@ import static com.example.till.game.VectorCalculations2D.*;
 public class Triangle implements Dockable, Drawable{
 
     private static final String TAG = Triangle.class.getSimpleName();
-    double[] positionInParent;
+    double[] translation;
     private double[] movement;
     private double currentRotation;
     private double rotationSpeed;
@@ -26,18 +24,15 @@ public class Triangle implements Dockable, Drawable{
     private boolean isFocused;
     private int currentColor;
     private double[] positionOfLastTouch;
-    private double[] positionInParentA;
-    private double[] positionInParentB;
-    private double[] positionInParentC;
-    private double[] cornerRelativeToCenterA = {-0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
-    private double[] cornerRelativeToCenterB = {0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
-    private double[] cornerRelativeToCenterC = {0, -4.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
+    public static final double[] A = {-0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
+    public static final double[] B = {0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
+    public static final double[] C = {0, -4.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
     private TriangleDrawer drawer;
     public Triangle(double[] positionInParent, double[] movement, double currentRotation, double rotationSpeed) {
         if (positionInParent.length != 2 || movement.length != 2) {
             throw new IllegalArgumentException();
         }
-        this.positionInParent = positionInParent;
+        this.translation = positionInParent;
         this.movement = movement;
         this.currentRotation = currentRotation;
         this.rotationSpeed = rotationSpeed;
@@ -54,21 +49,9 @@ public class Triangle implements Dockable, Drawable{
         return positionOfLastTouch;
     }
 
-    public double[] getPositionInParentA() {
-        return positionInParentA;
-    }
-
-    public double[] getPositionInParentB() {
-        return positionInParentB;
-    }
-
-    public double[] getPositionInParentC() {
-        return positionInParentC;
-    }
-
     private double[] calculatePositionOfCorner(double[] vector) {
         double[] vectorRotated = multiplyMatrixVector(rotationMatrix, vector);
-        double[] vectorShifted = add(vectorRotated, positionInParent);
+        double[] vectorShifted = add(vectorRotated, translation);
         return vectorShifted;
     }
 
@@ -87,8 +70,8 @@ public class Triangle implements Dockable, Drawable{
     }
 
     @Override
-    public double[] getPositionInParent() {
-        return positionInParent;
+    public double[] getTranslation() {
+        return translation;
     }
 
     @Override
@@ -118,10 +101,7 @@ public class Triangle implements Dockable, Drawable{
         currentRotation += rotationSpeed;
         rotationMatrix = new double[]{Math.cos(currentRotation), -Math.sin(currentRotation),
                 Math.sin(currentRotation), Math.cos(currentRotation)};
-        positionInParent = add(positionInParent, movement);
-        positionInParentA = calculatePositionOfCorner(cornerRelativeToCenterA);
-        positionInParentB = calculatePositionOfCorner(cornerRelativeToCenterB);
-        positionInParentC = calculatePositionOfCorner(cornerRelativeToCenterC);
+        translation = add(translation, movement);
     }
 
     @Override
@@ -129,10 +109,7 @@ public class Triangle implements Dockable, Drawable{
         currentRotation -= rotationSpeed;
         rotationMatrix = new double[]{Math.cos(currentRotation), -Math.sin(currentRotation),
                 Math.sin(currentRotation), Math.cos(currentRotation)};
-        positionInParent = substract(positionInParent, movement);
-        positionInParentA = calculatePositionOfCorner(cornerRelativeToCenterA);
-        positionInParentB = calculatePositionOfCorner(cornerRelativeToCenterB);
-        positionInParentC = calculatePositionOfCorner(cornerRelativeToCenterC);
+        translation = substract(translation, movement);
     }
 
     @Override
@@ -166,9 +143,9 @@ public class Triangle implements Dockable, Drawable{
         double[] endPoint = {event2x, event2y};
         double[] endPointInTriangleCoordinates = transformToTriangleCoordinates(endPoint);
 
-        if (normL2(startPointInTriangleCoordinates) < normL2(cornerRelativeToCenterA)) {
+        if (normL2(startPointInTriangleCoordinates) < normL2(A)) {
             setMovement(new double[]{velocityX / (10.0 * MainThread.MAX_FPS), velocityY / (30.0 * MainThread.MAX_FPS)});
-        } else if (normL2(startPointInTriangleCoordinates) < normL2(cornerRelativeToCenterA) * 3) {
+        } else if (normL2(startPointInTriangleCoordinates) < normL2(A) * 3) {
             double determinantOfDirectionMatrix = startPointInTriangleCoordinates[0] * endPointInTriangleCoordinates[1]
                     - startPointInTriangleCoordinates[1] * endPointInTriangleCoordinates[0];
             int signOfDeterminant;
@@ -182,17 +159,26 @@ public class Triangle implements Dockable, Drawable{
         return false;
     }
 
+    /**
+     * Parameters are given in coordinates of the hoding parent. They need to be transformed into triangle coordinates first.
+     * @param x
+     * @param y
+     * @return
+     */
     public boolean isInside(double x, double y) {
-        double[] vectorA = substract(new double[]{x, y}, positionInParentA);
-        double[] ab = substract(positionInParentB, positionInParentA);
-        double[] vectorB = substract(new double[]{x, y}, positionInParentB);
-        double[] bc = substract(positionInParentC, positionInParentB);
-        double[] vectorC = substract(new double[]{x, y}, positionInParentC);
-        double[] ca = substract(positionInParentA, positionInParentC);
+        double[] triangleCoordinates = transformLinear(invertLinearTransformation(translation, rotationMatrix), new double[]{x, y});
+        double newX = triangleCoordinates[0];
+        double newY = triangleCoordinates[1];
+        double[] vectorA = substract(new double[]{newX, newY}, A);
+        double[] ab = substract(B, A);
+        double[] vectorB = substract(new double[]{newX, newY}, B);
+        double[] bc = substract(C, B);
+        double[] vectorC = substract(new double[]{newX, newY}, C);
+        double[] ca = substract(A, C);
         double determinante1 = VectorCalculations2D.determinante(vectorA, ab);
         double determinante2 = VectorCalculations2D.determinante(vectorB, bc);
         double determinante3 = VectorCalculations2D.determinante(vectorC, ca);
-        return determinante1>=0 && determinante2 >= 0 && determinante3 >= 0;
+        return determinante1 >= 0 && determinante2 >= 0 && determinante3 >= 0;
     }
 
     public boolean isInside(double[] vector) {
@@ -200,21 +186,22 @@ public class Triangle implements Dockable, Drawable{
     }
 
     private double[] transformToTriangleCoordinates(double[] coordinates) {
-        double[] translated = substract(coordinates, positionInParent);
+        double[] translated = substract(coordinates, translation);
         double[] rotated = multiplyMatrixVector(rotationMatrix, translated);
         return rotated;
     }
 
-    public boolean trianglesCollide(Triangle triangle) {
-//        double[][] vertices1 = new double[][]{positionInParentA, positionInParentB, positionInParentC};
-//        double[][] vertices2 = new double[][]{triangle.getPositionInParentA(), triangle.getPositionInParentB(), triangle.getPositionInParentC()};
-        double[][] vertices = new double[][] {positionInParentA, positionInParentB, positionInParentC,
-                triangle.getPositionInParentA(), triangle.getPositionInParentB(), triangle.getPositionInParentC()};
+    public boolean trianglesCollide(double[] transformationThis, double[] transformationTriangle, Triangle triangle) {
+        transformationThis = concatenateLinearTransformation(transformationThis, makeLinearTransformation(translation, rotationMatrix));
+        transformationTriangle = concatenateLinearTransformation(transformationTriangle, makeLinearTransformation(triangle.translation, triangle.rotationMatrix));
+        double[] transformationTriangleToThis = concatenateLinearTransformation(invertLinearTransformation(transformationThis), transformationTriangle);
+        double[][] vertices = new double[][]{A, B, C,
+                transformLinear(transformationTriangleToThis, A), transformLinear(transformationTriangleToThis, B), transformLinear(transformationTriangleToThis, C)};
         for (int i = 0; i < 6; i++) {
-            double[] pivotVertex1 = VectorCalculations2D.substract(vertices[(i/3)*3 + 0], vertices[( 1 - i / 3 ) * 3 + i % 3]);
-            double[] pivotVertex2 = VectorCalculations2D.substract(vertices[(i/3)*3 + 1], vertices[( 1 - i / 3 ) * 3 + i%3]);
-            double[] pivotVertex3 = VectorCalculations2D.substract(vertices[(i/3)*3 + 2], vertices[( 1 - i / 3 ) * 3 + i%3]);
-            double[] comparisonEdge = VectorCalculations2D.substract(vertices[( 1 - i / 3 ) * 3 + (i+1)%3], vertices[( 1 - i / 3 ) * 3 + i%3]);
+            double[] pivotVertex1 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 0], vertices[(1 - i / 3) * 3 + i % 3]);
+            double[] pivotVertex2 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 1], vertices[(1 - i / 3) * 3 + i % 3]);
+            double[] pivotVertex3 = VectorCalculations2D.substract(vertices[(i / 3) * 3 + 2], vertices[(1 - i / 3) * 3 + i % 3]);
+            double[] comparisonEdge = VectorCalculations2D.substract(vertices[(1 - i / 3) * 3 + (i + 1) % 3], vertices[(1 - i / 3) * 3 + i % 3]);
             if (determinante(pivotVertex1, comparisonEdge) < 0 && determinante(pivotVertex2, comparisonEdge) < 0 && determinante(pivotVertex3, comparisonEdge) < 0) {
                 return false;
             }
@@ -224,7 +211,7 @@ public class Triangle implements Dockable, Drawable{
     }
 
     public boolean equals(Triangle triangle) {
-        if (!Arrays.equals(positionInParent, triangle.positionInParent)) {
+        if (!Arrays.equals(translation, triangle.translation)) {
             return false;
         }
         if (!Arrays.equals(movement, triangle.movement)) {
@@ -248,22 +235,13 @@ public class Triangle implements Dockable, Drawable{
         if (!Arrays.equals(positionOfLastTouch, triangle.positionOfLastTouch)) {
             return false;
         }
-        if (!Arrays.equals(positionInParentA, triangle.positionInParentA)) {
+        if (!Arrays.equals(A, triangle.A)) {
             return false;
         }
-        if (!Arrays.equals(positionInParentB, triangle.positionInParentB)) {
+        if (!Arrays.equals(B, triangle.B)) {
             return false;
         }
-        if (!Arrays.equals(positionInParentC, triangle.positionInParentC)) {
-            return false;
-        }
-        if (!Arrays.equals(cornerRelativeToCenterA, triangle.cornerRelativeToCenterA)) {
-            return false;
-        }
-        if (!Arrays.equals(cornerRelativeToCenterB, triangle.cornerRelativeToCenterB)) {
-            return false;
-        }
-        if (!Arrays.equals(cornerRelativeToCenterC, triangle.cornerRelativeToCenterC)) {
+        if (!Arrays.equals(C, triangle.C)) {
             return false;
         }
         return true;
@@ -272,21 +250,21 @@ public class Triangle implements Dockable, Drawable{
     private class TriangleDrawer extends Drawer{
         @Override
         public Canvas draw(double[] transformationToUserInterface, Canvas canvas) {
-            double[] transformationFromTriangle = concatenateLinearTransformation(transformationToUserInterface, makeLinearTransformation(positionInParent, rotationMatrix));
+            double[] transformationFromTriangle = concatenateLinearTransformation(transformationToUserInterface, makeLinearTransformation(translation, rotationMatrix));
             Paint paint = new Paint();
             paint.setStrokeWidth(4);
             paint.setColor(currentColor);
             paint.setAntiAlias(true);
-            double[] A = transformLinear(transformationFromTriangle, cornerRelativeToCenterA);
-            double[] B = transformLinear(transformationFromTriangle, cornerRelativeToCenterB);
-            double[] C = transformLinear(transformationFromTriangle, cornerRelativeToCenterC);
-            double[] center = transformLinear(positionInParent, rotationMatrix, new double[]{0, 0});
-            double[] insideNearA = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterA, 0.99));
-            double[] outsideNearA = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterA, 1.01));
-            double[] insideNearB = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterB, 0.99));
-            double[] outsideNearB = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterB, 1.01));
-            double[] insideNearC = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterC, 0.99));
-            double[] outsideNearC = transformLinear(positionInParent, rotationMatrix, scale(cornerRelativeToCenterC, 1.01));
+            double[] A = transformLinear(transformationFromTriangle, Triangle.this.A);
+            double[] B = transformLinear(transformationFromTriangle, Triangle.this.B);
+            double[] C = transformLinear(transformationFromTriangle, Triangle.this.C);
+            double[] center = transformLinear(translation, rotationMatrix, new double[]{0, 0});
+            double[] insideNearA = transformLinear(translation, rotationMatrix, scale(Triangle.this.A, 0.99));
+            double[] outsideNearA = transformLinear(translation, rotationMatrix, scale(Triangle.this.A, 1.01));
+            double[] insideNearB = transformLinear(translation, rotationMatrix, scale(Triangle.this.B, 0.99));
+            double[] outsideNearB = transformLinear(translation, rotationMatrix, scale(Triangle.this.B, 1.01));
+            double[] insideNearC = transformLinear(translation, rotationMatrix, scale(Triangle.this.C, 0.99));
+            double[] outsideNearC = transformLinear(translation, rotationMatrix, scale(Triangle.this.C, 1.01));
             Path path = new Path();
             path.setFillType(Path.FillType.EVEN_ODD);
             path.moveTo((float) A[0], (float) (A[1]));
