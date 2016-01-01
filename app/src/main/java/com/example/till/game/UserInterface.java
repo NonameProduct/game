@@ -7,6 +7,7 @@ import android.graphics.Path;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import static com.example.till.game.VectorCalculations2D.*;
 
 import java.util.List;
 
@@ -19,35 +20,7 @@ public class UserInterface extends GestureDetector.SimpleOnGestureListener {
     private double[] translation = {0, 0};
 
     public Canvas drawGameField(Canvas canvas) {
-        List<Dockable> content = GameField.getInstance().getContent();
-        for (Dockable dockable : content) {
-            drawTriangle(dockable, canvas);
-        }
-        return canvas;
-    }
-
-    private Canvas drawTriangle(Dockable dockable, Canvas canvas) {
-        Triangle triangle = (Triangle) dockable;
-        Paint paint = new Paint();
-        paint.setStrokeWidth(4);
-        paint.setColor(triangle.getCurrentColor());
-        paint.setAntiAlias(true);
-
-        Path path = new Path();
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo((float) (triangle.getPositionInParentA()[0]*200), (float) (triangle.getPositionInParentA()[1]*200));
-        path.lineTo((float) (triangle.getPositionInParentB()[0]*200), (float) (triangle.getPositionInParentB()[1]*200));
-        path.lineTo((float) (triangle.getPositionInParentC()[0]*200), (float) (triangle.getPositionInParentC()[1]*200));
-        path.lineTo((float) (triangle.getPositionInParentA()[0]*200), (float) (triangle.getPositionInParentA()[1]*200));
-        path.close();
-
-        canvas.drawPath(path, paint);
-
-        if (triangle.getPositionOfLastTouch() != null) {
-            paint.setColor(Color.WHITE);
-            canvas.drawCircle((int) (triangle.getPositionOfLastTouch()[0]*200), (int) (triangle.getPositionOfLastTouch()[1]*200), 10, paint);
-        }
-        return canvas;
+        return GameField.getInstance().getDrawer().draw(makeLinearTransformation(translation, scale(new double[]{1, 0, 0, 1}, zoomFactor)), canvas);
     }
 
     private double transformX(double d) {
@@ -58,10 +31,6 @@ public class UserInterface extends GestureDetector.SimpleOnGestureListener {
         return (d - translation[1]) / zoomFactor;
     }
 
-    private double[] transform(double[] d) {
-        return new double[] {transformX(d[0]), transformY(d[1])};
-
-    }
 
     public boolean onDown(MotionEvent event) {
         return true;

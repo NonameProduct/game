@@ -1,5 +1,8 @@
 package com.example.till.game;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 /**
  * Created by till on 29.12.15.
  * 2D matrices are represented as row vectors (x11, x12, x21, x22)
@@ -8,6 +11,7 @@ public class VectorCalculations2D {
 
 
     public static double[] add(double[] v1, double[] v2) {
+
         return add(v1[0], v1[1], v2[0], v2[1]);
     }
 
@@ -99,5 +103,51 @@ public class VectorCalculations2D {
             sumOfSquares += d*d;
         }
         return Math.sqrt(sumOfSquares);
+    }
+
+    public static double[] transformLinear(double[] transformation, double[] vector) {
+        checkDimensionsTransformation(transformation);
+        checkDimensionsVector(vector);
+        double[] translation = Arrays.copyOfRange(transformation, 0, 2);
+        double[] rotation = Arrays.copyOfRange(transformation, 2, 6);
+        return add(multiplyMatrixVector(rotation, vector), translation);
+    }
+
+    public static double[] makeLinearTransformation(double[] translation, double[] rotation) {
+        checkDimensionsVector(translation);
+        checkDimensionsMatrix(rotation);
+        return new double[]{translation[0], translation[1], rotation[0], rotation[1], rotation[2], rotation[3]};
+    }
+
+    public static double[] concatenateLinearTransformation(double[] translation1, double[] translation2) {
+        checkDimensionsTransformation(translation1);
+        checkDimensionsTransformation(translation2);
+        double[] t1 = Arrays.copyOfRange(translation1, 0, 2);
+        double[] r1 = Arrays.copyOfRange(translation1, 2, 6);
+        double[] t2 = Arrays.copyOfRange(translation2, 0, 2);
+        double[] r2 = Arrays.copyOfRange(translation2, 2, 6);
+        double[] t = add(multiplyMatrixVector(r1, t2), t1);
+        double[] r = multiplyMatrixMatrix(r1, r2);
+        return makeLinearTransformation(t, r);
+
+    }
+
+    public static void checkDimensionsVector(double[] v) {
+        if (v.length != 2) {
+            throw new IllegalArgumentException("Input must be a two-dimensional vector. The input has dimension " + v.length + ".");
+        }
+    }
+
+    public static void checkDimensionsMatrix(double[] m) {
+        if (m.length != 4) {
+            throw new IllegalArgumentException("Input must be a Matrix, represented as a four-dimensional vector. The input has dimension " + m.length + ".");
+        }
+    }
+
+    public static void checkDimensionsTransformation(double[] t) {
+        if (t.length != 6) {
+            throw new IllegalArgumentException("The transformation must have six entries. The first two are the translation, the last for are the rotationMatrix. " +
+                    "The input has dimension " + t.length + ".");
+        }
     }
 }

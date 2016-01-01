@@ -1,5 +1,6 @@
 package com.example.till.game;
 
+import android.graphics.Canvas;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -17,9 +18,10 @@ import java.util.List;
 /**
  * Created by till on 26.12.15.
  */
-public class GameField{
+public class GameField implements Drawable{
     private static GameField uniqueGameField = new GameField();
     private final String TAG = GameField.class.getSimpleName();
+    private GameFieldDrawer drawer;
 
     public List<Dockable> getContent() {
         return content;
@@ -38,6 +40,7 @@ public class GameField{
         content = new ArrayList<Dockable>();
         content.add(new Triangle(new double[]{2, 2}, new double[]{0, 0}, 0, 0));
         content.add(new Triangle(new double[]{2, 6}, new double[]{0, 0}, Math.PI, 0));
+        drawer = new GameFieldDrawer();
     }
 
     public static GameField getInstance() {
@@ -102,6 +105,21 @@ public class GameField{
             return currentlyFocusedDockable.handleFling(event1x, event1y, event2x, event2y, velocityX, velocityY);
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public Drawer getDrawer() {
+        return drawer;
+    }
+
+    private class GameFieldDrawer extends Drawer{
+        @Override
+        public Canvas draw(double[] transformation, Canvas canvas) {
+            for (Dockable d : content) {
+                canvas = d.getDrawer().draw(transformation, canvas);
+            }
+            return canvas;
         }
     }
 }

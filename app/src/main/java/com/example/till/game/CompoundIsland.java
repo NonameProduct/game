@@ -69,4 +69,9 @@ public class CompoundIsland implements Dockable {
     public void handleTap(MotionEvent event) {
 
     }
+
+    @Override
+    public Drawer getDrawer() {
+        return null;
+    }
 }
