@@ -21,6 +21,7 @@ public class CompoundIsland implements Dockable {
     private double[] translation;
     private double[] rotationMatrix;
     private double rotation;
+    private double rotationSpeed = 0.25 * Math.PI/MainThread.MAX_FPS;
 
     public Set<Dockable> getContent() {
         return content.vertexSet();
@@ -89,7 +90,7 @@ public class CompoundIsland implements Dockable {
 
     @Override
     public void update() {
-
+        setRotation(rotation+rotationSpeed);
     }
 
     @Override
@@ -203,7 +204,8 @@ public class CompoundIsland implements Dockable {
 
 
     @Override
-    public void setRotationSpeed(double v) {
+    public void setRotationSpeed(double rotationSpeed) {
+        this.rotationSpeed = rotationSpeed;
 
     }
 
@@ -246,8 +248,28 @@ public class CompoundIsland implements Dockable {
         double[] trafoThisToField = makeLinearTransformation(translation, rotationMatrix);
         double[] trafoTriangleToThis = concatenateLinearTransformation(invertLinearTransformation(trafoThisToField), trafoTriangleToField);
 
-        t.setTranslation(transformLinear(invertLinearTransformation(trafoThisToField), t.getTranslation()));
-        t.setRotation(t.getRotation() - rotation);
+        double newRotationUnsmoothed = t.getRotation() - rotation;
+        long nRotationSteps = Math.round(newRotationUnsmoothed / (Math.PI / 3));
+        nRotationSteps = Math.abs(nRotationSteps%2);
+        t.setRotation(nRotationSteps*Math.PI);
+
+        double[] translation = transformLinear(invertLinearTransformation(trafoThisToField), t.getTranslation());
+        translation[0] = Math.round(translation[0]*2.0)/2.0;
+        if (t.getRotation() == 0) {
+            translation[1] = Math.round(translation[1]/Triangle.HEIGHT) * Triangle.HEIGHT;
+        }else if (t.getRotation() == Math.PI) {
+            double d = translation[1] + Triangle.HEIGHT*1.0/3.0;
+            d = Math.round(d/Triangle.HEIGHT)*Triangle.HEIGHT;
+            translation[1] = d-Triangle.HEIGHT*1.0/3.0;
+        } else {
+            throw new RuntimeException("Triangle has incorrect angle. Must have either 0 or PI. Has: "+ t.getRotation() + ".");
+        }
+        t.setTranslation(translation);
+    }
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
+        rotationMatrix = calculateRotationMatrix(rotation);
     }
 
     private class CompoundIslandDrawer extends Drawer{

@@ -35,9 +35,10 @@ public class Triangle implements Dockable, Drawable{
     private double[] rotationMatrix;
     private boolean isFocused;
     private double[] positionOfLastTouch;
-    public static final double[] A = {-0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
-    public static final double[] B = {0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
-    public static final double[] C = {0, -4.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
+    public static final double HEIGHT = Math.sqrt(3.0/4.0);
+    public static final double[] A = {-0.5, 1.0 / 3.0 * HEIGHT};
+    public static final double[] B = {0.5, 1.0 / 3.0 * HEIGHT};
+    public static final double[] C = {0, -2.0 / 3.0 * HEIGHT};
     private TriangleDrawer drawer;
     private int numberOfNeighbors = 0;
     public Triangle(double[] positionInParent, double[] movement, double currentRotation, double rotationSpeed) {
