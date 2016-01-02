@@ -21,7 +21,8 @@ public class CompoundIsland implements Dockable {
     private double[] translation;
     private double[] rotationMatrix;
     private double rotation;
-    private double rotationSpeed = 0.25 * Math.PI/MainThread.MAX_FPS;
+    private double rotationSpeed;
+    double[] movement;
 
     public Set<Dockable> getContent() {
         return content.vertexSet();
@@ -42,8 +43,9 @@ public class CompoundIsland implements Dockable {
         surface.add(t2);
 
         translation = t1.getTranslation();
-        rotation = t1.getRotation();
-        rotationMatrix = calculateRotationMatrix(rotation);
+        setRotation(t1.getRotation());
+        setMovement(new double[]{0, 0});
+        setRotationSpeed(0.25 * Math.PI/MainThread.MAX_FPS);
 
         t1.setTranslation(new double[]{0, 0});
         t1.setRotation(0);
@@ -70,61 +72,63 @@ public class CompoundIsland implements Dockable {
 
     @Override
     public double[] getTranslation() {
-        return new double[0];
+        return translation;
     }
 
     @Override
     public double[] getMovement() {
-        return new double[0];
+        return movement;
     }
 
     @Override
     public double getRotation() {
-        return 0;
+        return rotation;
     }
 
     @Override
     public double getRotationSpeed() {
-        return 0;
+        return rotationSpeed;
     }
 
     @Override
     public void update() {
-        setRotation(rotation+rotationSpeed);
+        setRotation(rotation + rotationSpeed);
     }
 
     @Override
     public void rollbackUpdate() {
-
+        throw new RuntimeException("Not yet implemented.");
     }
 
     @Override
     public Dockable focus() {
-        return null;
+        throw new RuntimeException("Not yet implemented.");
     }
 
     @Override
     public void unfocus() {
+        throw new RuntimeException("Not yet implemented.");
 
     }
 
     @Override
     public boolean isFocused() {
-        return false;
+        throw new RuntimeException("Not yet implemented.");
     }
 
     @Override
     public boolean handleFling(double event1x, double event1y, double event2x, double event2y, float velocityX, float velocityY) {
-        return false;
+        throw new RuntimeException("Not yet implemented.");
     }
 
     @Override
     public boolean isInside(double x, double y) {
-        return false;
+        throw new RuntimeException("Not yet implemented.");
     }
 
     @Override
     public void handleTap(MotionEvent event) {
+        throw new RuntimeException("Not yet implemented.");
 
     }
 
@@ -211,16 +215,19 @@ public class CompoundIsland implements Dockable {
 
     @Override
     public void setMovement(double[] scale) {
+        throw new RuntimeException("Not yet implemented.");
 
     }
 
     @Override
     public void addNeighbor() {
+        throw new RuntimeException("Not yet implemented.");
 
     }
 
     @Override
     public void removeNeighbor() {
+        throw new RuntimeException("Not yet implemented.");
 
     }
 

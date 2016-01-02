@@ -152,17 +152,13 @@ public class Triangle implements Dockable, Drawable{
         double[] endPointInTriangleCoordinates = transformToTriangleCoordinates(endPoint);
 
         if (normL2(startPointInTriangleCoordinates) < normL2(A)) {
-            setMovement(new double[]{velocityX / (10.0 * MainThread.MAX_FPS), velocityY / (30.0 * MainThread.MAX_FPS)});
+            double[] movementIncrement =scale(new double[]{(event2x - event1x), (event2y - event1y)}, 1/(MainThread.MAX_FPS*3.0));
+            setMovement(add(movement, movementIncrement));
         } else if (normL2(startPointInTriangleCoordinates) < normL2(A) * 3) {
             double determinantOfDirectionMatrix = startPointInTriangleCoordinates[0] * endPointInTriangleCoordinates[1]
                     - startPointInTriangleCoordinates[1] * endPointInTriangleCoordinates[0];
-            int signOfDeterminant;
-            if (determinantOfDirectionMatrix > 0) {
-                signOfDeterminant = 1;
-            } else {
-                signOfDeterminant = -1;
-            }
-            rotationSpeed += signOfDeterminant * 2 * Math.PI / (MainThread.MAX_FPS * 4);
+            int signOfDeterminant = (int) Math.signum(determinantOfDirectionMatrix);
+            rotationSpeed += signOfDeterminant * normL2(substract(new double[]{event1x, event1y}, new double[]{event2x, event2y}))/(3.0*MainThread.MAX_FPS);
         }
         return false;
     }
