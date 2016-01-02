@@ -8,7 +8,12 @@ import android.view.MotionEvent;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.google.gson.reflect.TypeToken;
+
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -58,7 +63,7 @@ public class GameField implements Drawable{
     }
 
     public void loadGameFieldCataContainerFromJson(String jsonGameFieldDataContainer) {
-        Gson gson = new Gson();
+        final Gson gson = new GsonBuilder().registerTypeAdapter(SimpleGraph.class, new DefaultEdgeInstanceCreator()).create();
         GameFieldDataContainer gameFieldDataContainer = gson.fromJson(jsonGameFieldDataContainer, GameFieldDataContainer.class);
         content = gameFieldDataContainer.getContent();
     }
@@ -119,6 +124,14 @@ public class GameField implements Drawable{
                 canvas = d.getDrawer().draw(transformation, canvas);
             }
             return canvas;
+        }
+    }
+
+    private class DefaultEdgeInstanceCreator implements InstanceCreator<Class> {
+
+        @Override
+        public Class createInstance(Type type) {
+            return DefaultEdge.class;
         }
     }
 }

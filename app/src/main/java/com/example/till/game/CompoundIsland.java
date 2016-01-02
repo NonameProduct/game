@@ -214,8 +214,8 @@ public class CompoundIsland implements Dockable {
     }
 
     @Override
-    public void setMovement(double[] scale) {
-        throw new RuntimeException("Not yet implemented.");
+    public void setMovement(double[] movement) {
+        this.movement = movement;
 
     }
 

@@ -1,14 +1,9 @@
 package com.example.till.game.test;
 
-import android.support.v4.view.GestureDetectorCompat;
-import android.view.MotionEvent;
-
 import com.example.till.game.CompoundIsland;
 import com.example.till.game.Dockable;
 import com.example.till.game.GameField;
 import com.example.till.game.Triangle;
-
-import junit.framework.TestCase;
 
 import org.junit.Before;
 
@@ -21,9 +16,7 @@ import java.util.Set;
 
 import static com.example.till.game.VectorCalculations2D.*;
 
-import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by till on 30.12.15.
@@ -61,7 +54,55 @@ public class GameFieldTest extends GameTestCase {
         newContent = gameField.getContent();
         assertTrue(((Triangle)content.get(0)).equals(((Triangle)newContent.get(0))));
         assertTrue(((Triangle)content.get(1)).equals(((Triangle)newContent.get(1))));
+    }
 
+    public void testSavingAndLoadingOfDiamondIsland() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+//        given
+        gameFieldContainsDiamond();
+
+//        then
+        serializationThrowsNoException();
+        loadedContentContainsDiamond();
+    }
+
+    private void loadedContentContainsDiamond() {
+        assertEquals(1, gameField.getContent().size());
+        List<Dockable> content = gameField.getContent();
+        CompoundIsland island = (CompoundIsland) content.get(0);
+        Set<Dockable> contentIsland = island.getContent();
+        for (Dockable d : contentIsland) {
+            assertEquals(2, d.getNumberOfNeighbors());
+        }
+    }
+
+    private void serializationThrowsNoException() {
+        gameField.loadGameFieldCataContainerFromJson(gameField.getGameFieldDataContainerAsJson());
+    }
+
+    private void gameFieldContainsDiamond() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Triangle t1 = new Triangle(new double[]{0, 0}, new double[]{0, 0}, 0, 0);
+        Triangle t2 = new Triangle(new double[]{0, 2.0/3.0*Triangle.HEIGHT}, new double[]{0, 0}, Math.PI , 0);
+        Triangle t3 = new Triangle(new double[]{0.5, Triangle.HEIGHT}, new double[]{0, 0}, 0, 0);
+        Triangle t4 = new Triangle(new double[]{1, 2.0/3.0*Triangle.HEIGHT}, new double[]{0, 0}, Math.PI, 0);
+        Triangle t5 = new Triangle(new double[]{1, 0}, new double[]{0, 0}, 0, 0);
+        Triangle t6 = new Triangle(new double[]{0.5, -1.0/3.0*Triangle.HEIGHT}, new double[]{0, 0}, Math.PI, 0);
+
+        CompoundIsland island = new CompoundIsland(t1, t2);
+        Method dock = CompoundIsland.class.getDeclaredMethod("dock", Triangle.class);
+        dock.setAccessible(true);
+        dock.invoke(island, t3);
+        dock.invoke(island, t4);
+        dock.invoke(island, t5);
+        dock.invoke(island, t6);
+        Set<Dockable> contentIsland = island.getContent();
+        assertEquals(6, island.getContent().size());
+        for (Dockable d : contentIsland) {
+            assertEquals(2, d.getNumberOfNeighbors());
+        }
+
+        List<Dockable> contentGameField = new ArrayList<>();
+        contentGameField.add(island);
+        setContentInGameField(new ArrayList<Dockable>(contentGameField));
     }
 
     private void setContentInGameField(List<Dockable> content) {
