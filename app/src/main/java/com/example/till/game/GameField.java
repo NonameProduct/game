@@ -30,6 +30,8 @@ public class GameField implements Drawable{
         content = new ArrayList<Dockable>();
         content.add(new Triangle(new double[]{1, 1}, new double[]{0, 0}, Math.PI, 0));
         content.add(new Triangle(new double[]{4, 7}, new double[]{0, 0}, 0, 0));
+        content.add(new Triangle(new double[]{1, 7}, new double[]{0, 0}, 0, 0));
+        content.add(new Triangle(new double[]{4, 1}, new double[]{0, 0}, 0, 0));
         drawer = new GameFieldDrawer();
     }
 

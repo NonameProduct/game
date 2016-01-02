@@ -40,4 +40,12 @@ public interface Dockable extends Drawable {
     void setRotationSpeed(double v);
 
     void setMovement(double[] scale);
+
+    public void addNeighbor();
+
+    public void removeNeighbor();
+
+    public int getMaxNumberOfNeighbors();
+
+    public int getNumberOfNeighbors();
 }

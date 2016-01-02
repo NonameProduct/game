@@ -3,11 +3,14 @@ package com.example.till.game;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static com.example.till.game.VectorCalculations2D.*;
 
@@ -15,23 +18,28 @@ import static com.example.till.game.VectorCalculations2D.*;
  * Created by till on 30.12.15.
  */
 public class CompoundIsland implements Dockable {
-    private List<Triangle> surface;
     private double[] translation;
     private double[] rotationMatrix;
     private double rotation;
 
-    public List<Triangle> getContent() {
-        return content;
+    public Set<Dockable> getContent() {
+        return content.vertexSet();
     }
 
-    List<Triangle> content;
+    Graph<Dockable, DefaultEdge> content;
+    private List<Dockable> surface;
     private Drawer drawer;
-    private List<Triangle> collisionCandidates = new LinkedList<>();
+    private List<Dockable> collisionCandidates = new LinkedList<>();
 
     public CompoundIsland(Triangle t1, Triangle t2) {
-        content = new ArrayList<>();
-        content.add(t1);
-        content.add(t2);
+        content = new SimpleGraph<Dockable, DefaultEdge>(DefaultEdge.class);
+        content.addVertex(t1);
+        content.addVertex(t2);
+        content.addEdge(t1, t2);
+        surface = new ArrayList<>();
+        surface.add(t1);
+        surface.add(t2);
+
         translation = t1.getTranslation();
         rotation = t1.getRotation();
         rotationMatrix = calculateRotationMatrix(rotation);
@@ -46,12 +54,11 @@ public class CompoundIsland implements Dockable {
         GameField.getInstance().getContent().add(this);
         GameField.getInstance().getContent().remove(t1);
         GameField.getInstance().getContent().remove(t2);
-        surface = content;
 
         drawer = new CompoundIslandDrawer();
     }
 
-    public List<Triangle> getCollisionCandidate() {
+    public List<Dockable> getCollisionCandidate() {
         return collisionCandidates;
     }
 
@@ -124,9 +131,9 @@ public class CompoundIsland implements Dockable {
     public boolean dockablesCollide(double[] transformationThis, double[] transformationDockable, Dockable dockable) {
         collisionCandidates.clear();
         transformationThis = concatenateLinearTransformation(transformationThis, translation, rotationMatrix);
-        for (Triangle t : surface) {
-            if (t.dockablesCollide(transformationThis, transformationDockable, dockable)) {
-                collisionCandidates.add(t);
+        for (Dockable d : surface) {
+            if (d.dockablesCollide(transformationThis, transformationDockable, dockable)) {
+                collisionCandidates.add(d);
             }
         }
         return collisionCandidates.size()>0;
@@ -145,7 +152,7 @@ public class CompoundIsland implements Dockable {
 
     private void handleCollision(double[] transformationThis, double[] transformationTriangle, Triangle triangle) {
         transformationThis = concatenateLinearTransformation(transformationThis, translation, rotationMatrix);
-        for (Triangle candidate : collisionCandidates) {
+        for (Dockable candidate : collisionCandidates) {
             if (!candidate.dockablesCollide(transformationThis, transformationTriangle, triangle)) {
                 throw new RuntimeException("triangle does not collide with collision candidate");
             }
@@ -157,17 +164,37 @@ public class CompoundIsland implements Dockable {
             }
         }
 
-        triangle.setRotation(-triangle.getRotationSpeed());
+        triangle.setRotationSpeed(-triangle.getRotationSpeed());
         triangle.setMovement(scale(triangle.getMovement(), -1));
         setRotationSpeed(-getRotationSpeed());
         setMovement(scale(getMovement(), -1));
     }
 
     private void dock(Triangle triangle) {
-        content.add(triangle);
-        surface.add(triangle);
+        content.addVertex(triangle);
         GameField.getInstance().getContent().remove(triangle);
         adaptTriangleToIslandCoordinates(triangle);
+        List<Dockable> toRemoveFromSurface = new ArrayList<>();
+        for (Dockable d : surface) {
+            if(areNeighbors(triangle, d)){
+                d.addNeighbor();
+                triangle.addNeighbor();
+                content.addEdge(d, triangle);
+            }
+            if (d.getMaxNumberOfNeighbors() >= d.getNumberOfNeighbors()) {
+                toRemoveFromSurface.add(d);
+            }
+        }
+        surface.remove(toRemoveFromSurface);
+        surface.add(triangle);
+    }
+
+    private boolean areNeighbors(Dockable d1, Dockable d2) {
+        if (Triangle.class.isInstance(d1) && Triangle.class.isInstance(d2)) {
+            return normL2(substract(d1.getTranslation(), d2.getTranslation())) <= MAX_DISTANCE_TO_TRIGGER_DOCKING;
+        } else {
+            throw new RuntimeException("Not yet implemented for inputs different than Triangles");
+        }
     }
 
     private void handleCollision(double[] transformationThis, double[] transformationCompoundIsland, CompoundIsland compoundIsland) {
@@ -186,12 +213,32 @@ public class CompoundIsland implements Dockable {
     }
 
     @Override
+    public void addNeighbor() {
+
+    }
+
+    @Override
+    public void removeNeighbor() {
+
+    }
+
+    @Override
+    public int getMaxNumberOfNeighbors() {
+        throw new RuntimeException("Method not yet implemented");
+    }
+
+    @Override
+    public int getNumberOfNeighbors() {
+        throw new RuntimeException("Method not yet implemented");
+    }
+
+    @Override
     public Drawer getDrawer() {
         return drawer;
     }
 
     public boolean contains(Triangle t) {
-        return content.contains(t);
+        return content.containsVertex(t);
     }
 
     private void adaptTriangleToIslandCoordinates(Triangle t) {
@@ -208,8 +255,8 @@ public class CompoundIsland implements Dockable {
         @Override
         public Canvas draw(double[] transformation, Canvas canvas) {
             transformation = concatenateLinearTransformation(transformation, translation, rotationMatrix);
-            for (Triangle t : content) {
-                t.getDrawer().draw(transformation, canvas);
+            for (Dockable d : content.vertexSet()) {
+                d.getDrawer().draw(transformation, canvas);
             }
             return canvas;
         }

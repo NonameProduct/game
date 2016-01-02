@@ -17,6 +17,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 import static com.example.till.game.VectorCalculations2D.*;
 
 import static org.mockito.Matchers.contains;
@@ -204,7 +206,7 @@ public class GameFieldTest extends GameTestCase {
         gameField.handleTap(1.0, 2.0);
     }
 
-    public void testMergeTrianglesOnCollision() {
+    public void testMergeTrianglesOnCollision() throws InvocationTargetException, IllegalAccessException {
 //        given
         gameFieldContainsTwoCollidingTrianglesCloseEnough();
 
@@ -213,28 +215,42 @@ public class GameFieldTest extends GameTestCase {
 
 //        then
         aCompoundIslandIsCreated();
+
+    }
+
+    public void testMergeTriangleWithCompoundIsland() throws InvocationTargetException, IllegalAccessException {
+//        given
+        aCompoundIslandInTheGameField();
+        Triangle t = aTriangleCloseEnoughForMergeAndBeforeIslandInGameFieldContent();
+
 //        when
-        Triangle t = anAdditionalCollidingTriangleCloseEnoughOccurs();
         handleCollisionsIsCalled();
 
 //        then
         itGetsAddedToTheCompoundIsland(t);
 
+//        given
+        aCompoundIslandInTheGameField();
+        t = aTriangleCloseEnoughForMergeAndAfterIslandInGameFieldContent();
+
+//        when
+        handleCollisionsIsCalled();
+
+//        then
+        itGetsAddedToTheCompoundIsland(t);
     }
 
-    private void itGetsAddedToTheCompoundIsland(Triangle t) {
-        assertEquals(1, gameField.getContent().size());
+    private Triangle aTriangleCloseEnoughForMergeAndBeforeIslandInGameFieldContent() {
+        Triangle t = aTriangleCloseEnoughForMergeAndAfterIslandInGameFieldContent();
         List<Dockable> content = gameField.getContent();
-        CompoundIsland island = (CompoundIsland) content.get(0);
-        List<Triangle> contentIsland = island.getContent();
-        assertTrue(island.contains(t));
-        assertTrue(normL2(substract(contentIsland.get(0).getTranslation(), t.getTranslation())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING
-                ||normL2(substract(contentIsland.get(1).getTranslation(), t.getTranslation())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING);
-        assertTrue(normL2(substract(contentIsland.get(0).getTranslation(), t.getTranslation())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4
-                ||normL2(substract(contentIsland.get(1).getTranslation(), t.getTranslation())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4);
+        Dockable dockable = content.remove(1);
+        content.add(0, dockable);
+        assertTrue(content.get(0).getClass().getSimpleName().equals(Triangle.class.getSimpleName())
+                && content.get(1).getClass().getSimpleName().equals(CompoundIsland.class.getSimpleName()));
+        return t;
     }
 
-    private Triangle anAdditionalCollidingTriangleCloseEnoughOccurs() {
+    private Triangle aTriangleCloseEnoughForMergeAndAfterIslandInGameFieldContent() {
         Triangle t = new Triangle(new double[]{4-0.5*0.9, 7-Triangle.A[1]}, new double[]{0, 0}, Math.PI, 0);
         gameField.getContent().add(t);
 
@@ -243,15 +259,36 @@ public class GameFieldTest extends GameTestCase {
         return t;
     }
 
+    private void aCompoundIslandInTheGameField() throws InvocationTargetException, IllegalAccessException {
+        gameFieldContainsTwoCollidingTrianglesCloseEnough();
+        handleCollisionsIsCalled();
+    }
+
+    private void itGetsAddedToTheCompoundIsland(Triangle t) {
+        assertEquals(1, gameField.getContent().size());
+        List<Dockable> content = gameField.getContent();
+        CompoundIsland island = (CompoundIsland) content.get(0);
+        Set<Dockable> contentIslandSet = island.getContent();
+        List<Dockable> contentIsland = new ArrayList<>(contentIslandSet);
+        assertTrue(contentIsland.size() == 3);
+        assertTrue(island.contains(t));
+        assertTrue(normL2(substract(contentIsland.get(0).getTranslation(), t.getTranslation())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING
+                ||normL2(substract(contentIsland.get(1).getTranslation(), t.getTranslation())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING);
+        assertTrue(normL2(substract(contentIsland.get(0).getTranslation(), t.getTranslation())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4
+                ||normL2(substract(contentIsland.get(1).getTranslation(), t.getTranslation())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4);
+    }
+
+
     private void aCompoundIslandIsCreated() {
         assertEquals(1, gameField.getContent().size());
         assertTrue(CompoundIsland.class.getSimpleName().equals(gameField.getContent().get(0).getClass().getSimpleName()));
-        List<Triangle> content = ((CompoundIsland) gameField.getContent().get(0)).getContent();
+        Set<Dockable> contentSet = ((CompoundIsland) gameField.getContent().get(0)).getContent();
+        List<Dockable> content = new ArrayList<>(contentSet);
         assertTrue(normL2(substract(content.get(0).getTranslation(), content.get(1).getTranslation()))<= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING);
-        assertTrue(normL2(substract(content.get(0).getTranslation(), content.get(1).getTranslation()))>= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4);
+        assertTrue(normL2(substract(content.get(0).getTranslation(), content.get(1).getTranslation())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING / 4);
     }
 
-    private void handleCollisionsIsCalled() {
+    private void handleCollisionsIsCalled() throws InvocationTargetException, IllegalAccessException {
         Method method = null;
         try {
             method = gameField.getClass().getDeclaredMethod("handleCollisions");
@@ -259,13 +296,7 @@ public class GameFieldTest extends GameTestCase {
             e.printStackTrace();
         }
         method.setAccessible(true);
-        try {
-            method.invoke(gameField);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        method.invoke(gameField);
     }
 
     private void gameFieldContainsTwoCollidingTrianglesCloseEnough() {
@@ -281,7 +312,7 @@ public class GameFieldTest extends GameTestCase {
 
     }
 
-    public void testRepellTrianglesOnCollision() {
+    public void testRepellTrianglesOnCollision() throws InvocationTargetException, IllegalAccessException {
 //        given
         gameFieldContainsTwoCollidingTrianglesNotCloseEnough();
 

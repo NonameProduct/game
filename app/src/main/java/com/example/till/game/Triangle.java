@@ -16,6 +16,7 @@ import static com.example.till.game.VectorCalculations2D.*;
 public class Triangle implements Dockable, Drawable{
 
     private static final String TAG = Triangle.class.getSimpleName();
+    private static final int MAX_NUMBER_OF_NEIGHBORS = 3;
 
     public void setTranslation(double[] translation) {
         this.translation = translation;
@@ -38,7 +39,7 @@ public class Triangle implements Dockable, Drawable{
     public static final double[] B = {0.5, 2.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
     public static final double[] C = {0, -4.0 / 3.0 * Math.sqrt(3.0 / 16.0)};
     private TriangleDrawer drawer;
-    private int nNeighbors = 0;
+    private int numberOfNeighbors = 0;
     public Triangle(double[] positionInParent, double[] movement, double currentRotation, double rotationSpeed) {
         if (positionInParent.length != 2 || movement.length != 2) {
             throw new IllegalArgumentException("PositionInParent and Movement must have dimension 2. PositionInParent had dimension " + positionInParent.length + ", movement had dimension " + movement.length + ".");
@@ -228,22 +229,20 @@ public class Triangle implements Dockable, Drawable{
 
     @Override
     public void handleCollision(double[] transformationThis, double[] transformationDockable, Dockable dockable) {
-        if (dockable.getClass().getSimpleName().equals(Triangle.class.getSimpleName())) {
-            handleCollision(transformationThis, transformationDockable, (Triangle) dockable);
-        } else if (dockable.getClass().getSimpleName().equals(CompoundIsland.class)) {
-            handleCollision(transformationThis, transformationDockable, (CompoundIsland) dockable);
+        if (Triangle.class.isInstance(dockable)) {
+            Triangle triangle = (Triangle) dockable;
+            double[] vectorBetweenCenters = substract(transformLinear(transformationThis, translation), transformLinear(transformationDockable, triangle.getTranslation()));
+            if (normL2(vectorBetweenCenters)<=CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING){
+                new CompoundIsland(this, triangle);
+            }
+            else{
+                repell(triangle);
+            }
+        } else if (CompoundIsland.class.isInstance(dockable)) {
+            ((CompoundIsland) dockable).handleCollision(transformationDockable, transformationThis, this);
         }
     }
 
-    private void handleCollision(double[] transformationThis, double[] transformationTriangle, Triangle triangle) {
-        double[] vectorBetweenCenters = substract(transformLinear(transformationThis, translation), transformLinear(transformationTriangle, triangle.getTranslation()));
-        if (normL2(vectorBetweenCenters)<=CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING){
-            new CompoundIsland(this, triangle);
-        }
-        else{
-            repell(triangle);
-        }
-    }
 
     private void repell(Triangle triangle) {
         rollbackUpdate();
@@ -263,20 +262,32 @@ public class Triangle implements Dockable, Drawable{
         compoundIsland.setMovement(VectorCalculations2D.scale(compoundIsland.getMovement(), -1));
     }
 
+    @Override
     public void addNeighbor() {
-        if (nNeighbors < 3) {
-            nNeighbors++;
+        if (numberOfNeighbors < 3) {
+            numberOfNeighbors++;
         } else {
             throw new RuntimeException("A triangle must not have more than 3 neighbors.");
         }
     }
 
+    @Override
     public void removeNeighbor() {
-        if (nNeighbors > 0) {
-            nNeighbors--;
+        if (numberOfNeighbors > 0) {
+            numberOfNeighbors--;
         } else {
             throw new RuntimeException("A triangle must not have less than 0 neighbors.");
         }
+    }
+
+    @Override
+    public int getMaxNumberOfNeighbors() {
+        return MAX_NUMBER_OF_NEIGHBORS;
+    }
+
+    @Override
+    public int getNumberOfNeighbors() {
+        return numberOfNeighbors;
     }
 
     public boolean equals(Triangle triangle) {
@@ -311,7 +322,7 @@ public class Triangle implements Dockable, Drawable{
             Paint paint = new Paint();
             paint.setStrokeWidth(4);
             int color = 0;
-            if (nNeighbors > 0) {
+            if (numberOfNeighbors > 0) {
                 color = Color.BLUE;
             }else if (isFocused) {
                 color = Color.GREEN;
