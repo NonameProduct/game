@@ -3,14 +3,9 @@ package com.example.till.game;
 import android.graphics.Canvas;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
-import com.google.gson.reflect.TypeToken;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -21,8 +16,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +28,12 @@ public class GameField implements Drawable{
     private static GameField uniqueGameField = new GameField();
     private final String TAG = GameField.class.getSimpleName();
     private GameFieldDrawer drawer;
-    private List<Dockable> content;
-    private Dockable currentlyFocusedDockable = null;
+    private List<Island> content;
+    private Island currentlyFocusedIsland = null;
     private GestureDetectorCompat gestureDetector;
 
     private GameField(){
-        content = new ArrayList<Dockable>();
+        content = new ArrayList<Island>();
         Triangle t1 = new Triangle(new double[]{3, 3}, new double[]{0, 0}, Math.PI, 0);
         Triangle t2 = new Triangle(new double[]{3, 4+Triangle.HEIGHT*1.0/3.0*1.2}, new double[]{0, 0}, 0, 0);
         Triangle t3 = new Triangle(new double[]{4, 3.6}, new double[]{0, 0}, 3* Math.PI/2, 0);
@@ -56,16 +49,16 @@ public class GameField implements Drawable{
         return uniqueGameField;
     }
 
-    public List<Dockable> getContent() {
+    public List<Island> getContent() {
         return content;
     }
 
-    public Dockable getCurrentlyFocusedDockable() {
-        return currentlyFocusedDockable;
+    public Island getCurrentlyFocusedIsland() {
+        return currentlyFocusedIsland;
     }
 
-    public void setCurrentlyFocusedDockable(Dockable currentlyFocusedDockable) {
-        this.currentlyFocusedDockable = currentlyFocusedDockable;
+    public void setCurrentlyFocusedIsland(Island currentlyFocusedIsland) {
+        this.currentlyFocusedIsland = currentlyFocusedIsland;
     }
 
     public byte[] serializeAsByteArray() throws IOException {
@@ -78,18 +71,18 @@ public class GameField implements Drawable{
 
     public void loadSerializationFromByteArray(byte[] serialization) throws IOException, ClassNotFoundException {
         ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(serialization));
-        content = (List<Dockable>) ois.readObject();
+        content = (List<Island>) ois.readObject();
         ois.close();
     }
 
 
     public boolean handleTap(double x, double y) {
-        if (currentlyFocusedDockable != null) {
-            currentlyFocusedDockable.unfocus();
+        if (currentlyFocusedIsland != null) {
+            currentlyFocusedIsland.unfocus();
         }
-        for (Dockable dockable : content) {
-            if (dockable.isInside(x, y)) {
-                dockable.focus();
+        for (Island island : content) {
+            if (island.isInside(x, y)) {
+                island.focus();
                 return false;
             }
         }
@@ -98,8 +91,8 @@ public class GameField implements Drawable{
 
 
     public void update() {
-        for (Dockable dockable : content) {
-            dockable.update();
+        for (Island island : content) {
+            island.update();
         }
         handleCollisions();
     }
@@ -108,10 +101,10 @@ public class GameField implements Drawable{
         double[] identityTransformation = new double[]{0, 0, 1, 0, 0, 1};
         for (int i = 0; i < content.size(); i++) {
             for (int j = i + 1; j < content.size(); j++) {
-                Dockable dockable1 = content.get(i);
-                Dockable dockable2 = content.get(j);
-                if (dockable1.dockablesCollide(identityTransformation, identityTransformation, dockable2)) {
-                    dockable1.handleCollision(identityTransformation, identityTransformation, dockable2);
+                Island island1 = content.get(i);
+                Island island2 = content.get(j);
+                if (island1.dockablesCollide(identityTransformation, identityTransformation, island2)) {
+                    island1.handleCollision(identityTransformation, identityTransformation, island2);
                     Log.i(TAG, "Collision detected.");
                 }
             }
@@ -119,8 +112,8 @@ public class GameField implements Drawable{
     }
 
     public boolean handleFling(double event1x, double event1y, double event2x, double event2y, float velocityX, float velocityY) {
-        if (currentlyFocusedDockable != null) {
-            return currentlyFocusedDockable.handleFling(event1x, event1y, event2x, event2y, velocityX, velocityY);
+        if (currentlyFocusedIsland != null) {
+            return currentlyFocusedIsland.handleFling(event1x, event1y, event2x, event2y, velocityX, velocityY);
         } else {
             return false;
         }
@@ -134,17 +127,17 @@ public class GameField implements Drawable{
     private class GameFieldDrawer extends Drawer{
         @Override
         public Canvas draw(double[] transformation, Canvas canvas) {
-            for (Dockable d : content) {
+            for (Island d : content) {
                 canvas = d.getDrawer().draw(transformation, canvas);
             }
             return canvas;
         }
     }
 
-    private class DefaultEdgeInstanceCreator implements InstanceCreator<Graph<Dockable, DefaultEdge>> {
+    private class DefaultEdgeInstanceCreator implements InstanceCreator<Graph<Island, DefaultEdge>> {
 
-        public Graph<Dockable, DefaultEdge> createInstance(Type type) {
-            return new SimpleGraph<Dockable, DefaultEdge>(DefaultEdge.class);
+        public Graph<Island, DefaultEdge> createInstance(Type type) {
+            return new SimpleGraph<Island, DefaultEdge>(DefaultEdge.class);
         }
     }
 }

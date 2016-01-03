@@ -1,7 +1,6 @@
 package com.example.till.game;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +11,8 @@ public class GameFieldDataContainer implements Serializable {
 
     private ArrayList<Triangle> triangles = new ArrayList<>();
     private ArrayList<CompoundIsland> islands = new ArrayList<>();
-    public GameFieldDataContainer(List<Dockable> list) {
-        for (Dockable d : list) {
+    public GameFieldDataContainer(List<Island> list) {
+        for (Island d : list) {
             if (Triangle.class.isInstance(d)) {
                 triangles.add((Triangle) d);
             } else if (CompoundIsland.class.isInstance(d)) {
@@ -25,8 +24,8 @@ public class GameFieldDataContainer implements Serializable {
         }
     }
 
-    public ArrayList<Dockable> getContent() {
-        ArrayList<Dockable> content = new ArrayList<Dockable>();
+    public ArrayList<Island> getContent() {
+        ArrayList<Island> content = new ArrayList<Island>();
         content.addAll(triangles);
         content.addAll(islands);
         return content;

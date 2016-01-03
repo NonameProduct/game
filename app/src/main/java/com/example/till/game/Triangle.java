@@ -4,7 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.view.MotionEvent;
 
 import java.util.Arrays;
 
@@ -13,34 +12,14 @@ import static com.example.till.game.VectorCalculations2D.*;
 /**
  * Created by till on 23.12.15.
  */
-public class Triangle implements Dockable, Drawable{
+public class Triangle extends Island implements Drawable{
 
-    private static final String TAG = Triangle.class.getSimpleName();
-    private static final int MAX_NUMBER_OF_NEIGHBORS = 3;
-
-    public void setParentToCenter(double[] parentToCenter) {
-        this.parentToCenter = parentToCenter;
-    }
-
-    private double[] parentToCenter;
-    private double[] movement;
-
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
-        rotationMatrix = calculateRotationMatrix(rotation);
-    }
-
-    private double rotation;
-    private double rotationSpeed;
-    private double[] rotationMatrix;
-    private boolean isFocused;
-    private double[] positionOfLastTouch;
     public static final double HEIGHT = Math.sqrt(3.0/4.0);
     public static final double[] A = {-0.5, 1.0 / 3.0 * HEIGHT};
     public static final double[] B = {0.5, 1.0 / 3.0 * HEIGHT};
     public static final double[] C = {0, -2.0 / 3.0 * HEIGHT};
-    private TriangleDrawer drawer;
-    private int numberOfNeighbors = 0;
+    private static final String TAG = Triangle.class.getSimpleName();
+    public static final int MAX_NUMBER_OF_NEIGHBORS = 3;
     public Triangle(double[] positionInParent, double[] movement, double currentRotation, double rotationSpeed) {
         if (positionInParent.length != 2 || movement.length != 2) {
             throw new IllegalArgumentException("PositionInParent and Movement must have dimension 2. PositionInParent had dimension " + positionInParent.length + ", movement had dimension " + movement.length + ".");
@@ -51,107 +30,6 @@ public class Triangle implements Dockable, Drawable{
         this.rotationSpeed = rotationSpeed;
         drawer = new TriangleDrawer();
         update();
-    }
-
-
-    public double[] getPositionOfLastTouch() {
-        return positionOfLastTouch;
-    }
-
-    private double[] calculatePositionOfCorner(double[] vector) {
-        double[] vectorRotated = multiplyMatrixVector(rotationMatrix, vector);
-        double[] vectorShifted = add(vectorRotated, parentToCenter);
-        return vectorShifted;
-    }
-
-
-    @Override
-    public Drawer getDrawer() {
-        return drawer;
-    }
-
-    @Override
-    public double[] getParentToCenter() {
-        return parentToCenter;
-    }
-
-    @Override
-    public double[] getMovement() {
-        return movement;
-    }
-
-    @Override
-    public void setMovement(double[] movement) {
-        this.movement = movement;
-    }
-
-    @Override
-    public double getRotation() {
-        return rotation;
-    }
-
-    @Override
-    public double getRotationSpeed() {
-        return rotationSpeed;
-    }
-
-    @Override
-    public void setRotationSpeed(double rotationSpeed) {
-        this.rotationSpeed = rotationSpeed;
-    }
-
-    @Override
-    public void update() {
-        setRotation(rotation + rotationSpeed);
-        parentToCenter = add(parentToCenter, movement);
-    }
-
-    @Override
-    public void rollbackUpdate() {
-        setRotation(rotation - rotationSpeed);
-        parentToCenter = substract(parentToCenter, movement);
-    }
-
-    @Override
-    public Dockable focus() {
-        isFocused = true;
-        GameField.getInstance().setCurrentlyFocusedDockable(this);
-        return this;
-    }
-
-    @Override
-    public void unfocus() {
-        isFocused = false;
-        GameField.getInstance().setCurrentlyFocusedDockable(null);
-    }
-
-    @Override
-    public boolean isFocused() {
-        return isFocused;
-    }
-
-
-    @Override
-    public boolean handleFling(double event1x, double event1y, double event2x, double event2y, float velocityX, float velocityY) {
-        if (!isFocused()) {
-            throw new IllegalStateException("Triangle.onFling() should only be called if the respective triangle currantly isFocused()");
-        }
-
-        double[] startPoint = {event1x, event1y};
-        double[] startPointInTriangleCoordinates = transformToTriangleCoordinates(startPoint);
-        double[] endPoint = {event2x, event2y};
-        double[] endPointInTriangleCoordinates = transformToTriangleCoordinates(endPoint);
-
-        if (normL2(startPointInTriangleCoordinates) < normL2(A)) {
-            double[] movementIncrement =scale(new double[]{(event2x - event1x), (event2y - event1y)}, 1/(MainThread.MAX_FPS*3.0));
-            setMovement(add(movement, movementIncrement));
-        } else if (normL2(startPointInTriangleCoordinates) < normL2(A) * 3) {
-            double determinantOfDirectionMatrix = startPointInTriangleCoordinates[0] * endPointInTriangleCoordinates[1]
-                    - startPointInTriangleCoordinates[1] * endPointInTriangleCoordinates[0];
-            int signOfDeterminant = (int) Math.signum(determinantOfDirectionMatrix);
-            rotationSpeed += signOfDeterminant * normL2(substract(new double[]{event1x, event1y}, new double[]{event2x, event2y}))/(3.0*MainThread.MAX_FPS);
-        }
-        return false;
     }
 
     /**
@@ -181,19 +59,14 @@ public class Triangle implements Dockable, Drawable{
         return isInside(vector[0], vector[1]);
     }
 
-    private double[] transformToTriangleCoordinates(double[] coordinates) {
-        double[] translated = substract(coordinates, parentToCenter);
-        return multiplyMatrixVector(rotationMatrix, translated);
-    }
-
     @Override
-    public boolean dockablesCollide(double[] transformationThis, double[] transformationDockable, Dockable dockable) {
-        if (dockable.getClass().getSimpleName().equals(Triangle.class.getSimpleName())) {
-            return trianglesCollide(transformationThis, transformationDockable, (Triangle) dockable);
-        } else if (dockable.getClass().getSimpleName().equals(CompoundIsland.class.getSimpleName())) {
-            return dockable.dockablesCollide(transformationDockable, transformationThis, this);
+    public boolean dockablesCollide(double[] transformationThis, double[] transformationDockable, Island island) {
+        if (island.getClass().getSimpleName().equals(Triangle.class.getSimpleName())) {
+            return trianglesCollide(transformationThis, transformationDockable, (Triangle) island);
+        } else if (island.getClass().getSimpleName().equals(CompoundIsland.class.getSimpleName())) {
+            return island.dockablesCollide(transformationDockable, transformationThis, this);
         } else {
-            throw new IllegalArgumentException("For input dockable collisions are not yet implemented.");
+            throw new IllegalArgumentException("For input island collisions are not yet implemented.");
         }
     }
 
@@ -216,9 +89,9 @@ public class Triangle implements Dockable, Drawable{
     }
 
     @Override
-    public void handleCollision(double[] transformationThis, double[] transformationDockable, Dockable dockable) {
-        if (Triangle.class.isInstance(dockable)) {
-            Triangle triangle = (Triangle) dockable;
+    public void handleCollision(double[] transformationThis, double[] transformationDockable, Island island) {
+        if (Triangle.class.isInstance(island)) {
+            Triangle triangle = (Triangle) island;
             double[] vectorBetweenCenters = substract(transformLinear(transformationThis, parentToCenter), transformLinear(transformationDockable, triangle.getParentToCenter()));
             if (normL2(vectorBetweenCenters)<=CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING){
                 new CompoundIsland(this, triangle);
@@ -226,8 +99,8 @@ public class Triangle implements Dockable, Drawable{
             else{
                 repell(triangle);
             }
-        } else if (CompoundIsland.class.isInstance(dockable)) {
-            ((CompoundIsland) dockable).handleCollision(transformationDockable, transformationThis, this);
+        } else if (CompoundIsland.class.isInstance(island)) {
+            ((CompoundIsland) island).handleCollision(transformationDockable, transformationThis, this);
         }
     }
 
@@ -250,33 +123,6 @@ public class Triangle implements Dockable, Drawable{
         compoundIsland.setMovement(VectorCalculations2D.scale(compoundIsland.getMovement(), -1));
     }
 
-    @Override
-    public void addNeighbor() {
-        if (numberOfNeighbors < 3) {
-            numberOfNeighbors++;
-        } else {
-            throw new RuntimeException("A triangle must not have more than 3 neighbors.");
-        }
-    }
-
-    @Override
-    public void removeNeighbor() {
-        if (numberOfNeighbors > 0) {
-            numberOfNeighbors--;
-        } else {
-            throw new RuntimeException("A triangle must not have less than 0 neighbors.");
-        }
-    }
-
-    @Override
-    public int getMaxNumberOfNeighbors() {
-        return MAX_NUMBER_OF_NEIGHBORS;
-    }
-
-    @Override
-    public int getNumberOfNeighbors() {
-        return numberOfNeighbors;
-    }
 
     public boolean equals(Triangle triangle) {
         if (!Arrays.equals(parentToCenter, triangle.parentToCenter)) {
@@ -297,10 +143,20 @@ public class Triangle implements Dockable, Drawable{
         if (isFocused != triangle.isFocused) {
             return false;
         }
-        if (!Arrays.equals(positionOfLastTouch, triangle.positionOfLastTouch)) {
-            return false;
-        }
         return true;
+    }
+
+    @Override
+    public void addNeighbor(){
+        super.addNeighbor();
+        if (getNumberOfNeighbors() > getMaxNumberOfNeighbors()) {
+            throw new RuntimeException("For triangles, the maximal number of Neighbors is 3.");
+        }
+    }
+
+    @Override
+    public int getMaxNumberOfNeighbors() {
+        return 3;
     }
 
     private class TriangleDrawer extends Drawer{
@@ -322,13 +178,6 @@ public class Triangle implements Dockable, Drawable{
             double[] A = transformLinear(transformationFromTriangle, Triangle.A);
             double[] B = transformLinear(transformationFromTriangle, Triangle.B);
             double[] C = transformLinear(transformationFromTriangle, Triangle.C);
-            double[] center = transformLinear(parentToCenter, rotationMatrix, new double[]{0, 0});
-            double[] insideNearA = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.A, 0.99));
-            double[] outsideNearA = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.A, 1.01));
-            double[] insideNearB = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.B, 0.99));
-            double[] outsideNearB = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.B, 1.01));
-            double[] insideNearC = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.C, 0.99));
-            double[] outsideNearC = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.C, 1.01));
             Path path = new Path();
             path.setFillType(Path.FillType.EVEN_ODD);
             path.moveTo((float) A[0], (float) (A[1]));

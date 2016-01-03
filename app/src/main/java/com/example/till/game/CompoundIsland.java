@@ -1,7 +1,6 @@
 package com.example.till.game;
 
 import android.graphics.Canvas;
-import android.view.MotionEvent;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -18,27 +17,19 @@ import static com.example.till.game.VectorCalculations2D.*;
 /**
  * Created by till on 30.12.15.
  */
-public class CompoundIsland implements Dockable {
-    private double[] parentToCenter; // Center is the center of the rotation.
-    private double[] transformationBaseToCenter;
-    private double[] rotationMatrixCenter;
-    private double rotation;
+public class CompoundIsland extends Island {
+    public static final double MAX_DISTANCE_TO_TRIGGER_DOCKING=(2 * Triangle.A[1]) * 1.1;
     double[] transformationThis;
+    Graph<Island, DefaultEdge> content;
+    private double[] transformationBaseToCenter;
+    private List<Island> surface;
+    private List<Island> collisionCandidates = new LinkedList<>();
+    private SimpleGraph<Triangle, Double> g;
 
-    private double rotationSpeed;
-    double[] movement;
 
-    public Set<Dockable> getContent() {
-        return content.vertexSet();
-    }
-
-    Graph<Dockable, DefaultEdge> content;
-    private List<Dockable> surface;
-    private Drawer drawer;
-    private List<Dockable> collisionCandidates = new LinkedList<>();
 
     public CompoundIsland(Triangle t1, Triangle t2) {
-        content = new SimpleGraph<Dockable, DefaultEdge>(DefaultEdge.class);
+        content = new SimpleGraph<Island, DefaultEdge>(DefaultEdge.class);
         content.addVertex(t1);
         content.addVertex(t2);
         content.addEdge(t1, t2);
@@ -70,90 +61,54 @@ public class CompoundIsland implements Dockable {
         drawer = new CompoundIslandDrawer();
     }
 
-
-
-    private void updateTransformationThis() {
-        transformationThis = concatLinearTransformation(parentToCenter, rotationMatrixCenter, transformationBaseToCenter);
+    public Set<Island> getContent() {
+        return content.vertexSet();
     }
 
-    public List<Dockable> getCollisionCandidate() {
+    private void updateTransformationThis() {
+        transformationThis = concatLinearTransformation(parentToCenter, rotationMatrix, transformationBaseToCenter);
+    }
+
+    public List<Island> getCollisionCandidate() {
         return collisionCandidates;
     }
 
-    private SimpleGraph<Triangle, Double> g;
-    public static final double MAX_DISTANCE_TO_TRIGGER_DOCKING=(2 * Triangle.A[1]) * 1.1;
 
-
-
-    @Override
-    public double[] getParentToCenter() {
-        return parentToCenter;
-    }
-
-    private void setParentToCenter(double[] translation) {
-        parentToCenter = translation;
+    public void setParentToCenter(double[] parentToCenter) {
+        super.setParentToCenter(parentToCenter);
         updateTransformationThis();
     }
 
     @Override
-    public double[] getMovement() {
-        return movement;
+    public int getMaxNumberOfNeighbors() {
+        return Integer.MAX_VALUE;
     }
 
-    @Override
-    public double getRotation() {
-        return rotation;
+
+    public void setRotation(double rotation) {
+        super.setRotation(rotation);
+        updateTransformationThis();
     }
 
-    @Override
-    public double getRotationSpeed() {
-        return rotationSpeed;
-    }
 
-    @Override
-    public void update() {
-        setRotation(rotation + rotationSpeed);
-        setParentToCenter(add(parentToCenter, movement));
-    }
-
-    @Override
-    public void rollbackUpdate() {
-        throw new RuntimeException("Not yet implemented.");
-    }
-
-    @Override
-    public Dockable focus() {
-        throw new RuntimeException("Not yet implemented.");
-    }
-
-    @Override
-    public void unfocus() {
-        throw new RuntimeException("Not yet implemented.");
-
-    }
-
-    @Override
-    public boolean isFocused() {
-        throw new RuntimeException("Not yet implemented.");
-    }
-
-    @Override
-    public boolean handleFling(double event1x, double event1y, double event2x, double event2y, float velocityX, float velocityY) {
-        throw new RuntimeException("Not yet implemented.");
-    }
 
     @Override
     public boolean isInside(double x, double y) {
-        throw new RuntimeException("Not yet implemented.");
+        Set<Island> content = this.content.vertexSet();
+        for (Island d : content) {
+            if (d.isInside(x, y)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-
     @Override
-    public boolean dockablesCollide(double[] transformationParent, double[] transformationDockable, Dockable dockable) {
+    public boolean dockablesCollide(double[] transformationParent, double[] transformationDockable, Island island) {
         collisionCandidates.clear();;
         double[] transformationToGameField = concatLinearTransformation(transformationParent, transformationThis);
-        for (Dockable d : surface) {
-            if (d.dockablesCollide(transformationToGameField, transformationDockable, dockable)) {
+        for (Island d : surface) {
+            if (d.dockablesCollide(transformationToGameField, transformationDockable, island)) {
                 collisionCandidates.add(d);
             }
         }
@@ -161,19 +116,19 @@ public class CompoundIsland implements Dockable {
     }
 
     @Override
-    public void handleCollision(double[] transformationParent, double[] transformationDockable, Dockable dockable) {
-        if (Triangle.class.isInstance(dockable)) {
-            handleCollision(transformationParent, transformationDockable, (Triangle) dockable);
-        } else if (CompoundIsland.class.isInstance(dockable)) {
-            handleCollision(transformationParent, transformationDockable, (CompoundIsland) dockable);
+    public void handleCollision(double[] transformationParent, double[] transformationDockable, Island island) {
+        if (Triangle.class.isInstance(island)) {
+            handleCollision(transformationParent, transformationDockable, (Triangle) island);
+        } else if (CompoundIsland.class.isInstance(island)) {
+            handleCollision(transformationParent, transformationDockable, (CompoundIsland) island);
         } else {
-            throw new IllegalArgumentException("Not yet implemented for this kind of dockable");
+            throw new IllegalArgumentException("Not yet implemented for this kind of island");
         }
     }
 
     private void handleCollision(double[] transformationParent, double[] transformationTriangle, Triangle triangle) {
         double[] transformationThisToGameField = concatLinearTransformation(transformationParent, transformationThis);
-        for (Dockable candidate : collisionCandidates) {
+        for (Island candidate : collisionCandidates) {
             if (!candidate.dockablesCollide(transformationThisToGameField, transformationTriangle, triangle)) {
                 throw new RuntimeException("triangle does not collide with collision candidate");
             }
@@ -195,8 +150,8 @@ public class CompoundIsland implements Dockable {
         content.addVertex(triangle);
         GameField.getInstance().getContent().remove(triangle);
         adaptTriangleToIslandCoordinates(triangle);
-        List<Dockable> toRemoveFromSurface = new ArrayList<>();
-        for (Dockable d : surface) {
+        List<Island> toRemoveFromSurface = new ArrayList<>();
+        for (Island d : surface) {
             if(areNeighbors(triangle, d)){
                 d.addNeighbor();
                 triangle.addNeighbor();
@@ -218,14 +173,14 @@ public class CompoundIsland implements Dockable {
     private void changeParentToCenter(double[] newParentToCenter) {
         transformationBaseToCenter = concatLinearTransformation(
                 scale(newParentToCenter, -1), new double[]{1, 0, 0, 1},
-                concatLinearTransformation(parentToCenter, rotationMatrixCenter, transformationBaseToCenter));
+                concatLinearTransformation(parentToCenter, rotationMatrix, transformationBaseToCenter));
         rotation = 0;
-        rotationMatrixCenter = calculateRotationMatrix(0);
+        rotationMatrix = calculateRotationMatrix(0);
         parentToCenter = newParentToCenter;
         updateTransformationThis();
     }
 
-    private boolean areNeighbors(Dockable d1, Dockable d2) {
+    private boolean areNeighbors(Island d1, Island d2) {
         if (Triangle.class.isInstance(d1) && Triangle.class.isInstance(d2)) {
             return normL2(substract(d1.getParentToCenter(), d2.getParentToCenter())) <= MAX_DISTANCE_TO_TRIGGER_DOCKING;
         } else {
@@ -237,45 +192,6 @@ public class CompoundIsland implements Dockable {
         throw new RuntimeException("Collision between two compoundIslands still needs to be implemented.");
     }
 
-
-    @Override
-    public void setRotationSpeed(double rotationSpeed) {
-        this.rotationSpeed = rotationSpeed;
-
-    }
-
-    @Override
-    public void setMovement(double[] movement) {
-        this.movement = movement;
-
-    }
-
-    @Override
-    public void addNeighbor() {
-        throw new RuntimeException("Not yet implemented.");
-
-    }
-
-    @Override
-    public void removeNeighbor() {
-        throw new RuntimeException("Not yet implemented.");
-
-    }
-
-    @Override
-    public int getMaxNumberOfNeighbors() {
-        throw new RuntimeException("Method not yet implemented");
-    }
-
-    @Override
-    public int getNumberOfNeighbors() {
-        throw new RuntimeException("Method not yet implemented");
-    }
-
-    @Override
-    public Drawer getDrawer() {
-        return drawer;
-    }
 
     public boolean contains(Triangle t) {
         return content.containsVertex(t);
@@ -302,18 +218,12 @@ public class CompoundIsland implements Dockable {
         t.setParentToCenter(translation);
     }
 
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
-        rotationMatrixCenter = calculateRotationMatrix(rotation);
-        updateTransformationThis();
-    }
-
     private class CompoundIslandDrawer extends Drawer{
 
         @Override
         public Canvas draw(double[] transformation, Canvas canvas) {
             transformation = concatLinearTransformation(transformation, transformationThis);
-            for (Dockable d : content.vertexSet()) {
+            for (Island d : content.vertexSet()) {
                 d.getDrawer().draw(transformation, canvas);
             }
             return canvas;

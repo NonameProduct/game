@@ -1,7 +1,7 @@
 package com.example.till.game.test;
 
 import com.example.till.game.CompoundIsland;
-import com.example.till.game.Dockable;
+import com.example.till.game.Island;
 import com.example.till.game.GameField;
 import com.example.till.game.Triangle;
 
@@ -32,7 +32,7 @@ public class GameFieldTest extends GameTestCase {
 
 
     public void testSaveEquivalentContainerTransformAndLoadTwoTriangles() throws IOException, ClassNotFoundException {
-        List<Dockable> content = new ArrayList<>();
+        List<Island> content = new ArrayList<>();
         content.add(new Triangle(new double[]{400/200.0, 1200/200.0}, new double[]{34/200.0, 545/200.0}, 233, 445));
         content.add(new Triangle(new double[]{400/200.0, 400/200.0}, new double[]{349/200.0, 568/200.0}, 456, 436));
         setContentInGameField(content);
@@ -41,7 +41,7 @@ public class GameFieldTest extends GameTestCase {
         byte[] gameFieldAsByteArray = gameField.serializeAsByteArray();
         gameField.loadSerializationFromByteArray(gameFieldAsByteArray);
 
-        List<Dockable> newContent = gameField.getContent();
+        List<Island> newContent = gameField.getContent();
         assertTrue(((Triangle)content.get(0)).equals(((Triangle)newContent.get(0))));
         assertTrue(((Triangle) content.get(1)).equals(((Triangle) newContent.get(1))));
 
@@ -68,10 +68,10 @@ public class GameFieldTest extends GameTestCase {
 
     private void loadedContentContainsDiamond() {
         assertEquals(1, gameField.getContent().size());
-        List<Dockable> content = gameField.getContent();
+        List<Island> content = gameField.getContent();
         CompoundIsland island = (CompoundIsland) content.get(0);
-        Set<Dockable> contentIsland = island.getContent();
-        for (Dockable d : contentIsland) {
+        Set<Island> contentIsland = island.getContent();
+        for (Island d : contentIsland) {
             assertEquals(2, d.getNumberOfNeighbors());
         }
     }
@@ -95,18 +95,18 @@ public class GameFieldTest extends GameTestCase {
         dock.invoke(island, t4);
         dock.invoke(island, t5);
         dock.invoke(island, t6);
-        Set<Dockable> contentIsland = island.getContent();
+        Set<Island> contentIsland = island.getContent();
         assertEquals(6, island.getContent().size());
-        for (Dockable d : contentIsland) {
+        for (Island d : contentIsland) {
             assertEquals(2, d.getNumberOfNeighbors());
         }
 
-        List<Dockable> contentGameField = new ArrayList<>();
+        List<Island> contentGameField = new ArrayList<>();
         contentGameField.add(island);
-        setContentInGameField(new ArrayList<Dockable>(contentGameField));
+        setContentInGameField(new ArrayList<Island>(contentGameField));
     }
 
-    private void setContentInGameField(List<Dockable> content) {
+    private void setContentInGameField(List<Island> content) {
         Field field = null;
         try {
             field = GameField.getInstance().getClass().getDeclaredField("content");
@@ -204,7 +204,7 @@ public class GameFieldTest extends GameTestCase {
     private void triangleIsUnfocused() {
         Triangle t = (Triangle) gameField.getContent().get(0);
         assertFalse(t.isFocused());
-        assertNull(gameField.getCurrentlyFocusedDockable());
+        assertNull(gameField.getCurrentlyFocusedIsland());
     }
 
     private void tapOutsideTriangle() {
@@ -214,11 +214,11 @@ public class GameFieldTest extends GameTestCase {
     private void triangleIsFocused() {
         Triangle t = (Triangle) gameField.getContent().get(0);
         assertTrue(t.isFocused());
-        assertTrue(gameField.getCurrentlyFocusedDockable() == t);
+        assertTrue(gameField.getCurrentlyFocusedIsland() == t);
     }
 
     private void gameFieldContainsOneTriangle() {
-        List<Dockable> content = new ArrayList<>();
+        List<Island> content = new ArrayList<>();
         Triangle t = new Triangle(new double[]{1, 2}, new double[]{0, 0}, Math.PI, 0);
         content.add(t);
         Field field = null;
@@ -241,7 +241,7 @@ public class GameFieldTest extends GameTestCase {
     }
 
     private void currentlyFocusedDockableIsNull() {
-        assertTrue(gameField.getCurrentlyFocusedDockable() == null);
+        assertTrue(gameField.getCurrentlyFocusedIsland() == null);
     }
 
     private void tapInsideTriangle() {
@@ -284,9 +284,9 @@ public class GameFieldTest extends GameTestCase {
 
     private Triangle aTriangleCloseEnoughForMergeAndBeforeIslandInGameFieldContent() {
         Triangle t = aTriangleCloseEnoughForMergeAndAfterIslandInGameFieldContent();
-        List<Dockable> content = gameField.getContent();
-        Dockable dockable = content.remove(1);
-        content.add(0, dockable);
+        List<Island> content = gameField.getContent();
+        Island island = content.remove(1);
+        content.add(0, island);
         assertTrue(content.get(0).getClass().getSimpleName().equals(Triangle.class.getSimpleName())
                 && content.get(1).getClass().getSimpleName().equals(CompoundIsland.class.getSimpleName()));
         return t;
@@ -308,10 +308,10 @@ public class GameFieldTest extends GameTestCase {
 
     private void itGetsAddedToTheCompoundIsland(Triangle t) {
         assertEquals(1, gameField.getContent().size());
-        List<Dockable> content = gameField.getContent();
+        List<Island> content = gameField.getContent();
         CompoundIsland island = (CompoundIsland) content.get(0);
-        Set<Dockable> contentIslandSet = island.getContent();
-        List<Dockable> contentIsland = new ArrayList<>(contentIslandSet);
+        Set<Island> contentIslandSet = island.getContent();
+        List<Island> contentIsland = new ArrayList<>(contentIslandSet);
         assertTrue(contentIsland.size() == 3);
         assertTrue(island.contains(t));
         assertTrue(normL2(substract(contentIsland.get(0).getParentToCenter(), t.getParentToCenter())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING
@@ -324,8 +324,8 @@ public class GameFieldTest extends GameTestCase {
     private void aCompoundIslandIsCreated() {
         assertEquals(1, gameField.getContent().size());
         assertTrue(CompoundIsland.class.getSimpleName().equals(gameField.getContent().get(0).getClass().getSimpleName()));
-        Set<Dockable> contentSet = ((CompoundIsland) gameField.getContent().get(0)).getContent();
-        List<Dockable> content = new ArrayList<>(contentSet);
+        Set<Island> contentSet = ((CompoundIsland) gameField.getContent().get(0)).getContent();
+        List<Island> content = new ArrayList<>(contentSet);
         assertTrue(normL2(substract(content.get(0).getParentToCenter(), content.get(1).getParentToCenter()))<= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING);
         assertTrue(normL2(substract(content.get(0).getParentToCenter(), content.get(1).getParentToCenter())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING / 4);
     }
@@ -344,7 +344,7 @@ public class GameFieldTest extends GameTestCase {
     private void gameFieldContainsTwoCollidingTrianglesCloseEnough() {
         Triangle t1 = new Triangle(new double[]{4, 7}, new double[]{0, 0}, 0, 0);
         Triangle t2 = new Triangle(new double[]{4, 7+2*Triangle.A[1]*0.9}, new double[]{0, 0}, Math.PI, 0);
-        List<Dockable> content = new ArrayList<>();
+        List<Island> content = new ArrayList<>();
         content.add(t1);
         content.add(t2);
 
@@ -367,7 +367,7 @@ public class GameFieldTest extends GameTestCase {
     }
 
     private void theTrianglesRepell() {
-        List<Dockable> content = gameField.getContent();
+        List<Island> content = gameField.getContent();
         assertEquals(2, content.size());
         assertTrue(content.get(0).getClass().getSimpleName().equals(Triangle.class.getSimpleName()));
         assertTrue(content.get(1).getClass().getSimpleName().equals(Triangle.class.getSimpleName()));
@@ -376,7 +376,7 @@ public class GameFieldTest extends GameTestCase {
     private void gameFieldContainsTwoCollidingTrianglesNotCloseEnough() {
         Triangle t1 = new Triangle(new double[]{5, 2}, new double[]{0, 0}, 0, 0);
         Triangle t2 = new Triangle(new double[]{5+0.75*0.9, 2-(Triangle.A[1] - Triangle.C[1])/2.0}, new double[]{0, 0}, 0, 0);
-        List<Dockable> content = new ArrayList<>();
+        List<Island> content = new ArrayList<>();
         content.add(t1);
         content.add(t2);
         setContentInGameField(content);
