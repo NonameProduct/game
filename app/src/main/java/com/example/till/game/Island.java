@@ -83,7 +83,11 @@ public abstract class Island implements Drawable, Serializable {
         return false;
     }
 
-    public abstract boolean isInside(double x, double y);
+    /**
+     * @param point Parameters are given in coordinates of the holding parent. They need to be transformed into triangle coordinates first.
+     * @return
+     */
+    public abstract boolean isInside(double[] point);
 
     public abstract boolean dockablesCollide(double[] transformationThis, double[] transformationDockable, Island island);
 

@@ -44,8 +44,9 @@ public class VectorCalculations2D implements Serializable {
         return new double[]{factor * x22, factor * -x12, factor * -x21, factor * x11};
     }
 
-    public static double[] invert(double[] matrix1) {
-        return invert(matrix1[0], matrix1[1], matrix1[2], matrix1[3]);
+    public static double[] invert(double[] matrix) {
+        checkDimensionsMatrix(matrix);
+        return invert(matrix[0], matrix[1], matrix[2], matrix[3]);
     }
 
     public static double[] multiplyMatrixMatrix(double[] m1, double[] m2) {

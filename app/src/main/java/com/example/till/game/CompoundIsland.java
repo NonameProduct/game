@@ -91,12 +91,11 @@ public class CompoundIsland extends Island {
     }
 
 
-
     @Override
-    public boolean isInside(double x, double y) {
+    public boolean isInside(double[] point) {
         Set<Island> content = this.content.vertexSet();
         for (Island d : content) {
-            if (d.isInside(x, y)) {
+            if (d.isInside(transformLinear(invertLinearTransformation(transformationThis), point))){
                 return true;
             }
         }
@@ -229,4 +228,5 @@ public class CompoundIsland extends Island {
             return canvas;
         }
     }
+
 }

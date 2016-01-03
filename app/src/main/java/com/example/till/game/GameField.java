@@ -81,7 +81,7 @@ public class GameField implements Drawable{
             currentlyFocusedIsland.unfocus();
         }
         for (Island island : content) {
-            if (island.isInside(x, y)) {
+            if (island.isInside(new double[] {x, y})) {
                 island.focus();
                 return false;
             }

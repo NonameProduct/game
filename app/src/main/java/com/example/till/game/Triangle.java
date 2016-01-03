@@ -32,15 +32,10 @@ public class Triangle extends Island implements Drawable{
         update();
     }
 
-    /**
-     * Parameters are given in coordinates of the hoding parent. They need to be transformed into triangle coordinates first.
-     * @param x
-     * @param y
-     * @return
-     */
+
     @Override
-    public boolean isInside(double x, double y) {
-        double[] triangleCoordinates = transformLinear(invertLinearTransformation(parentToCenter, rotationMatrix), new double[]{x, y});
+    public boolean isInside(double[] point) {
+        double[] triangleCoordinates = transformLinear(invertLinearTransformation(parentToCenter, rotationMatrix), point);
         double newX = triangleCoordinates[0];
         double newY = triangleCoordinates[1];
         double[] vectorA = substract(new double[]{newX, newY}, A);
@@ -53,10 +48,6 @@ public class Triangle extends Island implements Drawable{
         double determinante2 = VectorCalculations2D.determinante(vectorB, bc);
         double determinante3 = VectorCalculations2D.determinante(vectorC, ca);
         return determinante1 >= 0 && determinante2 >= 0 && determinante3 >= 0;
-    }
-
-    public boolean isInside(double[] vector) {
-        return isInside(vector[0], vector[1]);
     }
 
     @Override

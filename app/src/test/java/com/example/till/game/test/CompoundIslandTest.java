@@ -8,6 +8,45 @@ import com.example.till.game.Triangle;
  */
 public class CompoundIslandTest extends GameTestCase {
 
+
+    public void testIsInsideWorksCorrectly() {
+//        given
+        CompoundIsland island = aCompoundIsland();
+
+//        then
+        pointsJustOutsideAreRecognizedAsOutside(island);
+        pointsJustInsideAreRecognizedAsInside(island);
+    }
+
+    private void pointsJustInsideAreRecognizedAsInside(CompoundIsland island) {
+        double[][] pointsJustOutside = new double[][]{
+                new double[]{3+Triangle.HEIGHT*2.0/3.0*0.99, 5},
+                new double[]{3-Triangle.HEIGHT*4.0/3.0*0.99, 5},
+                new double[]{3-Triangle.HEIGHT*1.0/3.0, 5+0.5*0.99},
+                new double[]{3-Triangle.HEIGHT*1.0/3.0, 5-0.5*0.99},
+        };
+        for (double[] d : pointsJustOutside) {
+            assertTrue(island.isInside(d));
+        }
+
+    }
+
+    private void pointsJustOutsideAreRecognizedAsOutside(CompoundIsland island) {
+        double[][] pointsJustOutside = new double[][]{
+                new double[]{3+Triangle.HEIGHT*2.0/3.0*1.01, 5},
+                new double[]{3-Triangle.HEIGHT*4.0/3.0*1.01, 5},
+                new double[]{3-Triangle.HEIGHT*1.0/3.0, 5+0.5*1.01},
+                new double[]{3-Triangle.HEIGHT*1.0/3.0, 5-0.5*1.01},
+        };
+        for (double[] d : pointsJustOutside) {
+            assertFalse(island.isInside(d));
+        }
+    }
+
+    private CompoundIsland aCompoundIsland() {
+        return createCompoundIsland();
+    }
+
     public void testUpdatedDiamondCollidesWithTriangles() {
 //        given
         CompoundIsland island = createUpdatedCompoundIsland();
