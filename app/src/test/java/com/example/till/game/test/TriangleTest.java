@@ -1,6 +1,6 @@
 package com.example.till.game.test;
 
-import com.example.till.game.Triangle;
+import com.example.till.game.gameFieldContent.Triangle;
 
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;

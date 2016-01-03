@@ -1,6 +1,10 @@
-package com.example.till.game;
+package com.example.till.game.gameFieldContent;
 
 import android.graphics.Canvas;
+
+import com.example.till.game.Drawer;
+import com.example.till.game.GameField;
+import com.example.till.game.MainThread;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -45,7 +49,7 @@ public class CompoundIsland extends Island {
         setRotation(0);
         updateTransformationThis();
         setMovement(new double[]{0, 0});
-        setRotationSpeed(0.25 * Math.PI/MainThread.MAX_FPS);
+        setRotationSpeed(0.25 * Math.PI/ MainThread.MAX_FPS);
 
         t1.setParentToCenter(new double[]{0, 0});
         t1.setRotation(0);
@@ -217,7 +221,7 @@ public class CompoundIsland extends Island {
         t.setParentToCenter(translation);
     }
 
-    private class CompoundIslandDrawer extends Drawer{
+    private class CompoundIslandDrawer extends Drawer {
 
         @Override
         public Canvas draw(double[] transformation, Canvas canvas) {

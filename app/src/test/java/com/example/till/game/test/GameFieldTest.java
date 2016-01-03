@@ -1,9 +1,9 @@
 package com.example.till.game.test;
 
-import com.example.till.game.CompoundIsland;
-import com.example.till.game.Island;
+import com.example.till.game.gameFieldContent.CompoundIsland;
+import com.example.till.game.gameFieldContent.Island;
 import com.example.till.game.GameField;
-import com.example.till.game.Triangle;
+import com.example.till.game.gameFieldContent.Triangle;
 
 import org.junit.Before;
 

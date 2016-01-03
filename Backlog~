@@ -1,0 +1,8 @@
+Refactoring
+- put Islands in separate package
+- review CompoundIsland
+- Reduce Lagging
+
+Features
+- Scrolling
+- Visual Change when Island is selected

@@ -1,7 +1,7 @@
 package com.example.till.game.test;
 
-import com.example.till.game.CompoundIsland;
-import com.example.till.game.Triangle;
+import com.example.till.game.gameFieldContent.CompoundIsland;
+import com.example.till.game.gameFieldContent.Triangle;
 
 /**
  * Created by till on 03.01.16.

@@ -1,4 +1,9 @@
-package com.example.till.game;
+package com.example.till.game.gameFieldContent;
+
+import com.example.till.game.Drawable;
+import com.example.till.game.Drawer;
+import com.example.till.game.GameField;
+import com.example.till.game.MainThread;
 
 import java.io.Serializable;
 

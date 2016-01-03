@@ -5,6 +5,8 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 
 
+import com.example.till.game.gameFieldContent.Island;
+import com.example.till.game.gameFieldContent.Triangle;
 import com.google.gson.InstanceCreator;
 
 import org.jgrapht.Graph;

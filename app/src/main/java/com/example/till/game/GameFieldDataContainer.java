@@ -1,5 +1,9 @@
 package com.example.till.game;
 
+import com.example.till.game.gameFieldContent.CompoundIsland;
+import com.example.till.game.gameFieldContent.Island;
+import com.example.till.game.gameFieldContent.Triangle;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

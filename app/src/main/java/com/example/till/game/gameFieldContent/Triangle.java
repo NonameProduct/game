@@ -1,9 +1,13 @@
-package com.example.till.game;
+package com.example.till.game.gameFieldContent;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+
+import com.example.till.game.Drawable;
+import com.example.till.game.Drawer;
+import com.example.till.game.VectorCalculations2D;
 
 import java.util.Arrays;
 
@@ -12,7 +16,7 @@ import static com.example.till.game.VectorCalculations2D.*;
 /**
  * Created by till on 23.12.15.
  */
-public class Triangle extends Island implements Drawable{
+public class Triangle extends Island implements Drawable {
 
     public static final double HEIGHT = Math.sqrt(3.0/4.0);
     public static final double[] A = {-0.5, 1.0 / 3.0 * HEIGHT};
@@ -150,7 +154,7 @@ public class Triangle extends Island implements Drawable{
         return 3;
     }
 
-    private class TriangleDrawer extends Drawer{
+    private class TriangleDrawer extends Drawer {
         @Override
         public Canvas draw(double[] transformationToUserInterface, Canvas canvas) {
             double[] transformationFromTriangle = concatLinearTransformation(transformationToUserInterface, makeLinearTransformation(parentToCenter, rotationMatrix));
