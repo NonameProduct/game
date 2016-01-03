@@ -18,11 +18,11 @@ public class Triangle implements Dockable, Drawable{
     private static final String TAG = Triangle.class.getSimpleName();
     private static final int MAX_NUMBER_OF_NEIGHBORS = 3;
 
-    public void setTranslation(double[] translation) {
-        this.translation = translation;
+    public void setParentToCenter(double[] parentToCenter) {
+        this.parentToCenter = parentToCenter;
     }
 
-    private double[] translation;
+    private double[] parentToCenter;
     private double[] movement;
 
     public void setRotation(double rotation) {
@@ -45,7 +45,7 @@ public class Triangle implements Dockable, Drawable{
         if (positionInParent.length != 2 || movement.length != 2) {
             throw new IllegalArgumentException("PositionInParent and Movement must have dimension 2. PositionInParent had dimension " + positionInParent.length + ", movement had dimension " + movement.length + ".");
         }
-        this.translation = positionInParent;
+        this.parentToCenter = positionInParent;
         this.movement = movement;
         setRotation(currentRotation);
         this.rotationSpeed = rotationSpeed;
@@ -60,19 +60,10 @@ public class Triangle implements Dockable, Drawable{
 
     private double[] calculatePositionOfCorner(double[] vector) {
         double[] vectorRotated = multiplyMatrixVector(rotationMatrix, vector);
-        double[] vectorShifted = add(vectorRotated, translation);
+        double[] vectorShifted = add(vectorRotated, parentToCenter);
         return vectorShifted;
     }
 
-    @Override
-    public void handleTap(MotionEvent event) {
-        if (isInside(event.getX(), event.getY())) {
-            focus();
-        } else {
-            unfocus();
-        }
-        positionOfLastTouch = new double[]{event.getX(), event.getY()};
-    }
 
     @Override
     public Drawer getDrawer() {
@@ -80,8 +71,8 @@ public class Triangle implements Dockable, Drawable{
     }
 
     @Override
-    public double[] getCenterToParent() {
-        return translation;
+    public double[] getParentToCenter() {
+        return parentToCenter;
     }
 
     @Override
@@ -112,13 +103,13 @@ public class Triangle implements Dockable, Drawable{
     @Override
     public void update() {
         setRotation(rotation + rotationSpeed);
-        translation = add(translation, movement);
+        parentToCenter = add(parentToCenter, movement);
     }
 
     @Override
     public void rollbackUpdate() {
         setRotation(rotation - rotationSpeed);
-        translation = substract(translation, movement);
+        parentToCenter = substract(parentToCenter, movement);
     }
 
     @Override
@@ -171,7 +162,7 @@ public class Triangle implements Dockable, Drawable{
      */
     @Override
     public boolean isInside(double x, double y) {
-        double[] triangleCoordinates = transformLinear(invertLinearTransformation(translation, rotationMatrix), new double[]{x, y});
+        double[] triangleCoordinates = transformLinear(invertLinearTransformation(parentToCenter, rotationMatrix), new double[]{x, y});
         double newX = triangleCoordinates[0];
         double newY = triangleCoordinates[1];
         double[] vectorA = substract(new double[]{newX, newY}, A);
@@ -191,7 +182,7 @@ public class Triangle implements Dockable, Drawable{
     }
 
     private double[] transformToTriangleCoordinates(double[] coordinates) {
-        double[] translated = substract(coordinates, translation);
+        double[] translated = substract(coordinates, parentToCenter);
         return multiplyMatrixVector(rotationMatrix, translated);
     }
 
@@ -207,8 +198,8 @@ public class Triangle implements Dockable, Drawable{
     }
 
     private boolean trianglesCollide(double[] transformationThis, double[] transformationTriangle, Triangle triangle) {
-        transformationThis = concatLinearTransformation(transformationThis, translation, rotationMatrix);
-        transformationTriangle = concatLinearTransformation(transformationTriangle, triangle.translation, triangle.rotationMatrix);
+        transformationThis = concatLinearTransformation(transformationThis, parentToCenter, rotationMatrix);
+        transformationTriangle = concatLinearTransformation(transformationTriangle, triangle.parentToCenter, triangle.rotationMatrix);
         double[] transformationTriangleToThis = concatLinearTransformation(invertLinearTransformation(transformationThis), transformationTriangle);
         double[][] vertices = new double[][]{A, B, C,
                 transformLinear(transformationTriangleToThis, A), transformLinear(transformationTriangleToThis, B), transformLinear(transformationTriangleToThis, C)};
@@ -228,7 +219,7 @@ public class Triangle implements Dockable, Drawable{
     public void handleCollision(double[] transformationThis, double[] transformationDockable, Dockable dockable) {
         if (Triangle.class.isInstance(dockable)) {
             Triangle triangle = (Triangle) dockable;
-            double[] vectorBetweenCenters = substract(transformLinear(transformationThis, translation), transformLinear(transformationDockable, triangle.getCenterToParent()));
+            double[] vectorBetweenCenters = substract(transformLinear(transformationThis, parentToCenter), transformLinear(transformationDockable, triangle.getParentToCenter()));
             if (normL2(vectorBetweenCenters)<=CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING){
                 new CompoundIsland(this, triangle);
             }
@@ -288,7 +279,7 @@ public class Triangle implements Dockable, Drawable{
     }
 
     public boolean equals(Triangle triangle) {
-        if (!Arrays.equals(translation, triangle.translation)) {
+        if (!Arrays.equals(parentToCenter, triangle.parentToCenter)) {
             return false;
         }
         if (!Arrays.equals(movement, triangle.movement)) {
@@ -315,7 +306,7 @@ public class Triangle implements Dockable, Drawable{
     private class TriangleDrawer extends Drawer{
         @Override
         public Canvas draw(double[] transformationToUserInterface, Canvas canvas) {
-            double[] transformationFromTriangle = concatLinearTransformation(transformationToUserInterface, makeLinearTransformation(translation, rotationMatrix));
+            double[] transformationFromTriangle = concatLinearTransformation(transformationToUserInterface, makeLinearTransformation(parentToCenter, rotationMatrix));
             Paint paint = new Paint();
             paint.setStrokeWidth(4);
             int color = 0;
@@ -331,13 +322,13 @@ public class Triangle implements Dockable, Drawable{
             double[] A = transformLinear(transformationFromTriangle, Triangle.A);
             double[] B = transformLinear(transformationFromTriangle, Triangle.B);
             double[] C = transformLinear(transformationFromTriangle, Triangle.C);
-            double[] center = transformLinear(translation, rotationMatrix, new double[]{0, 0});
-            double[] insideNearA = transformLinear(translation, rotationMatrix, scale(Triangle.A, 0.99));
-            double[] outsideNearA = transformLinear(translation, rotationMatrix, scale(Triangle.A, 1.01));
-            double[] insideNearB = transformLinear(translation, rotationMatrix, scale(Triangle.B, 0.99));
-            double[] outsideNearB = transformLinear(translation, rotationMatrix, scale(Triangle.B, 1.01));
-            double[] insideNearC = transformLinear(translation, rotationMatrix, scale(Triangle.C, 0.99));
-            double[] outsideNearC = transformLinear(translation, rotationMatrix, scale(Triangle.C, 1.01));
+            double[] center = transformLinear(parentToCenter, rotationMatrix, new double[]{0, 0});
+            double[] insideNearA = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.A, 0.99));
+            double[] outsideNearA = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.A, 1.01));
+            double[] insideNearB = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.B, 0.99));
+            double[] outsideNearB = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.B, 1.01));
+            double[] insideNearC = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.C, 0.99));
+            double[] outsideNearC = transformLinear(parentToCenter, rotationMatrix, scale(Triangle.C, 1.01));
             Path path = new Path();
             path.setFillType(Path.FillType.EVEN_ODD);
             path.moveTo((float) A[0], (float) (A[1]));

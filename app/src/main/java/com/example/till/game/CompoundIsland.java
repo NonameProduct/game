@@ -8,6 +8,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -18,13 +19,12 @@ import static com.example.till.game.VectorCalculations2D.*;
  * Created by till on 30.12.15.
  */
 public class CompoundIsland implements Dockable {
-    private double[] centerToParent;
-    private double[] centerToBase; // Base is the base of the coordinate system. Translation and rotation in children refer to the base, not to the center.
+    private double[] parentToCenter; // Center is the center of the rotation.
+    private double[] transformationBaseToCenter;
     private double[] rotationMatrixCenter;
-    private double[] rotationMatrixBase;
     private double rotation;
-    private double rotationBase;
     double[] transformationThis;
+
     private double rotationSpeed;
     double[] movement;
 
@@ -46,17 +46,17 @@ public class CompoundIsland implements Dockable {
         surface.add(t1);
         surface.add(t2);
 
-        double[] base = t1.getCenterToParent();
-        centerToParent = scale(add(t1.getCenterToParent(), t2.getCenterToParent()), 0.5);
-        centerToBase = substract(base, centerToParent);
-        rotationMatrixBase = calculateRotationMatrix(t1.getRotation());
-        rotationBase = t1.getRotation();
+        double[] base = t1.getParentToCenter();
+        parentToCenter = scale(add(t1.getParentToCenter(), t2.getParentToCenter()), 0.5);
+        double[] centerToBase = substract(base, parentToCenter);
+        double[] rotationMatrixBase = calculateRotationMatrix(t1.getRotation());
+        transformationBaseToCenter = makeLinearTransformation(centerToBase, rotationMatrixBase);
         setRotation(0);
         updateTransformationThis();
         setMovement(new double[]{0, 0});
-        setRotationSpeed(0);//(0.25 * Math.PI/MainThread.MAX_FPS);
+        setRotationSpeed(0.25 * Math.PI/MainThread.MAX_FPS);
 
-        t1.setTranslation(new double[]{0, 0});
+        t1.setParentToCenter(new double[]{0, 0});
         t1.setRotation(0);
         adaptTriangleToIslandCoordinates(t2);
 
@@ -73,7 +73,7 @@ public class CompoundIsland implements Dockable {
 
 
     private void updateTransformationThis() {
-        transformationThis = concatLinearTransformation(centerToParent, rotationMatrixCenter, centerToBase, rotationMatrixBase);
+        transformationThis = concatLinearTransformation(parentToCenter, rotationMatrixCenter, transformationBaseToCenter);
     }
 
     public List<Dockable> getCollisionCandidate() {
@@ -86,12 +86,12 @@ public class CompoundIsland implements Dockable {
 
 
     @Override
-    public double[] getCenterToParent() {
-        return centerToParent;
+    public double[] getParentToCenter() {
+        return parentToCenter;
     }
 
-    private void setCenterToParent(double[] translation) {
-        centerToParent = translation;
+    private void setParentToCenter(double[] translation) {
+        parentToCenter = translation;
         updateTransformationThis();
     }
 
@@ -113,7 +113,7 @@ public class CompoundIsland implements Dockable {
     @Override
     public void update() {
         setRotation(rotation + rotationSpeed);
-        setCenterToParent(add(centerToParent, movement));
+        setParentToCenter(add(parentToCenter, movement));
     }
 
     @Override
@@ -147,11 +147,6 @@ public class CompoundIsland implements Dockable {
         throw new RuntimeException("Not yet implemented.");
     }
 
-    @Override
-    public void handleTap(MotionEvent event) {
-        throw new RuntimeException("Not yet implemented.");
-
-    }
 
     @Override
     public boolean dockablesCollide(double[] transformationParent, double[] transformationDockable, Dockable dockable) {
@@ -182,8 +177,8 @@ public class CompoundIsland implements Dockable {
             if (!candidate.dockablesCollide(transformationThisToGameField, transformationTriangle, triangle)) {
                 throw new RuntimeException("triangle does not collide with collision candidate");
             }
-            double[] vectorBetweenMiddlePoints = substract(transformLinear(transformationTriangle, triangle.getCenterToParent()),
-                    transformLinear(transformationThisToGameField, candidate.getCenterToParent()));
+            double[] vectorBetweenMiddlePoints = substract(transformLinear(transformationTriangle, triangle.getParentToCenter()),
+                    transformLinear(transformationThisToGameField, candidate.getParentToCenter()));
             if (normL2(vectorBetweenMiddlePoints) <= MAX_DISTANCE_TO_TRIGGER_DOCKING) {
                 dock(triangle);
                 return;
@@ -214,16 +209,25 @@ public class CompoundIsland implements Dockable {
         surface.remove(toRemoveFromSurface);
         surface.add(triangle);
 
-//        double[] newRotationCenter = scale(add(scale(centerToParent, content.vertexSet().size() - 1), transformLinear(transformationThis, triangle.getCenterToParent())), 0.5);
-//        centerToBase = add( substract(centerToBase, centerToParent),  newRotationCenter);
-//        centerToParent = newRotationCenter;
+        double[] newParentToCenter = scale(add(scale(parentToCenter, content.vertexSet().size() - 1), transformLinear(transformationThis, triangle.getParentToCenter())), 1.0/content.vertexSet().size());
+        changeParentToCenter(newParentToCenter);
         updateTransformationThis();
 
     }
 
+    private void changeParentToCenter(double[] newParentToCenter) {
+        transformationBaseToCenter = concatLinearTransformation(
+                scale(newParentToCenter, -1), new double[]{1, 0, 0, 1},
+                concatLinearTransformation(parentToCenter, rotationMatrixCenter, transformationBaseToCenter));
+        rotation = 0;
+        rotationMatrixCenter = calculateRotationMatrix(0);
+        parentToCenter = newParentToCenter;
+        updateTransformationThis();
+    }
+
     private boolean areNeighbors(Dockable d1, Dockable d2) {
         if (Triangle.class.isInstance(d1) && Triangle.class.isInstance(d2)) {
-            return normL2(substract(d1.getCenterToParent(), d2.getCenterToParent())) <= MAX_DISTANCE_TO_TRIGGER_DOCKING;
+            return normL2(substract(d1.getParentToCenter(), d2.getParentToCenter())) <= MAX_DISTANCE_TO_TRIGGER_DOCKING;
         } else {
             throw new RuntimeException("Not yet implemented for inputs different than Triangles");
         }
@@ -279,12 +283,12 @@ public class CompoundIsland implements Dockable {
 
     private void adaptTriangleToIslandCoordinates(Triangle t) {
 
-        double newRotationUnsmoothed = t.getRotation() - rotation - rotationBase;
+        double newRotationUnsmoothed = t.getRotation() - rotation - getRotationAngle(Arrays.copyOfRange(transformationBaseToCenter, 2, 6));
         long nRotationSteps = Math.round(newRotationUnsmoothed / (Math.PI / 3));
         nRotationSteps = Math.abs(nRotationSteps%2);
         t.setRotation(nRotationSteps*Math.PI);
 
-        double[] translation = transformLinear(invertLinearTransformation(transformationThis), t.getCenterToParent());
+        double[] translation = transformLinear(invertLinearTransformation(transformationThis), t.getParentToCenter());
         translation[0] = Math.round(translation[0]*2.0)/2.0;
         if (t.getRotation() == 0) {
             translation[1] = Math.round(translation[1]/Triangle.HEIGHT) * Triangle.HEIGHT;
@@ -295,7 +299,7 @@ public class CompoundIsland implements Dockable {
         } else {
             throw new RuntimeException("Triangle has incorrect angle. Must have either 0 or PI. Has: "+ t.getRotation() + ".");
         }
-        t.setTranslation(translation);
+        t.setParentToCenter(translation);
     }
 
     public void setRotation(double rotation) {

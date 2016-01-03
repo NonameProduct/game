@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 public interface Dockable extends Drawable, Serializable {
 
-    public double[] getCenterToParent();
+    public double[] getParentToCenter();
 
     public double[] getMovement();
 
@@ -33,8 +33,6 @@ public interface Dockable extends Drawable, Serializable {
     public boolean handleFling(double event1x, double event1y, double event2x, double event2y, float velocityX, float velocityY);
 
     public boolean isInside(double x, double y);
-
-    public void handleTap(MotionEvent event);
 
     public boolean dockablesCollide(double[] transformationThis, double[] transformationDockable, Dockable dockable);
 

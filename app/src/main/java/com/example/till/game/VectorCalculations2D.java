@@ -136,13 +136,24 @@ public class VectorCalculations2D implements Serializable {
         return concatLinearTransformation(transformation1, t2, r2);
     }
 
-    public static double[] concatLinearTransformation(double[] transformation, double[] t2, double[] r2) {
-        checkDimensionsTransformation(transformation);
-        checkDimensionsVector(t2);
-        checkDimensionsMatrix(r2);
-        double[] t1 = Arrays.copyOfRange(transformation, 0, 2);
-        double[] r1 = Arrays.copyOfRange(transformation, 2, 6);
-        return concatLinearTransformation(t1, r1, t2, r2);
+    public static double[] concatLinearTransformation(double[] d1, double[] d2, double[] d3) {
+        if (d1.length == 6) {
+            checkDimensionsTransformation(d1);
+            checkDimensionsVector(d2);
+            checkDimensionsMatrix(d3);
+            double[] t1 = Arrays.copyOfRange(d1, 0, 2);
+            double[] r1 = Arrays.copyOfRange(d1, 2, 6);
+            return concatLinearTransformation(t1, r1, d2, d3);
+        }else if (d1.length == 2) {
+            checkDimensionsTransformation(d3);
+            checkDimensionsVector(d1);
+            checkDimensionsMatrix(d2);
+            double[] t2 = Arrays.copyOfRange(d3, 0, 2);
+            double[] r2 = Arrays.copyOfRange(d3, 2, 6);
+            return concatLinearTransformation(d1, d2, t2, r2);
+        } else {
+            throw new IllegalArgumentException("First parameter must be eiter a vector or a transformation.");
+        }
     }
 
     public static double[] concatLinearTransformation(double[] translation1, double[] rotation1, double[] translation2, double[] rotation2) {
@@ -190,5 +201,14 @@ public class VectorCalculations2D implements Serializable {
 
     public static double[] calculateRotationMatrix(double angle) {
         return  new double[]{Math.cos(angle), -Math.sin(angle),Math.sin(angle), Math.cos(angle)};
+    }
+
+    public static double getRotationAngle(double[] matrix) {
+        checkDimensionsMatrix(matrix);
+        double cos = matrix[0];
+        double sin = matrix[2];
+        double acos = Math.acos(cos);
+        double asin = Math.asin(sin);
+        return Math.signum(asin) * acos;
     }
 }

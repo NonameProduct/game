@@ -41,28 +41,14 @@ public class GameField implements Drawable{
 
     private GameField(){
         content = new ArrayList<Dockable>();
-        Triangle t1 = new Triangle(new double[]{0, 0}, new double[]{0, 0}, 0, 0);
-        Triangle t2 = new Triangle(new double[]{0, 2.0/3.0*Triangle.HEIGHT}, new double[]{0, 0}, Math.PI , 0);
-        Triangle t3 = new Triangle(new double[]{0.5, Triangle.HEIGHT}, new double[]{0, 0}, 0, 0);
-        Triangle t4 = new Triangle(new double[]{1, 2.0/3.0*Triangle.HEIGHT}, new double[]{0, 0}, Math.PI, 0);
-        Triangle t5 = new Triangle(new double[]{1, 0}, new double[]{0, 0}, 0, 0);
-        Triangle t6 = new Triangle(new double[]{0.5, -1.0/3.0*Triangle.HEIGHT}, new double[]{0, 0}, Math.PI, 0);
+        Triangle t1 = new Triangle(new double[]{3, 3}, new double[]{0, 0}, Math.PI, 0);
+        Triangle t2 = new Triangle(new double[]{3, 4+Triangle.HEIGHT*1.0/3.0*1.2}, new double[]{0, 0}, 0, 0);
+        Triangle t3 = new Triangle(new double[]{4, 3.6}, new double[]{0, 0}, 3* Math.PI/2, 0);
+        Triangle t4 = new Triangle(new double[]{2, 3.6}, new double[]{0, 0},  Math.PI/2, 0);
         content.add(t1);
         content.add(t2);
         content.add(t3);
         content.add(t4);
-        content.add(t5);
-        content.add(t6);
-//
-//        t1 = new Triangle(new double[]{1, 4}, new double[]{0, 0}, 4*Math.PI, 0);
-//        t2 = new Triangle(new double[]{1, 4+2*Triangle.HEIGHT/3}, new double[]{0, 0}, -11*Math.PI, 0);
-//        CompoundIsland island = new CompoundIsland(t1, t2);
-//        island.setMovement(new double[]{2-Triangle.HEIGHT/3, 1-Triangle.HEIGHT/3});
-//        island.setRotationSpeed(Math.PI / 2);
-//        island.update();
-//        island.setMovement(new double[]{0, 0});
-//        island.setRotationSpeed(0);
-//        content.add(island);
         drawer = new GameFieldDrawer();
     }
 
