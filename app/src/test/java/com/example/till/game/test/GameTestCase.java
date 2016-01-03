@@ -16,6 +16,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Log.class)
 public class GameTestCase extends TestCase {
+    public static final double[] IDENTITY_TRANSFORMATION = {0, 0, 1, 0, 0, 1};
+
 
     @Before
     public void setUp() {

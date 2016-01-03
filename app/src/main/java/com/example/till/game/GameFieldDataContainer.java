@@ -1,5 +1,6 @@
 package com.example.till.game;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 /**
  * Created by till on 30.12.15.
  */
-public class GameFieldDataContainer {
+public class GameFieldDataContainer implements Serializable {
 
     private ArrayList<Triangle> triangles = new ArrayList<>();
     private ArrayList<CompoundIsland> islands = new ArrayList<>();

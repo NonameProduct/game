@@ -19,6 +19,8 @@ import static com.example.till.game.VectorCalculations2D.*;
  */
 public class CompoundIsland implements Dockable {
     private double[] translation;
+    private double[] rotationCenterInParent;
+    private double[] coordinateBaseToRotationCenter;
     private double[] rotationMatrix;
     private double rotation;
     private double rotationSpeed;
@@ -43,6 +45,8 @@ public class CompoundIsland implements Dockable {
         surface.add(t2);
 
         translation = t1.getTranslation();
+        rotationCenterInParent = scale(add(t1.getTranslation(), t2.getTranslation()), 0.5);
+        coordinateBaseToRotationCenter = substract(rotationCenterInParent, translation);
         setRotation(t1.getRotation());
         setMovement(new double[]{0, 0});
         setRotationSpeed(0.25 * Math.PI/MainThread.MAX_FPS);
@@ -251,9 +255,7 @@ public class CompoundIsland implements Dockable {
     }
 
     private void adaptTriangleToIslandCoordinates(Triangle t) {
-        double[] trafoTriangleToField = makeLinearTransformation(t.getTranslation(), calculateRotationMatrix(t.getRotation()));
-        double[] trafoThisToField = makeLinearTransformation(translation, rotationMatrix);
-        double[] trafoTriangleToThis = concatenateLinearTransformation(invertLinearTransformation(trafoThisToField), trafoTriangleToField);
+        double[] trafoThisToField = makeLinearTransformation(substract(rotationCenterInParent, coordinateBaseToRotationCenter), rotationMatrix);
 
         double newRotationUnsmoothed = t.getRotation() - rotation;
         long nRotationSteps = Math.round(newRotationUnsmoothed / (Math.PI / 3));

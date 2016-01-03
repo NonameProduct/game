@@ -7,6 +7,7 @@ import com.example.till.game.Triangle;
 
 import org.junit.Before;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,15 +31,15 @@ public class GameFieldTest extends GameTestCase {
     }
 
 
-    public void testSaveEquivalentContainerTransformAndLoadTwoTriangles() {
+    public void testSaveEquivalentContainerTransformAndLoadTwoTriangles() throws IOException, ClassNotFoundException {
         List<Dockable> content = new ArrayList<>();
         content.add(new Triangle(new double[]{400/200.0, 1200/200.0}, new double[]{34/200.0, 545/200.0}, 233, 445));
         content.add(new Triangle(new double[]{400/200.0, 400/200.0}, new double[]{349/200.0, 568/200.0}, 456, 436));
         setContentInGameField(content);
 
         GameField gameField = GameField.getInstance();
-        String gameFieldAsJson = gameField.getGameFieldDataContainerAsJson();
-        gameField.loadGameFieldCataContainerFromJson(gameFieldAsJson);
+        byte[] gameFieldAsByteArray = gameField.serializeAsByteArray();
+        gameField.loadSerializationFromByteArray(gameFieldAsByteArray);
 
         List<Dockable> newContent = gameField.getContent();
         assertTrue(((Triangle)content.get(0)).equals(((Triangle)newContent.get(0))));
@@ -49,14 +50,14 @@ public class GameFieldTest extends GameTestCase {
         }
 
         content = gameField.getContent();
-        gameFieldAsJson = gameField.getGameFieldDataContainerAsJson();
-        gameField.loadGameFieldCataContainerFromJson(gameFieldAsJson);
+        gameFieldAsByteArray = gameField.serializeAsByteArray();
+        gameField.loadSerializationFromByteArray(gameFieldAsByteArray);
         newContent = gameField.getContent();
         assertTrue(((Triangle)content.get(0)).equals(((Triangle)newContent.get(0))));
         assertTrue(((Triangle)content.get(1)).equals(((Triangle)newContent.get(1))));
     }
 
-    public void testSavingAndLoadingOfDiamondIsland() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public void testSavingAndLoadingOfHexagonIsland() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, ClassNotFoundException {
 //        given
         gameFieldContainsDiamond();
 
@@ -75,8 +76,8 @@ public class GameFieldTest extends GameTestCase {
         }
     }
 
-    private void serializationThrowsNoException() {
-        gameField.loadGameFieldCataContainerFromJson(gameField.getGameFieldDataContainerAsJson());
+    private void serializationThrowsNoException() throws IOException, ClassNotFoundException {
+        gameField.loadSerializationFromByteArray(gameField.serializeAsByteArray());
     }
 
     private void gameFieldContainsDiamond() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {

@@ -3,11 +3,13 @@ package com.example.till.game;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
+import java.io.Serializable;
+
 
 /**
  * Created by till on 23.12.15.
  */
-public interface Dockable extends Drawable {
+public interface Dockable extends Drawable, Serializable {
 
     public double[] getTranslation();
 

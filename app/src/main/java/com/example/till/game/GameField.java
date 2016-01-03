@@ -12,9 +12,15 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 import com.google.gson.reflect.TypeToken;
 
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +39,16 @@ public class GameField implements Drawable{
 
     private GameField() {
         content = new ArrayList<Dockable>();
-        content.add(new Triangle(new double[]{1, 1}, new double[]{0, 0}, Math.PI, 0));
-        content.add(new Triangle(new double[]{4, 7}, new double[]{0, 0}, 0, 0));
-        content.add(new Triangle(new double[]{1, 7}, new double[]{0, 0}, 0, 0));
-        content.add(new Triangle(new double[]{4, 1}, new double[]{0, 0}, 0, 0));
+        Triangle t1 = new Triangle(new double[]{3+Triangle.HEIGHT*0.99, 5}, new double[]{0, 0}, Math.PI/2, 0);
+        Triangle t2 = new Triangle(new double[]{3-Triangle.HEIGHT*1.99, 5}, new double[]{0, 0}, Math.PI/2, 0);
+        Triangle t3 = new Triangle(new double[]{3-2*Triangle.HEIGHT/3, 5 - 0.99}, new double[]{0, 0}, 3*Math.PI/2, 0);
+        Triangle t4 = new Triangle(new double[]{3, 5 + 0.99}, new double[]{0, 0}, Math.PI/2, 0);
+        content.add(t1);
+        content.add(t2);
+        content.add(t3);
+        content.add(t4);
+        t1 = new Triangle(new double[]{3, 5}, new double[]{0, 0}, Math.PI/2, 0);
+        content.add(t1);
         drawer = new GameFieldDrawer();
     }
 
@@ -56,16 +68,18 @@ public class GameField implements Drawable{
         this.currentlyFocusedDockable = currentlyFocusedDockable;
     }
 
-    public String getGameFieldDataContainerAsJson() {
-        Gson gson = new Gson();
-        GameFieldDataContainer gameFieldDataContainer = new GameFieldDataContainer(content);
-        return gson.toJson(gameFieldDataContainer);
+    public byte[] serializeAsByteArray() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(content);
+        oos.close();
+        return baos.toByteArray();
     }
 
-    public void loadGameFieldCataContainerFromJson(String jsonGameFieldDataContainer) {
-        final Gson gson = new GsonBuilder().registerTypeAdapter(SimpleGraph.class, new DefaultEdgeInstanceCreator()).create();
-        GameFieldDataContainer gameFieldDataContainer = gson.fromJson(jsonGameFieldDataContainer, GameFieldDataContainer.class);
-        content = gameFieldDataContainer.getContent();
+    public void loadSerializationFromByteArray(byte[] serialization) throws IOException, ClassNotFoundException {
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(serialization));
+        content = (List<Dockable>) ois.readObject();
+        ois.close();
     }
 
 
@@ -127,11 +141,10 @@ public class GameField implements Drawable{
         }
     }
 
-    private class DefaultEdgeInstanceCreator implements InstanceCreator<Class> {
+    private class DefaultEdgeInstanceCreator implements InstanceCreator<Graph<Dockable, DefaultEdge>> {
 
-        @Override
-        public Class createInstance(Type type) {
-            return DefaultEdge.class;
+        public Graph<Dockable, DefaultEdge> createInstance(Type type) {
+            return new SimpleGraph<Dockable, DefaultEdge>(DefaultEdge.class);
         }
     }
 }

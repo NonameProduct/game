@@ -1,5 +1,6 @@
 package com.example.till.game;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
@@ -7,7 +8,7 @@ import java.util.Arrays;
  * Created by till on 29.12.15.
  * 2D matrices are represented as row vectors (x11, x12, x21, x22)
  */
-public class VectorCalculations2D {
+public class VectorCalculations2D implements Serializable {
 
 
     public static double[] add(double[] v1, double[] v2) {
