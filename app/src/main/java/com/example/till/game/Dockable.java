@@ -7,11 +7,12 @@ import java.io.Serializable;
 
 
 /**
+ * Center refers to the rotation center of the object.
  * Created by till on 23.12.15.
  */
 public interface Dockable extends Drawable, Serializable {
 
-    public double[] getTranslation();
+    public double[] getCenterToParent();
 
     public double[] getMovement();
 

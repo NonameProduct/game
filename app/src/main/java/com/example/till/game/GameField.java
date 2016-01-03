@@ -21,6 +21,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,18 +39,30 @@ public class GameField implements Drawable{
     private Dockable currentlyFocusedDockable = null;
     private GestureDetectorCompat gestureDetector;
 
-    private GameField() {
+    private GameField(){
         content = new ArrayList<Dockable>();
-        Triangle t1 = new Triangle(new double[]{3+Triangle.HEIGHT*0.99, 5}, new double[]{0, 0}, Math.PI/2, 0);
-        Triangle t2 = new Triangle(new double[]{3-Triangle.HEIGHT*1.99, 5}, new double[]{0, 0}, Math.PI/2, 0);
-        Triangle t3 = new Triangle(new double[]{3-2*Triangle.HEIGHT/3, 5 - 0.99}, new double[]{0, 0}, 3*Math.PI/2, 0);
-        Triangle t4 = new Triangle(new double[]{3, 5 + 0.99}, new double[]{0, 0}, Math.PI/2, 0);
+        Triangle t1 = new Triangle(new double[]{0, 0}, new double[]{0, 0}, 0, 0);
+        Triangle t2 = new Triangle(new double[]{0, 2.0/3.0*Triangle.HEIGHT}, new double[]{0, 0}, Math.PI , 0);
+        Triangle t3 = new Triangle(new double[]{0.5, Triangle.HEIGHT}, new double[]{0, 0}, 0, 0);
+        Triangle t4 = new Triangle(new double[]{1, 2.0/3.0*Triangle.HEIGHT}, new double[]{0, 0}, Math.PI, 0);
+        Triangle t5 = new Triangle(new double[]{1, 0}, new double[]{0, 0}, 0, 0);
+        Triangle t6 = new Triangle(new double[]{0.5, -1.0/3.0*Triangle.HEIGHT}, new double[]{0, 0}, Math.PI, 0);
         content.add(t1);
         content.add(t2);
         content.add(t3);
         content.add(t4);
-        t1 = new Triangle(new double[]{3, 5}, new double[]{0, 0}, Math.PI/2, 0);
-        content.add(t1);
+        content.add(t5);
+        content.add(t6);
+//
+//        t1 = new Triangle(new double[]{1, 4}, new double[]{0, 0}, 4*Math.PI, 0);
+//        t2 = new Triangle(new double[]{1, 4+2*Triangle.HEIGHT/3}, new double[]{0, 0}, -11*Math.PI, 0);
+//        CompoundIsland island = new CompoundIsland(t1, t2);
+//        island.setMovement(new double[]{2-Triangle.HEIGHT/3, 1-Triangle.HEIGHT/3});
+//        island.setRotationSpeed(Math.PI / 2);
+//        island.update();
+//        island.setMovement(new double[]{0, 0});
+//        island.setRotationSpeed(0);
+//        content.add(island);
         drawer = new GameFieldDrawer();
     }
 

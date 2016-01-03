@@ -314,10 +314,10 @@ public class GameFieldTest extends GameTestCase {
         List<Dockable> contentIsland = new ArrayList<>(contentIslandSet);
         assertTrue(contentIsland.size() == 3);
         assertTrue(island.contains(t));
-        assertTrue(normL2(substract(contentIsland.get(0).getTranslation(), t.getTranslation())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING
-                ||normL2(substract(contentIsland.get(1).getTranslation(), t.getTranslation())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING);
-        assertTrue(normL2(substract(contentIsland.get(0).getTranslation(), t.getTranslation())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4
-                ||normL2(substract(contentIsland.get(1).getTranslation(), t.getTranslation())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4);
+        assertTrue(normL2(substract(contentIsland.get(0).getCenterToParent(), t.getCenterToParent())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING
+                ||normL2(substract(contentIsland.get(1).getCenterToParent(), t.getCenterToParent())) <= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING);
+        assertTrue(normL2(substract(contentIsland.get(0).getCenterToParent(), t.getCenterToParent())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4
+                ||normL2(substract(contentIsland.get(1).getCenterToParent(), t.getCenterToParent())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING/4);
     }
 
 
@@ -326,8 +326,8 @@ public class GameFieldTest extends GameTestCase {
         assertTrue(CompoundIsland.class.getSimpleName().equals(gameField.getContent().get(0).getClass().getSimpleName()));
         Set<Dockable> contentSet = ((CompoundIsland) gameField.getContent().get(0)).getContent();
         List<Dockable> content = new ArrayList<>(contentSet);
-        assertTrue(normL2(substract(content.get(0).getTranslation(), content.get(1).getTranslation()))<= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING);
-        assertTrue(normL2(substract(content.get(0).getTranslation(), content.get(1).getTranslation())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING / 4);
+        assertTrue(normL2(substract(content.get(0).getCenterToParent(), content.get(1).getCenterToParent()))<= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING);
+        assertTrue(normL2(substract(content.get(0).getCenterToParent(), content.get(1).getCenterToParent())) >= CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING / 4);
     }
 
     private void handleCollisionsIsCalled() throws InvocationTargetException, IllegalAccessException {

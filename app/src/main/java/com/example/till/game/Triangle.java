@@ -80,7 +80,7 @@ public class Triangle implements Dockable, Drawable{
     }
 
     @Override
-    public double[] getTranslation() {
+    public double[] getCenterToParent() {
         return translation;
     }
 
@@ -207,9 +207,9 @@ public class Triangle implements Dockable, Drawable{
     }
 
     private boolean trianglesCollide(double[] transformationThis, double[] transformationTriangle, Triangle triangle) {
-        transformationThis = concatenateLinearTransformation(transformationThis, translation, rotationMatrix);
-        transformationTriangle = concatenateLinearTransformation(transformationTriangle, triangle.translation, triangle.rotationMatrix);
-        double[] transformationTriangleToThis = concatenateLinearTransformation(invertLinearTransformation(transformationThis), transformationTriangle);
+        transformationThis = concatLinearTransformation(transformationThis, translation, rotationMatrix);
+        transformationTriangle = concatLinearTransformation(transformationTriangle, triangle.translation, triangle.rotationMatrix);
+        double[] transformationTriangleToThis = concatLinearTransformation(invertLinearTransformation(transformationThis), transformationTriangle);
         double[][] vertices = new double[][]{A, B, C,
                 transformLinear(transformationTriangleToThis, A), transformLinear(transformationTriangleToThis, B), transformLinear(transformationTriangleToThis, C)};
         for (int i = 0; i < 6; i++) {
@@ -228,7 +228,7 @@ public class Triangle implements Dockable, Drawable{
     public void handleCollision(double[] transformationThis, double[] transformationDockable, Dockable dockable) {
         if (Triangle.class.isInstance(dockable)) {
             Triangle triangle = (Triangle) dockable;
-            double[] vectorBetweenCenters = substract(transformLinear(transformationThis, translation), transformLinear(transformationDockable, triangle.getTranslation()));
+            double[] vectorBetweenCenters = substract(transformLinear(transformationThis, translation), transformLinear(transformationDockable, triangle.getCenterToParent()));
             if (normL2(vectorBetweenCenters)<=CompoundIsland.MAX_DISTANCE_TO_TRIGGER_DOCKING){
                 new CompoundIsland(this, triangle);
             }
@@ -315,7 +315,7 @@ public class Triangle implements Dockable, Drawable{
     private class TriangleDrawer extends Drawer{
         @Override
         public Canvas draw(double[] transformationToUserInterface, Canvas canvas) {
-            double[] transformationFromTriangle = concatenateLinearTransformation(transformationToUserInterface, makeLinearTransformation(translation, rotationMatrix));
+            double[] transformationFromTriangle = concatLinearTransformation(transformationToUserInterface, makeLinearTransformation(translation, rotationMatrix));
             Paint paint = new Paint();
             paint.setStrokeWidth(4);
             int color = 0;

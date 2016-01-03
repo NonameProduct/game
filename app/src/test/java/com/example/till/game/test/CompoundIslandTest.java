@@ -7,7 +7,36 @@ import com.example.till.game.Triangle;
  * Created by till on 03.01.16.
  */
 public class CompoundIslandTest extends GameTestCase {
-    public void testDiamondCollidesWithTriangles(){
+
+    public void testUpdatedDiamondCollidesWithTriangles() {
+//        given
+        CompoundIsland island = createUpdatedCompoundIsland();
+
+//        when
+        Triangle[] triangles = trianglesOnlyJustDoNotCollide();
+
+//        then
+        noCollisionsAreDetected(triangles, island);
+
+//        when
+        triangles = trianglesOnlyJustCollide();
+
+//        then
+        collisionsAreDetected(triangles, island);
+
+    }
+
+    private CompoundIsland createUpdatedCompoundIsland() {
+        Triangle t1 = new Triangle(new double[]{1, 4}, new double[]{0, 0}, 4*Math.PI, 0);
+        Triangle t2 = new Triangle(new double[]{1, 4+2*Triangle.HEIGHT/3}, new double[]{0, 0}, -11*Math.PI, 0);
+        CompoundIsland island = new CompoundIsland(t1, t2);
+        island.setMovement(new double[]{2-Triangle.HEIGHT/3, 1-Triangle.HEIGHT/3});
+        island.setRotationSpeed(Math.PI / 2);
+        island.update();
+        return island;
+    }
+
+    public void testUnupdatedDiamondCollidesWithTriangles(){
 //        given
         CompoundIsland island = createCompoundIsland();
 
