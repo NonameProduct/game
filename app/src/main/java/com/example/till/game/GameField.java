@@ -78,12 +78,12 @@ public class GameField implements Drawable{
     }
 
 
-    public boolean handleTap(double x, double y) {
+    public boolean handleTap(double[] positionOfTap) {
         if (currentlyFocusedIsland != null) {
             currentlyFocusedIsland.unfocus();
         }
         for (Island island : content) {
-            if (island.isInside(new double[] {x, y})) {
+            if (island.isInside(positionOfTap)) {
                 island.focus();
                 return false;
             }
@@ -113,9 +113,9 @@ public class GameField implements Drawable{
         }
     }
 
-    public boolean handleFling(double event1x, double event1y, double event2x, double event2y, float velocityX, float velocityY) {
+    public boolean handleFling(double[] startPoint, double[] endPoint, float velocityX, float velocityY) {
         if (currentlyFocusedIsland != null) {
-            return currentlyFocusedIsland.handleFling(event1x, event1y, event2x, event2y, velocityX, velocityY);
+            return currentlyFocusedIsland.handleFling(startPoint, endPoint, velocityX, velocityY);
         } else {
             return false;
         }

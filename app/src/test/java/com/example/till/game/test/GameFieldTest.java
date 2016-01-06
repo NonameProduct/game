@@ -178,27 +178,27 @@ public class GameFieldTest extends GameTestCase {
     }
 
     private void tapOutsideNearC() {
-        gameField.handleTap(1.0, 2.583123771881522);
+        gameField.handleTap(new double[] {1.0, 2.583123771881522});
     }
 
     private void tapInsideNearC() {
-        gameField.handleTap(1.0, 2.5715767664977296);
+        gameField.handleTap(new double[] {1.0, 2.5715767664977296});
     }
 
     private void tapOutsideNearB() {
-        gameField.handleTap(0.495, 1.708438114059239);
+        gameField.handleTap(new double[] {0.495, 1.708438114059239});
     }
 
     private void tapInsideNearB() {
-        gameField.handleTap(0.5049999999999999, 1.7142116167511352);
+        gameField.handleTap(new double[] {0.5049999999999999, 1.7142116167511352});
     }
 
     private void tapOutsideNearA() {
-        gameField.handleTap(1.505, 1.708438114059239);
+        gameField.handleTap(new double[] {1.505, 1.708438114059239});
     }
 
     private void tapInsideNearA() {
-        gameField.handleTap(1.4949999999999999, 1.7142116167511352);
+        gameField.handleTap(new double[] {1.4949999999999999, 1.7142116167511352});
     }
 
     private void triangleIsUnfocused() {
@@ -208,7 +208,7 @@ public class GameFieldTest extends GameTestCase {
     }
 
     private void tapOutsideTriangle() {
-        gameField.handleTap(0, 0);
+        gameField.handleTap(new double[] {0, 0});
     }
 
     private void triangleIsFocused() {
@@ -245,7 +245,7 @@ public class GameFieldTest extends GameTestCase {
     }
 
     private void tapInsideTriangle() {
-        gameField.handleTap(1.0, 2.0);
+        gameField.handleTap(new double[] {1.0, 2.0});
     }
 
     public void testMergeTrianglesOnCollision() throws InvocationTargetException, IllegalAccessException {

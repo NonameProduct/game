@@ -1,1 +1,969 @@
 Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=350m; support was removed in 8.0
+11:58:35.836 [Connection worker] DEBUG o.g.t.i.provider.DefaultConnection - Tooling API provider 2.2.1 created.
+11:58:35.981 [Connection worker] DEBUG o.g.t.i.provider.ProviderConnection - Configuring logging to level: INFO
+Tooling API is using target Gradle version: 2.2.1.
+Tooling API is using target Gradle version: 2.2.1.
+Connected to daemon DaemonInfo{pid=13200, address=[91f823f7-b969-4bfa-8efe-4263477fb21e port:56594, addresses:[/0:0:0:0:0:0:0:1%1, /127.0.0.1]], idle=true, context=DefaultDaemonContext[uid=dca15402-a20f-4799-9f02-409fec861a7b,javaHome=/usr/lib/jvm/java-7-openjdk-amd64,daemonRegistryDir=/home/till/.gradle/daemon,pid=13200,idleTimeout=10800000,daemonOpts=-XX:MaxPermSize=256m,-XX:+HeapDumpOnOutOfMemoryError,-Xmx1024m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]}. Dispatching request Build{id=395d3e6a-a9cc-4a43-99e8-91fe877a89d8.1, currentDir=/home/till/AndroidStudioProjects/game/app}.
+:app:cleanTest UP-TO-DATE
+:app:preBuild UP-TO-DATE
+:app:preDebugBuild UP-TO-DATE
+:app:checkDebugManifest
+:app:preReleaseBuild UP-TO-DATE
+:app:prepareComAndroidSupportAppcompatV72220Library UP-TO-DATE
+:app:prepareComAndroidSupportSupportV42220Library UP-TO-DATE
+:app:prepareDebugDependencies
+:app:compileDebugAidl UP-TO-DATE
+:app:compileDebugRenderscript UP-TO-DATE
+:app:generateDebugBuildConfig UP-TO-DATE
+:app:generateDebugAssets UP-TO-DATE
+:app:mergeDebugAssets UP-TO-DATE
+:app:generateDebugResValues UP-TO-DATE
+:app:generateDebugResources UP-TO-DATE
+:app:mergeDebugResources UP-TO-DATE
+:app:processDebugManifest UP-TO-DATE
+:app:processDebugResources UP-TO-DATE
+:app:generateDebugSources UP-TO-DATE
+:app:processDebugJavaRes UP-TO-DATE
+:app:compileDebugJavaNote: /home/till/AndroidStudioProjects/game/app/src/main/java/com/example/till/game/MainActivity.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: /home/till/AndroidStudioProjects/game/app/src/main/java/com/example/till/game/GameField.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+:app:preCompileDebugUnitTestJava
+:app:preDebugUnitTestBuild UP-TO-DATE
+:app:prepareDebugUnitTestDependencies
+:app:processDebugUnitTestJavaRes UP-TO-DATE
+:app:compileDebugUnitTestJava/home/till/AndroidStudioProjects/game/app/src/test/java/com/example/till/game/test/GameFieldTest.java:181: error: method handleTap in class GameField cannot be applied to given types;
+        gameField.handleTap(1.0, 2.583123771881522);
+                 ^
+  required: double[]
+  found: double,double
+  reason: actual and formal argument lists differ in length
+/home/till/AndroidStudioProjects/game/app/src/test/java/com/example/till/game/test/GameFieldTest.java:185: error: method handleTap in class GameField cannot be applied to given types;
+        gameField.handleTap(1.0, 2.5715767664977296);
+                 ^
+  required: double[]
+  found: double,double
+  reason: actual and formal argument lists differ in length
+/home/till/AndroidStudioProjects/game/app/src/test/java/com/example/till/game/test/GameFieldTest.java:189: error: method handleTap in class GameField cannot be applied to given types;
+        gameField.handleTap(0.495, 1.708438114059239);
+                 ^
+  required: double[]
+  found: double,double
+  reason: actual and formal argument lists differ in length
+/home/till/AndroidStudioProjects/game/app/src/test/java/com/example/till/game/test/GameFieldTest.java:193: error: method handleTap in class GameField cannot be applied to given types;
+        gameField.handleTap(0.5049999999999999, 1.7142116167511352);
+                 ^
+  required: double[]
+  found: double,double
+  reason: actual and formal argument lists differ in length
+/home/till/AndroidStudioProjects/game/app/src/test/java/com/example/till/game/test/GameFieldTest.java:197: error: method handleTap in class GameField cannot be applied to given types;
+        gameField.handleTap(1.505, 1.708438114059239);
+                 ^
+  required: double[]
+  found: double,double
+  reason: actual and formal argument lists differ in length
+/home/till/AndroidStudioProjects/game/app/src/test/java/com/example/till/game/test/GameFieldTest.java:201: error: method handleTap in class GameField cannot be applied to given types;
+        gameField.handleTap(1.4949999999999999, 1.7142116167511352);
+                 ^
+  required: double[]
+  found: double,double
+  reason: actual and formal argument lists differ in length
+/home/till/AndroidStudioProjects/game/app/src/test/java/com/example/till/game/test/GameFieldTest.java:211: error: method handleTap in class GameField cannot be applied to given types;
+        gameField.handleTap(0, 0);
+                 ^
+  required: double[]
+  found: int,int
+  reason: actual and formal argument lists differ in length
+/home/till/AndroidStudioProjects/game/app/src/test/java/com/example/till/game/test/GameFieldTest.java:248: error: method handleTap in class GameField cannot be applied to given types;
+        gameField.handleTap(1.0, 2.0);
+                 ^
+  required: double[]
+  found: double,double
+  reason: actual and formal argument lists differ in length
+8 errors
+ FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugUnitTestJava'.
+> Compilation failed; see the compiler error output for details.
+
+* Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output.
+
+BUILD FAILED
+
+Total time: 1.403 secs
+Received result DaemonCommandResult[type=CommandFailure, value=org.gradle.launcher.exec.ReportedException: org.gradle.internal.exceptions.LocationAwareException: Execution failed for task ':app:compileDebugUnitTestJava'.] from daemon DaemonInfo{pid=13200, address=[91f823f7-b969-4bfa-8efe-4263477fb21e port:56594, addresses:[/0:0:0:0:0:0:0:1%1, /127.0.0.1]], idle=true, context=DefaultDaemonContext[uid=dca15402-a20f-4799-9f02-409fec861a7b,javaHome=/usr/lib/jvm/java-7-openjdk-amd64,daemonRegistryDir=/home/till/.gradle/daemon,pid=13200,idleTimeout=10800000,daemonOpts=-XX:MaxPermSize=256m,-XX:+HeapDumpOnOutOfMemoryError,-Xmx1024m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]}.
+[60239675]   WARN - nal.AbstractExternalSystemTask - Compilation failed; see the compiler error output for details. 
+com.intellij.openapi.externalSystem.model.ExternalSystemException: Compilation failed; see the compiler error output for details.
+	at org.jetbrains.plugins.gradle.service.project.GradleExecutionHelper.execute(GradleExecutionHelper.java:223)
+	at org.jetbrains.plugins.gradle.service.task.GradleTaskManager.executeTasks(GradleTaskManager.java:143)
+	at org.jetbrains.plugins.gradle.service.task.GradleTaskManager.executeTasks(GradleTaskManager.java:54)
+	at com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemTaskManagerImpl$1.produce(RemoteExternalSystemTaskManagerImpl.java:56)
+	at com.intellij.openapi.externalSystem.service.remote.AbstractRemoteExternalSystemService.execute(AbstractRemoteExternalSystemService.java:59)
+	at com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemTaskManagerImpl.executeTasks(RemoteExternalSystemTaskManagerImpl.java:52)
+	at com.intellij.openapi.externalSystem.service.remote.wrapper.ExternalSystemTaskManagerWrapper.executeTasks(ExternalSystemTaskManagerWrapper.java:55)
+	at com.intellij.openapi.externalSystem.service.internal.ExternalSystemExecuteTaskTask.doExecute(ExternalSystemExecuteTaskTask.java:113)
+	at com.intellij.openapi.externalSystem.service.internal.AbstractExternalSystemTask.execute(AbstractExternalSystemTask.java:138)
+	at com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration$MyRunnableState$1.run(ExternalSystemRunConfiguration.java:197)
+	at com.intellij.openapi.application.impl.ApplicationImpl$8.run(ApplicationImpl.java:405)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+	at org.jetbrains.ide.PooledThreadExecutor$1$1.run(PooledThreadExecutor.java:56)
+
+Tooling API is using target Gradle version: 2.2.1.
+Tooling API is using target Gradle version: 2.2.1.
+Connected to daemon DaemonInfo{pid=13200, address=[91f823f7-b969-4bfa-8efe-4263477fb21e port:56594, addresses:[/0:0:0:0:0:0:0:1%1, /127.0.0.1]], idle=true, context=DefaultDaemonContext[uid=dca15402-a20f-4799-9f02-409fec861a7b,javaHome=/usr/lib/jvm/java-7-openjdk-amd64,daemonRegistryDir=/home/till/.gradle/daemon,pid=13200,idleTimeout=10800000,daemonOpts=-XX:MaxPermSize=256m,-XX:+HeapDumpOnOutOfMemoryError,-Xmx1024m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]}. Dispatching request Build{id=b696f819-50cb-4388-b21c-7030f9e793f4.1, currentDir=/home/till/AndroidStudioProjects/game/app}.
+:app:cleanTest UP-TO-DATE
+:app:preBuild UP-TO-DATE
+:app:preDebugBuild UP-TO-DATE
+:app:checkDebugManifest
+:app:preReleaseBuild UP-TO-DATE
+:app:prepareComAndroidSupportAppcompatV72220Library UP-TO-DATE
+:app:prepareComAndroidSupportSupportV42220Library UP-TO-DATE
+:app:prepareDebugDependencies
+:app:compileDebugAidl UP-TO-DATE
+:app:compileDebugRenderscript UP-TO-DATE
+:app:generateDebugBuildConfig UP-TO-DATE
+:app:generateDebugAssets UP-TO-DATE
+:app:mergeDebugAssets UP-TO-DATE
+:app:generateDebugResValues UP-TO-DATE
+:app:generateDebugResources UP-TO-DATE
+:app:mergeDebugResources UP-TO-DATE
+:app:processDebugManifest UP-TO-DATE
+:app:processDebugResources UP-TO-DATE
+:app:generateDebugSources UP-TO-DATE
+:app:processDebugJavaRes UP-TO-DATE
+:app:compileDebugJava UP-TO-DATE
+:app:preCompileDebugUnitTestJava
+:app:preDebugUnitTestBuild UP-TO-DATE
+:app:prepareDebugUnitTestDependencies
+:app:processDebugUnitTestJavaRes UP-TO-DATE
+:app:compileDebugUnitTestJava
+:app:compileDebugUnitTestSources
+:app:mockableAndroidJar UP-TO-DATE
+:app:assembleDebugUnitTest
+:app:testDebug
+
+<ijLog><event type='reportLocation' testReport='/home/till/AndroidStudioProjects/game/app/build/reports/tests/debug/index.html' /></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='root' parentId=''><ijLogEol/>
+    <descriptor name='Test Run' className='' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='1.1' parentId='root'><ijLogEol/>
+    <descriptor name='Gradle Test Executor 1' className='' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='1.2' parentId='1.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.GameTestCase' className='com.example.till.game.test.GameTestCase' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='1.2' parentId='1.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.GameTestCase' className='com.example.till.game.test.GameTestCase' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078033008' endTime='1452078033340'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='1.3' parentId='1.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.CompoundIslandTest' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.4' parentId='1.3'><ijLogEol/>
+    <descriptor name='testIsInsideWorksCorrectly' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.4' parentId='1.3'><ijLogEol/>
+    <descriptor name='testIsInsideWorksCorrectly' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078033568' endTime='1452078033710'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.5' parentId='1.3'><ijLogEol/>
+    <descriptor name='testUnupdatedDiamondCollidesWithTriangles' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.5' parentId='1.3'><ijLogEol/>
+    <descriptor name='testUnupdatedDiamondCollidesWithTriangles' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078033714' endTime='1452078033723'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.6' parentId='1.3'><ijLogEol/>
+    <descriptor name='testUpdatedDiamondCollidesWithTriangles' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.6' parentId='1.3'><ijLogEol/>
+    <descriptor name='testUpdatedDiamondCollidesWithTriangles' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078033724' endTime='1452078033733'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='1.3' parentId='1.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.CompoundIslandTest' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078033346' endTime='1452078033736'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='1.7' parentId='1.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.VectorCalculations2DTest' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.8' parentId='1.7'><ijLogEol/>
+    <descriptor name='testMatrixTranspose' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.8' parentId='1.7'><ijLogEol/>
+    <descriptor name='testMatrixTranspose' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078033910' endTime='1452078034008'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.9' parentId='1.7'><ijLogEol/>
+    <descriptor name='testGetAngleFromRotationMatrix' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.9' parentId='1.7'><ijLogEol/>
+    <descriptor name='testGetAngleFromRotationMatrix' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034010' endTime='1452078034013'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.10' parentId='1.7'><ijLogEol/>
+    <descriptor name='testMatrixMultiplicationAndInversion' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.10' parentId='1.7'><ijLogEol/>
+    <descriptor name='testMatrixMultiplicationAndInversion' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034014' endTime='1452078034018'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.11' parentId='1.7'><ijLogEol/>
+    <descriptor name='testMatrixAdditionAndSubstraction' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.11' parentId='1.7'><ijLogEol/>
+    <descriptor name='testMatrixAdditionAndSubstraction' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034018' endTime='1452078034020'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.12' parentId='1.7'><ijLogEol/>
+    <descriptor name='testNorm' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.12' parentId='1.7'><ijLogEol/>
+    <descriptor name='testNorm' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034021' endTime='1452078034023'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.13' parentId='1.7'><ijLogEol/>
+    <descriptor name='testDeterminante' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.13' parentId='1.7'><ijLogEol/>
+    <descriptor name='testDeterminante' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034024' endTime='1452078034027'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='1.7' parentId='1.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.VectorCalculations2DTest' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078033736' endTime='1452078034028'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='1.14' parentId='1.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.GameFieldTest' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.15' parentId='1.14'><ijLogEol/>
+    <descriptor name='testFocusUnfocusedTriangle' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.15' parentId='1.14'><ijLogEol/>
+    <descriptor name='testFocusUnfocusedTriangle' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034311' endTime='1452078034450'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.16' parentId='1.14'><ijLogEol/>
+    <descriptor name='testPreparation' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.16' parentId='1.14'><ijLogEol/>
+    <descriptor name='testPreparation' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034453' endTime='1452078034455'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.17' parentId='1.14'><ijLogEol/>
+    <descriptor name='testRepellTrianglesOnCollision' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.17' parentId='1.14'><ijLogEol/>
+    <descriptor name='testRepellTrianglesOnCollision' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034456' endTime='1452078034479'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.18' parentId='1.14'><ijLogEol/>
+    <descriptor name='testSaveEquivalentContainerTransformAndLoadTwoTriangles' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.18' parentId='1.14'><ijLogEol/>
+    <descriptor name='testSaveEquivalentContainerTransformAndLoadTwoTriangles' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034480' endTime='1452078034495'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.19' parentId='1.14'><ijLogEol/>
+    <descriptor name='testSavingAndLoadingOfHexagonIsland' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.19' parentId='1.14'><ijLogEol/>
+    <descriptor name='testSavingAndLoadingOfHexagonIsland' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034495' endTime='1452078034513'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.20' parentId='1.14'><ijLogEol/>
+    <descriptor name='testMergeTrianglesOnCollision' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.20' parentId='1.14'><ijLogEol/>
+    <descriptor name='testMergeTrianglesOnCollision' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034513' endTime='1452078034517'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.21' parentId='1.14'><ijLogEol/>
+    <descriptor name='testMergeTriangleWithCompoundIsland' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.21' parentId='1.14'><ijLogEol/>
+    <descriptor name='testMergeTriangleWithCompoundIsland' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034518' endTime='1452078034528'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='1.14' parentId='1.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.GameFieldTest' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034028' endTime='1452078034529'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='1.22' parentId='1.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.TriangleTest' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.23' parentId='1.22'><ijLogEol/>
+    <descriptor name='testTrianglesCollide' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.23' parentId='1.22'><ijLogEol/>
+    <descriptor name='testTrianglesCollide' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034627' endTime='1452078034697'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.24' parentId='1.22'><ijLogEol/>
+    <descriptor name='testEquals' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.24' parentId='1.22'><ijLogEol/>
+    <descriptor name='testEquals' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034698' endTime='1452078034700'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='1.25' parentId='1.22'><ijLogEol/>
+    <descriptor name='testIsInside' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='1.25' parentId='1.22'><ijLogEol/>
+    <descriptor name='testIsInside' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034700' endTime='1452078034701'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='1.22' parentId='1.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.TriangleTest' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078034529' endTime='1452078034702'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='1.1' parentId='root'><ijLogEol/>
+    <descriptor name='Gradle Test Executor 1' className='' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078032998' endTime='1452078034702'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='root' parentId=''><ijLogEol/>
+    <descriptor name='Test Run' className='' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078032554' endTime='1452078034717'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+:app:checkReleaseManifest
+:app:prepareReleaseDependencies
+:app:compileReleaseAidl UP-TO-DATE
+:app:compileReleaseRenderscript UP-TO-DATE
+:app:generateReleaseBuildConfig UP-TO-DATE
+:app:generateReleaseAssets UP-TO-DATE
+:app:mergeReleaseAssets UP-TO-DATE
+:app:generateReleaseResValues UP-TO-DATE
+:app:generateReleaseResources UP-TO-DATE
+:app:mergeReleaseResources UP-TO-DATE
+:app:processReleaseManifest UP-TO-DATE
+:app:processReleaseResources UP-TO-DATE
+:app:generateReleaseSources UP-TO-DATE
+:app:processReleaseJavaRes UP-TO-DATE
+:app:compileReleaseJavaNote: /home/till/AndroidStudioProjects/game/app/src/main/java/com/example/till/game/MainActivity.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: /home/till/AndroidStudioProjects/game/app/src/main/java/com/example/till/game/GameField.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+:app:preCompileReleaseUnitTestJava
+:app:preReleaseUnitTestBuild UP-TO-DATE
+:app:prepareReleaseUnitTestDependencies
+:app:processReleaseUnitTestJavaRes UP-TO-DATE
+:app:compileReleaseUnitTestJava
+:app:compileReleaseUnitTestSources
+:app:assembleReleaseUnitTest
+:app:testRelease
+
+<ijLog><event type='reportLocation' testReport='/home/till/AndroidStudioProjects/game/app/build/reports/tests/release/index.html' /></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='root' parentId=''><ijLogEol/>
+    <descriptor name='Test Run' className='' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='2.1' parentId='root'><ijLogEol/>
+    <descriptor name='Gradle Test Executor 2' className='' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='2.2' parentId='2.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.GameTestCase' className='com.example.till.game.test.GameTestCase' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='2.2' parentId='2.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.GameTestCase' className='com.example.till.game.test.GameTestCase' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078035546' endTime='1452078035845'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='2.3' parentId='2.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.CompoundIslandTest' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.4' parentId='2.3'><ijLogEol/>
+    <descriptor name='testIsInsideWorksCorrectly' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.4' parentId='2.3'><ijLogEol/>
+    <descriptor name='testIsInsideWorksCorrectly' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036047' endTime='1452078036175'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.5' parentId='2.3'><ijLogEol/>
+    <descriptor name='testUpdatedDiamondCollidesWithTriangles' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.5' parentId='2.3'><ijLogEol/>
+    <descriptor name='testUpdatedDiamondCollidesWithTriangles' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036179' endTime='1452078036188'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.6' parentId='2.3'><ijLogEol/>
+    <descriptor name='testUnupdatedDiamondCollidesWithTriangles' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.6' parentId='2.3'><ijLogEol/>
+    <descriptor name='testUnupdatedDiamondCollidesWithTriangles' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036189' endTime='1452078036198'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='2.3' parentId='2.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.CompoundIslandTest' className='com.example.till.game.test.CompoundIslandTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078035851' endTime='1452078036200'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='2.7' parentId='2.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.VectorCalculations2DTest' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.8' parentId='2.7'><ijLogEol/>
+    <descriptor name='testMatrixTranspose' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.8' parentId='2.7'><ijLogEol/>
+    <descriptor name='testMatrixTranspose' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036335' endTime='1452078036411'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.9' parentId='2.7'><ijLogEol/>
+    <descriptor name='testDeterminante' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.9' parentId='2.7'><ijLogEol/>
+    <descriptor name='testDeterminante' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036414' endTime='1452078036418'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.10' parentId='2.7'><ijLogEol/>
+    <descriptor name='testMatrixAdditionAndSubstraction' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.10' parentId='2.7'><ijLogEol/>
+    <descriptor name='testMatrixAdditionAndSubstraction' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036418' endTime='1452078036422'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.11' parentId='2.7'><ijLogEol/>
+    <descriptor name='testNorm' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.11' parentId='2.7'><ijLogEol/>
+    <descriptor name='testNorm' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036423' endTime='1452078036427'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.12' parentId='2.7'><ijLogEol/>
+    <descriptor name='testGetAngleFromRotationMatrix' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.12' parentId='2.7'><ijLogEol/>
+    <descriptor name='testGetAngleFromRotationMatrix' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036428' endTime='1452078036432'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.13' parentId='2.7'><ijLogEol/>
+    <descriptor name='testMatrixMultiplicationAndInversion' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.13' parentId='2.7'><ijLogEol/>
+    <descriptor name='testMatrixMultiplicationAndInversion' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036433' endTime='1452078036441'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='2.7' parentId='2.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.VectorCalculations2DTest' className='com.example.till.game.test.VectorCalculations2DTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036200' endTime='1452078036442'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='2.14' parentId='2.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.GameFieldTest' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.15' parentId='2.14'><ijLogEol/>
+    <descriptor name='testFocusUnfocusedTriangle' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.15' parentId='2.14'><ijLogEol/>
+    <descriptor name='testFocusUnfocusedTriangle' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036774' endTime='1452078036886'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.16' parentId='2.14'><ijLogEol/>
+    <descriptor name='testSavingAndLoadingOfHexagonIsland' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.16' parentId='2.14'><ijLogEol/>
+    <descriptor name='testSavingAndLoadingOfHexagonIsland' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036890' endTime='1452078036926'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.17' parentId='2.14'><ijLogEol/>
+    <descriptor name='testSaveEquivalentContainerTransformAndLoadTwoTriangles' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.17' parentId='2.14'><ijLogEol/>
+    <descriptor name='testSaveEquivalentContainerTransformAndLoadTwoTriangles' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036926' endTime='1452078036932'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.18' parentId='2.14'><ijLogEol/>
+    <descriptor name='testPreparation' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.18' parentId='2.14'><ijLogEol/>
+    <descriptor name='testPreparation' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036932' endTime='1452078036934'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.19' parentId='2.14'><ijLogEol/>
+    <descriptor name='testMergeTrianglesOnCollision' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.19' parentId='2.14'><ijLogEol/>
+    <descriptor name='testMergeTrianglesOnCollision' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036934' endTime='1452078036950'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.20' parentId='2.14'><ijLogEol/>
+    <descriptor name='testMergeTriangleWithCompoundIsland' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.20' parentId='2.14'><ijLogEol/>
+    <descriptor name='testMergeTriangleWithCompoundIsland' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036951' endTime='1452078036962'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.21' parentId='2.14'><ijLogEol/>
+    <descriptor name='testRepellTrianglesOnCollision' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.21' parentId='2.14'><ijLogEol/>
+    <descriptor name='testRepellTrianglesOnCollision' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036962' endTime='1452078036967'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='2.14' parentId='2.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.GameFieldTest' className='com.example.till.game.test.GameFieldTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036442' endTime='1452078036968'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeSuite'><ijLogEol/>
+  <test id='2.22' parentId='2.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.TriangleTest' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.23' parentId='2.22'><ijLogEol/>
+    <descriptor name='testEquals' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.23' parentId='2.22'><ijLogEol/>
+    <descriptor name='testEquals' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078037086' endTime='1452078037157'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.24' parentId='2.22'><ijLogEol/>
+    <descriptor name='testIsInside' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.24' parentId='2.22'><ijLogEol/>
+    <descriptor name='testIsInside' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078037160' endTime='1452078037162'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='beforeTest'><ijLogEol/>
+  <test id='2.25' parentId='2.22'><ijLogEol/>
+    <descriptor name='testTrianglesCollide' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterTest'><ijLogEol/>
+  <test id='2.25' parentId='2.22'><ijLogEol/>
+    <descriptor name='testTrianglesCollide' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078037163' endTime='1452078037165'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='2.22' parentId='2.1'><ijLogEol/>
+    <descriptor name='com.example.till.game.test.TriangleTest' className='com.example.till.game.test.TriangleTest' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078036968' endTime='1452078037165'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='2.1' parentId='root'><ijLogEol/>
+    <descriptor name='Gradle Test Executor 2' className='' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078035540' endTime='1452078037166'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+
+<ijLog><event type='afterSuite'><ijLogEol/>
+  <test id='root' parentId=''><ijLogEol/>
+    <descriptor name='Test Run' className='' /><ijLogEol/>
+    <result resultType='SUCCESS' startTime='1452078035082' endTime='1452078037185'><ijLogEol/>
+      <failureType>error</failureType><ijLogEol/>
+    </result><ijLogEol/>
+  </test><ijLogEol/>
+</event></ijLog>
+:app:test
+
+BUILD SUCCESSFUL
+
+Total time: 5.756 secs
+Received result DaemonCommandResult[type=Success, value=org.gradle.tooling.internal.provider.BuildActionResult@1a506d36] from daemon DaemonInfo{pid=13200, address=[91f823f7-b969-4bfa-8efe-4263477fb21e port:56594, addresses:[/0:0:0:0:0:0:0:1%1, /127.0.0.1]], idle=true, context=DefaultDaemonContext[uid=dca15402-a20f-4799-9f02-409fec861a7b,javaHome=/usr/lib/jvm/java-7-openjdk-amd64,daemonRegistryDir=/home/till/.gradle/daemon,pid=13200,idleTimeout=10800000,daemonOpts=-XX:MaxPermSize=256m,-XX:+HeapDumpOnOutOfMemoryError,-Xmx1024m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]}.

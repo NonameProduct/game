@@ -65,25 +65,23 @@ public abstract class Island implements Drawable, Serializable {
         return isFocused;
     }
 
-    public boolean handleFling(double event1x, double event1y, double event2x, double event2y, float velocityX, float velocityY) {
+    public boolean handleFling(double[] startPoint, double[] endPoint, float velocityX, float velocityY) {
         if (!isFocused()) {
             throw new IllegalStateException("Triangle.onFling() should only be called if the respective triangle currantly isFocused()");
         }
 
         double[] transformationToTriangle = invertLinearTransformation(parentToCenter, rotationMatrix);
-        double[] startPoint = {event1x, event1y};
         double[] startPointInTriangleCoordinates = transformLinear(transformationToTriangle, startPoint);
-        double[] endPoint = {event2x, event2y};
         double[] endPointInTriangleCoordinates = transformLinear(transformationToTriangle, endPoint);
 
         if (normL2(startPointInTriangleCoordinates) < normL2(Triangle.A)) {
-            double[] movementIncrement =scale(new double[]{(event2x - event1x), (event2y - event1y)}, 1/(MainThread.MAX_FPS*3.0));
+            double[] movementIncrement =scale(substract(endPoint, startPoint), 1/(MainThread.MAX_FPS*3.0));
             setMovement(add(movement, movementIncrement));
         } else if (normL2(startPointInTriangleCoordinates) < normL2(Triangle.A) * 3) {
             double determinantOfDirectionMatrix = startPointInTriangleCoordinates[0] * endPointInTriangleCoordinates[1]
                     - startPointInTriangleCoordinates[1] * endPointInTriangleCoordinates[0];
             int signOfDeterminant = (int) Math.signum(determinantOfDirectionMatrix);
-            rotationSpeed += signOfDeterminant * normL2(substract(new double[]{event1x, event1y}, new double[]{event2x, event2y}))/(3.0*MainThread.MAX_FPS);
+            rotationSpeed += signOfDeterminant * normL2(substract(startPoint, endPoint))/(3.0*MainThread.MAX_FPS);
         }
         return false;
     }

@@ -75,7 +75,7 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Log.d(TAG, "action masked: " + event.getActionMasked() + ", pointer count: " + event.getPointerCount());
-        if (event.getActionMasked() == 2 && event.getPointerCount() > 1) {
+        if (event.getActionMasked() == MotionEvent.ACTION_MOVE && event.getPointerCount() > 1) {
             if (coordsOfLastActionMoveEventFinger0[0] != -1) {
                 shiftView(event);
 
@@ -85,28 +85,22 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
             coordsOfLastActionMoveEventFinger1[0] = event.getX(1);
             coordsOfLastActionMoveEventFinger1[1] = event.getY(1);
         }
-        if (event.getActionMasked() == 6) {
+        if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
             coordsOfLastActionMoveEventFinger0[0] = coordsOfLastActionMoveEventFinger0[1] = coordsOfLastActionMoveEventFinger1[0] = coordsOfLastActionMoveEventFinger1[1] = -1;
         }
         return gestureDetector.onTouchEvent(event);
     }
 
     private void shiftView(MotionEvent event) {
-        double[] new0 = new double[]{event.getX(0), event.getY(0)};
-        double[] new1 = new double[]{event.getX(1), event.getY(1)};
-        double[] old0 = coordsOfLastActionMoveEventFinger0;
-        double[] old1 = coordsOfLastActionMoveEventFinger1;
-        double[] trafo1 = {-old0[0], -old0[1], 1, 0, 0, 1};
-        double angle = angleBetweenVectors(substract(old1, old0), substract(new1, new0));
-        double[] trafo2 = makeLinearTransformation(new0, scale(calculateRotationMatrix(angle), normL2(substract(new1, new0)) / normL2(substract(old1, old0))));
-        double[] additionalTrafo = concatLinearTransformation(trafo2, trafo1);
-        for (double d : additionalTrafo) {
-            if (Double.isNaN(d)) {
-                Log.d(TAG, "NaN is inside.");
-                angle = angleBetweenVectors(substract(old1, old0), substract(new1, new0));
-            }
-        }
-        trafoGameFieldToMainGamePanel = concatLinearTransformation(additionalTrafo, trafoGameFieldToMainGamePanel);
+        double[] newPosition0 = new double[]{event.getX(0), event.getY(0)};
+        double[] newPosition1 = new double[]{event.getX(1), event.getY(1)};
+        double[] oldPosition0 = coordsOfLastActionMoveEventFinger0;
+        double[] oldPosition1 = coordsOfLastActionMoveEventFinger1;
+        double[] shiftOldPos0ToCoordinateBase = {-oldPosition0[0], -oldPosition0[1], 1, 0, 0, 1};
+        double angleOld1MinusOld0_New1MinusNew0 = angleBetweenVectors(substract(oldPosition1, oldPosition0), substract(newPosition1, newPosition0));
+        double[] rotationAndShiftToNew0 = makeLinearTransformation(newPosition0, scale(calculateRotationMatrix(angleOld1MinusOld0_New1MinusNew0), normL2(substract(newPosition1, newPosition0)) / normL2(substract(oldPosition1, oldPosition0))));
+        double[] trafoOldPositionsToNewPositions = concatLinearTransformation(rotationAndShiftToNew0, shiftOldPos0ToCoordinateBase);
+        trafoGameFieldToMainGamePanel = concatLinearTransformation(trafoOldPositionsToNewPositions, trafoGameFieldToMainGamePanel);
     }
 
     protected void render(Canvas canvas) {
@@ -145,8 +139,11 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-            return GameField.getInstance().handleFling(transformX(event1.getX()), transformY(event1.getY()), transformX(event2.getX()), transformY(event2.getY()),
-                    (float) (velocityX/zoomFactor), (float) (velocityY/zoomFactor));
+            double[] startPointInGamePanel = new double[]{event1.getX(), event1.getY()};
+            double[] endPointInGamePanel = new double[]{event2.getX(), event2.getY()};
+            double[] trafoMainGamePanelToGameField = invertLinearTransformation(trafoGameFieldToMainGamePanel);
+            return GameField.getInstance().handleFling(transformLinear(trafoMainGamePanelToGameField, startPointInGamePanel), transformLinear(trafoMainGamePanelToGameField, endPointInGamePanel),
+                    (float) (velocityX / zoomFactor), (float) (velocityY / zoomFactor));
         }
 
         @Override
@@ -171,7 +168,9 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
                 ((Activity) getContext()).finish();
                 return true;
             } else {
-                return GameField.getInstance().handleTap(transformX(event.getX()), transformY(event.getY()));
+                double[] positionOfTap = new double[]{event.getX(), event.getY()};
+                double[] trafoMainGamePanelToGameField = invertLinearTransformation(trafoGameFieldToMainGamePanel);
+                return GameField.getInstance().handleTap(transformLinear(trafoMainGamePanelToGameField, positionOfTap));
             }
         }
 
@@ -179,15 +178,6 @@ public class MainGamePanel extends SurfaceView implements SurfaceHolder.Callback
         public boolean onSingleTapUp(MotionEvent event) {
             return true;
         }
-    }
-
-
-    private double transformX(double d) {
-        return (d-translation[0])/zoomFactor;
-    }
-
-    private double transformY(double d) {
-        return (d - translation[1]) / zoomFactor;
     }
 
 
