@@ -1,6 +1,9 @@
 package com.example.till.game.gameFieldContent;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.util.Log;
 
 import com.example.till.game.Drawer;
 import com.example.till.game.GameField;
@@ -23,6 +26,7 @@ import static com.example.till.game.VectorCalculations2D.*;
  */
 public class CompoundIsland extends Island {
     public static final double MAX_DISTANCE_TO_TRIGGER_DOCKING=(2 * Triangle.A[1]) * 1.1;
+    private static final String TAG = CompoundIsland.class.getSimpleName();
     double[] transformationThis;
     Graph<Island, DefaultEdge> content;
     private double[] transformationBaseToCenter;
@@ -49,7 +53,7 @@ public class CompoundIsland extends Island {
         setRotation(0);
         updateTransformationThis();
         setMovement(new double[]{0, 0});
-        setRotationSpeed(0.25 * Math.PI/ MainThread.MAX_FPS);
+        setRotationSpeed(0);
 
         t1.setParentToCenter(new double[]{0, 0});
         t1.setRotation(0);
@@ -97,9 +101,11 @@ public class CompoundIsland extends Island {
 
     @Override
     public boolean isInside(double[] point) {
+        double[] pointInThisCoordinates = transformLinear(invertLinearTransformation(transformationThis), point);
+        Log.d(TAG, "Values of pointInThisCoordinates: " + pointInThisCoordinates[0] + ", " + pointInThisCoordinates[1]);
         Set<Island> content = this.content.vertexSet();
         for (Island d : content) {
-            if (d.isInside(transformLinear(invertLinearTransformation(transformationThis), point))){
+            if (d.isInside(pointInThisCoordinates)){
                 return true;
             }
         }
@@ -228,6 +234,12 @@ public class CompoundIsland extends Island {
             transformation = concatLinearTransformation(transformation, transformationThis);
             for (Island d : content.vertexSet()) {
                 d.getDrawer().draw(transformation, canvas);
+            }
+            if (isFocused) {
+                double[] centerOfRotationInCanvas = transformLinear(transformation, new double[]{0, 0});
+                Paint paint = new Paint();
+                paint.setColor(Color.WHITE);
+                canvas.drawCircle((float) centerOfRotationInCanvas[0], (float) centerOfRotationInCanvas[1], 20, paint);
             }
             return canvas;
         }

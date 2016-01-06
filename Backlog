@@ -5,7 +5,6 @@ Refactoring and technical tasks
 - Write an Island factory that can creat islands (also compound islands) using a yet to develop specification format.
 
 Features
-- Scrolling
-- Visual Change when Island is selected
+- Visual change when Island is selected (color all outer sides of triangles white (color all outer sides of triangles white)
 - implement collision + merging of CompoundIslands
 - physics
