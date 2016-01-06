@@ -212,4 +212,15 @@ public class VectorCalculations2D implements Serializable {
         double asin = Math.asin(sin);
         return Math.signum(asin) * acos;
     }
+
+    public static double angleBetweenVectors(double[] v1, double[] v2) {
+        checkDimensionsVector(v1);
+        checkDimensionsVector(v2);
+        double cosPhi = scalarProduct(v1, v2) / (normL2(v1) * normL2(v2));
+        if (cosPhi > 1) {
+            cosPhi = 1;
+        }
+        double cos = Math.signum(determinante(v1, v2)) * Math.acos(cosPhi);
+        return cos;
+    }
 }

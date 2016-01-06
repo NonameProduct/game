@@ -1,8 +1,11 @@
-Refactoring
+Refactoring and technical tasks
 - review CompoundIsland
 - Reduce Lagging
+- Make method collides with to take lists of Triangles instead of Islands
+- Write an Island factory that can creat islands (also compound islands) using a yet to develop specification format.
 
 Features
 - Scrolling
 - Visual Change when Island is selected
-- implement collision of CompoundIslands
+- implement collision + merging of CompoundIslands
+- physics
