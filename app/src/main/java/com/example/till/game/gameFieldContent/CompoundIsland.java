@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.example.till.game.Drawer;
 import com.example.till.game.GameField;
-import com.example.till.game.MainThread;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -19,13 +18,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static com.example.till.game.VectorCalculations2D.*;
+import static com.example.till.game.VectorCalculations2D.add;
+import static com.example.till.game.VectorCalculations2D.calculateRotationMatrix;
+import static com.example.till.game.VectorCalculations2D.concatLinearTransformation;
+import static com.example.till.game.VectorCalculations2D.getRotationAngle;
+import static com.example.till.game.VectorCalculations2D.invertLinearTransformation;
+import static com.example.till.game.VectorCalculations2D.makeLinearTransformation;
+import static com.example.till.game.VectorCalculations2D.normL2;
+import static com.example.till.game.VectorCalculations2D.scale;
+import static com.example.till.game.VectorCalculations2D.substract;
+import static com.example.till.game.VectorCalculations2D.transformLinear;
 
 /**
  * Created by till on 30.12.15.
  */
 public class CompoundIsland extends Island {
-    public static final double MAX_DISTANCE_TO_TRIGGER_DOCKING=(2 * Triangle.A[1]) * 1.1;
+    public static final double MAX_DISTANCE_TO_TRIGGER_DOCKING = (2 * Triangle.A[1]) * 1.1;
     private static final String TAG = CompoundIsland.class.getSimpleName();
     double[] transformationThis;
     Graph<Island, DefaultEdge> content;
@@ -35,15 +43,8 @@ public class CompoundIsland extends Island {
     private SimpleGraph<Triangle, Double> g;
 
 
-
     public CompoundIsland(Triangle t1, Triangle t2) {
-        content = new SimpleGraph<Island, DefaultEdge>(DefaultEdge.class);
-        content.addVertex(t1);
-        content.addVertex(t2);
-        content.addEdge(t1, t2);
-        surface = new ArrayList<>();
-        surface.add(t1);
-        surface.add(t2);
+        createStructure(t1, t2);
 
         double[] base = t1.getParentToCenter();
         parentToCenter = scale(add(t1.getParentToCenter(), t2.getParentToCenter()), 0.5);
@@ -67,6 +68,16 @@ public class CompoundIsland extends Island {
         GameField.getInstance().getContent().remove(t2);
 
         drawer = new CompoundIslandDrawer();
+    }
+
+    private void createStructure(Triangle t1, Triangle t2) {
+        content = new SimpleGraph<Island, DefaultEdge>(DefaultEdge.class);
+        content.addVertex(t1);
+        content.addVertex(t2);
+        content.addEdge(t1, t2);
+        surface = new ArrayList<>();
+        surface.add(t1);
+        surface.add(t2);
     }
 
     public Set<Island> getContent() {
@@ -104,24 +115,37 @@ public class CompoundIsland extends Island {
         double[] pointInThisCoordinates = transformLinear(invertLinearTransformation(transformationThis), point);
         Log.d(TAG, "Values of pointInThisCoordinates: " + pointInThisCoordinates[0] + ", " + pointInThisCoordinates[1]);
         Set<Island> content = this.content.vertexSet();
+        
+        FluentIterable.from(content).filter(getFilter());
+        
         for (Island d : content) {
-            if (d.isInside(pointInThisCoordinates)){
+            if (d.isInside(pointInThisCoordinates)) {
                 return true;
             }
         }
         return false;
     }
 
+    private Predicate<Island> getFilter() {
+
+        @Override
+                public Boolean apply(Island island){
+            island.isInside();
+        }
+        return null;
+    }
+
     @Override
     public boolean dockablesCollide(double[] transformationParent, double[] transformationDockable, Island island) {
-        collisionCandidates.clear();;
+        collisionCandidates.clear();
+        ;
         double[] transformationToGameField = concatLinearTransformation(transformationParent, transformationThis);
         for (Island d : surface) {
             if (d.dockablesCollide(transformationToGameField, transformationDockable, island)) {
                 collisionCandidates.add(d);
             }
         }
-        return collisionCandidates.size()>0;
+        return collisionCandidates.size() > 0;
     }
 
     @Override
@@ -139,6 +163,7 @@ public class CompoundIsland extends Island {
         double[] transformationThisToGameField = concatLinearTransformation(transformationParent, transformationThis);
         for (Island candidate : collisionCandidates) {
             if (!candidate.dockablesCollide(transformationThisToGameField, transformationTriangle, triangle)) {
+                Rejects.rejectIfNull(candidate,"message");
                 throw new RuntimeException("triangle does not collide with collision candidate");
             }
             double[] vectorBetweenMiddlePoints = substract(transformLinear(transformationTriangle, triangle.getParentToCenter()),
@@ -161,7 +186,7 @@ public class CompoundIsland extends Island {
         adaptTriangleToIslandCoordinates(triangle);
         List<Island> toRemoveFromSurface = new ArrayList<>();
         for (Island d : surface) {
-            if(areNeighbors(triangle, d)){
+            if (areNeighbors(triangle, d)) {
                 d.addNeighbor();
                 triangle.addNeighbor();
                 content.addEdge(d, triangle);
@@ -173,7 +198,7 @@ public class CompoundIsland extends Island {
         surface.remove(toRemoveFromSurface);
         surface.add(triangle);
 
-        double[] newParentToCenter = scale(add(scale(parentToCenter, content.vertexSet().size() - 1), transformLinear(transformationThis, triangle.getParentToCenter())), 1.0/content.vertexSet().size());
+        double[] newParentToCenter = scale(add(scale(parentToCenter, content.vertexSet().size() - 1), transformLinear(transformationThis, triangle.getParentToCenter())), 1.0 / content.vertexSet().size());
         changeParentToCenter(newParentToCenter);
         updateTransformationThis();
 
@@ -210,19 +235,19 @@ public class CompoundIsland extends Island {
 
         double newRotationUnsmoothed = t.getRotation() - rotation - getRotationAngle(Arrays.copyOfRange(transformationBaseToCenter, 2, 6));
         long nRotationSteps = Math.round(newRotationUnsmoothed / (Math.PI / 3));
-        nRotationSteps = Math.abs(nRotationSteps%2);
-        t.setRotation(nRotationSteps*Math.PI);
+        nRotationSteps = Math.abs(nRotationSteps % 2);
+        t.setRotation(nRotationSteps * Math.PI);
 
         double[] translation = transformLinear(invertLinearTransformation(transformationThis), t.getParentToCenter());
-        translation[0] = Math.round(translation[0]*2.0)/2.0;
+        translation[0] = Math.round(translation[0] * 2.0) / 2.0;
         if (t.getRotation() == 0) {
-            translation[1] = Math.round(translation[1]/Triangle.HEIGHT) * Triangle.HEIGHT;
-        }else if (t.getRotation() == Math.PI) {
-            double d = translation[1] + Triangle.HEIGHT*1.0/3.0;
-            d = Math.round(d/Triangle.HEIGHT)*Triangle.HEIGHT;
-            translation[1] = d-Triangle.HEIGHT*1.0/3.0;
+            translation[1] = Math.round(translation[1] / Triangle.HEIGHT) * Triangle.HEIGHT;
+        } else if (t.getRotation() == Math.PI) {
+            double d = translation[1] + Triangle.HEIGHT * 1.0 / 3.0;
+            d = Math.round(d / Triangle.HEIGHT) * Triangle.HEIGHT;
+            translation[1] = d - Triangle.HEIGHT * 1.0 / 3.0;
         } else {
-            throw new RuntimeException("Triangle has incorrect angle. Must have either 0 or PI. Has: "+ t.getRotation() + ".");
+            throw new RuntimeException("Triangle has incorrect angle. Must have either 0 or PI. Has: " + t.getRotation() + ".");
         }
         t.setParentToCenter(translation);
     }

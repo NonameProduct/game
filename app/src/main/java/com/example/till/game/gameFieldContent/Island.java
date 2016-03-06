@@ -24,6 +24,8 @@ public abstract class Island implements Drawable, Serializable {
     protected boolean isFocused;
     protected int numberOfNeighbors = 0;
 
+    protected static int pachageTester = 1;
+
     public double[] getParentToCenter(){return parentToCenter;};
 
     public double[] getMovement() {
